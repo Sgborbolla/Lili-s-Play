@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#06080c">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>Lili’s Play · Bienvenido</title>
+<meta name="description" content="Consolas, juegos, comida y torneos en Lili’s Play. Entra al menú, reserva tu mesa y vive la noche gamer.">
+<link rel="preload" href="/fonts/Syne.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="/fonts/SpaceGrotesk.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="/css/social.css">
+<link rel="stylesheet" href="/css/watermarks.css">
+<link rel="stylesheet" href="/css/welcome.css">
+<link rel="stylesheet" href="/css/ps4-theme.css?v=3">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+<svg class="svg-sprite" aria-hidden="true">
+  <symbol id="wm-pad" viewBox="0 0 64 64">
+    <path d="M19 22h26c6 0 9 5 10 11l2 10c1 5-2 8-6 7-3-.5-5-3-7-6H20c-2 3-4 5.5-7 6-4 1-7-2-6-7l2-10c1-6 4-11 10-11Z"/>
+    <path d="M20 31v10M15 36h10"/>
+    <circle cx="43" cy="33" r="2.4"/><circle cx="49" cy="38" r="2.4"/>
+  </symbol>
+  <symbol id="wm-dpad" viewBox="0 0 64 64">
+    <path d="M26 8h12v18h18v12H38v18H26V38H8V26h18Z"/>
+  </symbol>
+  <symbol id="wm-disc" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="24"/><circle cx="32" cy="32" r="9"/><path d="M32 8a24 24 0 0 1 24 24"/>
+  </symbol>
+  <symbol id="wm-headset" viewBox="0 0 64 64">
+    <path d="M14 38v-6a18 18 0 0 1 36 0v6"/>
+    <rect x="9" y="34" width="10" height="17" rx="4"/><rect x="45" y="34" width="10" height="17" rx="4"/>
+    <path d="M49 51c0 5-5 8-12 8h-4"/>
+  </symbol>
+  <symbol id="wm-trophy" viewBox="0 0 64 64">
+    <path d="M20 10h24v11c0 9-5 16-12 16s-12-7-12-16Z"/>
+    <path d="M20 14H10v5c0 7 4 11 11 11M44 14h10v5c0 7-4 11-11 11"/>
+    <path d="M32 37v9M22 54h20M25 46h14l3 8H22Z"/>
+  </symbol>
+  <symbol id="wm-arcade" viewBox="0 0 64 64">
+    <path d="M15 8h34v48H15Z"/><path d="M21 15h22v19H21Z"/>
+    <path d="M23 44h7M34 44h7"/><circle cx="25" cy="50" r="2"/><circle cx="39" cy="50" r="2"/>
+  </symbol>
+</svg>
+
+<div class="watermarks" aria-hidden="true">
+  <span class="wm wm-text wm-1">PS4</span>
+  <svg class="wm wm-2"><use href="#wm-pad"></use></svg>
+  <span class="wm wm-text wm-3">XBOX</span>
+  <span class="wm wm-text wm-4">FIFA</span>
+  <span class="wm wm-text wm-5">SWITCH</span>
+  <span class="wm wm-text wm-6">ARCADE</span>
+  <span class="wm wm-btn wm-7" style="--c:#5efc8d">△</span>
+  <span class="wm wm-btn wm-8" style="--c:#ff4d6d">○</span>
+  <span class="wm wm-btn wm-9" style="--c:#5bbcff">✕</span>
+  <span class="wm wm-btn wm-10" style="--c:#ff6bd6">□</span>
+  <svg class="wm wm-11"><use href="#wm-disc"></use></svg>
+  <span class="wm wm-text wm-12">ATARI</span>
+  <svg class="wm wm-13"><use href="#wm-headset"></use></svg>
+  <span class="wm wm-text wm-14">MARIO KART</span>
+  <span class="wm wm-text wm-15">1UP</span>
+  <span class="wm wm-text wm-16">STREET FIGHTER</span>
+  <span class="wm wm-text wm-17">RETRO</span>
+  <span class="wm wm-text wm-18">ROCKET LEAGUE</span>
+</div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="/bienvenida.html" aria-label="Lili’s Play, inicio">
+      <span class="brand-badge"><img src="/logo-icon.png" alt="" width="512" height="512"></span>
+      <span class="brand-text">
+        <span class="brand-name">Lili’s <em>Play</em></span>
+        <span class="brand-sub">Salón Gamer y Bistró</span>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav">Menú</button>
+
+    <nav class="nav" id="nav" aria-label="Navegación principal">
+      <a href="#inicio">Inicio</a>
+      <a href="#consolas">Consolas</a>
+      <a href="#juegos">Juegos</a>
+      <a href="#menu">Menú</a>
+      <a href="#promos">Promos</a>
+      <a href="#reservar">Reservar</a>
+    </nav>
+
+    <a class="header-cta" href="#menu">Entrar al menú <span>→</span></a>
+  </div>
+</header>
+
+<main id="inicio">
+
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-grid">
+      <div class="hero-art">
+        <span class="hero-badge"><i></i> Nuevo · Zona gamer</span>
+        <picture>
+          <source srcset="/img/banner-lili.webp" type="image/webp">
+          <img src="/img/banner-lili.jpg" alt="Letrero neón de Lili’s Play, Salón Gamer y Bistró" width="1264" height="843" loading="eager" decoding="async">
+        </picture>
+      </div>
+
+      <div class="hero-copy">
+        <p class="eyebrow">Salón gamer y bistró · Bienvenido</p>
+        <h1 id="hero-title">JUEGA, COME<br><span>Y REPITE.</span></h1>
+        <p class="lead">Estaciones PlayStation 4, clásicos de siempre y una cocina que juega de local. Todo en un solo lugar, con la noche a tu favor.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#menu">Ver el menú <span>→</span></a>
+          <a class="btn btn-ghost" href="#reservar">Reservar mesa</a>
+        </div>
+        <div class="hero-meta">
+          <span class="dot"></span>
+          <span>Abierto hoy · 12:00 a 00:00</span>
+          <span class="sep"></span>
+          <span>Wi‑Fi libre</span>
+          <span class="sep"></span>
+          <span>+30 juegos</span>
+        </div>
+        <div class="ps-buttons" aria-hidden="true">
+          <span style="--c:#5efc8d">△</span>
+          <span style="--c:#ff4d6d">○</span>
+          <span style="--c:#5bbcff">✕</span>
+          <span style="--c:#ff6bd6">□</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker" aria-label="Promociones y anuncios">
+    <div class="ticker-track">
+      <span><b>Promo del día</b> · Combo Gamer: 1 hora de consola + hamburguesa + bebida</span>
+      <span><i>Viernes</i> · Noche de torneos + premios</span>
+      <span><b>Reserva</b> tu mesa y elige tu consola</span>
+      <span><i>Nuevo</i> · Zona retro con clásicos</span>
+      <span><b>Promo del día</b> · Combo Gamer: 1 hora de consola + hamburguesa + bebida</span>
+      <span><i>Viernes</i> · Noche de torneos + premios</span>
+      <span><b>Reserva</b> tu mesa y elige tu consola</span>
+      <span><i>Nuevo</i> · Zona retro con clásicos</span>
+    </div>
+  </div>
+
+  <section class="stats" aria-label="Números de Lili’s Play">
+    <div class="stat"><strong>2 consolas</strong><span>PlayStation 4 · Full HD</span></div>
+    <div class="stat"><strong>+30 juegos</strong><span>De clásicos a torneos</span></div>
+    <div class="stat"><strong>Cocina propia</strong><span>Comida y bebida</span></div>
+    <div class="stat"><strong>Reservas</strong><span>Tu estación, tu mesa</span></div>
+  </section>
+
+  <section class="section" id="consolas" aria-labelledby="consolas-title">
+    <div class="section-head reveal">
+      <div>
+        <p class="eyebrow">Elige tu estación</p>
+        <h2 id="consolas-title">Dos estaciones PS4.</h2>
+        <p>Dos formas de jugar, una sola noche. Mandos listos, pantallas grandes y sillones para quedarse.</p>
+      </div>
+      <a class="link-more" href="#reservar">Reservar una estación →</a>
+    </div>
+
+    <div class="console-grid">
+      <article class="console-card reveal">
+        <img src="/img/stock/ps4-game-console.jpg" alt="Consola PlayStation 4 lista para jugar" loading="lazy" decoding="async">
+        <div class="console-body">
+          <span class="pill">PS4 · Full HD</span>
+          <h3>PS4 · Estación 1</h3>
+          <p>Una estación cómoda para partidas individuales o cooperativas, con mando inalámbrico y pantalla grande.</p>
+          <a class="card-link" href="#reservar">Reservar estación <span>→</span></a>
+        </div>
+      </article>
+
+      <article class="console-card reveal">
+        <img src="/img/stock/ps4.jpg" alt="Consola PlayStation 4 con su mando" loading="lazy" decoding="async">
+        <div class="console-body">
+          <span class="pill">PS4 · Zona torneo</span>
+          <h3>PS4 · Estación 2</h3>
+          <p>La estación para retos y torneos. Ideal para jugar con amigos y turnarse el mando.</p>
+          <a class="card-link" href="#reservar">Reservar estación <span>→</span></a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" id="juegos" aria-labelledby="juegos-title">
+    <div class="section-head reveal">
+      <div>
+        <p class="eyebrow">Juegos que enganchan</p>
+        <h2 id="juegos-title">De clásicos a torneos.</h2>
+        <p>Elige tu favorito, arma la partida y únete a la próxima noche de torneo. Siempre hay un mando libre.</p>
+      </div>
+      <a class="link-more" href="#menu">Ver el menú →</a>
+    </div>
+
+    <div class="games-grid">
+      <article class="game-feature reveal">
+        <img src="/img/user/juegos.jpg" alt="Collage de juegos de acción, carreras, aventura y deportes" loading="lazy" decoding="async">
+        <div class="game-copy">
+          <span class="pill">+30 títulos</span>
+          <h3>Arma tu noche de juego.</h3>
+          <p>Del retro al multiplayer, con torneos, retos y partidas que se cuentan al día siguiente.</p>
+          <a class="card-link" href="#reservar">Reservar para jugar <span>→</span></a>
+        </div>
+      </article>
+
+      <div class="game-side">
+        <article class="game-mini reveal">
+          <img src="/img/user/juegos-1.jpg" alt="Selección de juegos retro y arcade" loading="lazy" decoding="async">
+          <span class="mini-label">Retro & arcade</span>
+        </article>
+        <article class="game-mini reveal">
+          <img src="/img/user/juegos-2.jpg" alt="Selección de juegos de disparos, carreras y aventura" loading="lazy" decoding="async">
+          <span class="mini-label">Shooters & carreras</span>
+        </article>
+      </div>
+    </div>
+
+    <div class="chips reveal" aria-label="Algunos juegos disponibles">
+      <span class="chip">FIFA</span>
+      <span class="chip">Mario Kart</span>
+      <span class="chip">Minecraft</span>
+      <span class="chip">Rocket League</span>
+      <span class="chip">Call of Duty</span>
+      <span class="chip">Street Fighter</span>
+      <span class="chip">Tekken</span>
+      <span class="chip">Sonic</span>
+    </div>
+  </section>
+
+  <section class="section" id="promos" aria-labelledby="promos-title">
+    <div class="section-head reveal">
+      <div>
+        <p class="eyebrow">Anuncios y promos</p>
+        <h2 id="promos-title">La noche se arma aquí.</h2>
+      </div>
+      <a class="link-more" href="#menu">Ver combos →</a>
+    </div>
+
+    <div class="promo-grid">
+      <article class="promo reveal">
+        <img src="/img/stock/food.jpg" alt="Platos de comida para compartir" loading="lazy" decoding="async">
+        <div class="promo-copy">
+          <span class="pill">Combo gamer</span>
+          <h3>1 hora de PS4 + hamburguesa + bebida.</h3>
+          <p>La combinación perfecta para no cortar la partida. Consulta la promo del día.</p>
+          <a class="btn btn-primary" href="#menu">Pedir combo <span>→</span></a>
+        </div>
+      </article>
+
+      <article class="promo reveal">
+        <img src="/img/stock/esports.jpg" alt="Jugador de esports en una competencia" loading="lazy" decoding="async">
+        <div class="promo-copy">
+          <span class="pill">Viernes · 20:00</span>
+          <h3>Noche de torneo.</h3>
+          <p>Únete, compite y gana premios. Cupos limitados.</p>
+          <a class="btn btn-ghost" href="#reservar">Inscribirme <span>→</span></a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" id="menu" aria-labelledby="menu-title">
+    <div class="section-head reveal">
+      <div>
+        <p class="eyebrow">Del menú</p>
+        <h2 id="menu-title">Para jugar con hambre.</h2>
+        <p>Clásicos de bistró con nombres de videojuego. Todo se prepara en casa.</p>
+      </div>
+      <a class="link-more" href="#menu">Ver menú completo →</a>
+    </div>
+
+    <div class="food-grid">
+      <article class="food-card reveal">
+        <img src="/img/stock/burger.jpg" alt="Hamburguesa God of War Ragnarök Smash" loading="lazy" decoding="async">
+        <div class="food-body">
+          <div class="food-kicker"><span>Burger</span><b>Res Angus</b></div>
+          <h3>God of War: Ragnarök Smash</h3>
+          <p>Pan brioche negro, cheddar curado, tocino nórdico crujiente y papas con paprika.</p>
+          <div class="food-bottom"><span class="food-price">US$12.50 <small>CUC$12.50</small></span><a class="food-add" href="#menu" aria-label="Agregar God of War Ragnarök Smash">+</a></div>
+        </div>
+      </article>
+
+      <article class="food-card reveal">
+        <img src="/img/stock/pizza.jpg" alt="Pizzas Smash Dúo Party" loading="lazy" decoding="async">
+        <div class="food-body">
+          <div class="food-kicker"><span>Pizza</span><b>Compartir</b></div>
+          <h3>Pizzas Smash Dúo Party</h3>
+          <p>2 pizzas individuales de pepperoni artesanal, nachos con queso fundido y 2 malteadas.</p>
+          <div class="food-bottom"><span class="food-price">US$22.00 <small>CUC$22.00</small></span><a class="food-add" href="#menu" aria-label="Agregar Pizzas Smash Dúo Party">+</a></div>
+        </div>
+      </article>
+
+      <article class="food-card reveal">
+        <img src="/img/stock/wings.jpg" alt="Snack DualShock Haptic Astro" loading="lazy" decoding="async">
+        <div class="food-body">
+          <div class="food-kicker"><span>Entrada</span><b>3 salsas</b></div>
+          <h3>Snack DualShock Haptic Astro</h3>
+          <p>Boneless crocantes con toque cítrico, aros de cebolla y bastones de mozzarella con dips.</p>
+          <div class="food-bottom"><span class="food-price">US$11.00 <small>CUC$11.00</small></span><a class="food-add" href="#menu" aria-label="Agregar Snack DualShock Haptic Astro">+</a></div>
+        </div>
+      </article>
+
+      <article class="food-card reveal">
+        <img src="/img/stock/shake.jpg" alt="Sundae Kirby Dream Land" loading="lazy" decoding="async">
+        <div class="food-body">
+          <div class="food-kicker"><span>Postre</span><b>Rosa</b></div>
+          <h3>Sundae Kirby Dream Land</h3>
+          <p>Helado de fresa y algodón de azúcar, mochi rosa, estrellitas crocantes y nata.</p>
+          <div class="food-bottom"><span class="food-price">US$6.00 <small>CUC$6.00</small></span><a class="food-add" href="#menu" aria-label="Agregar Sundae Kirby Dream Land">+</a></div>
+        </div>
+      </article>
+    </div>
+    <p class="food-note">Precios en USD y CUC. Consulta combos, promociones y opciones sin alcohol.</p>
+  </section>
+
+  <section class="section" aria-labelledby="retro-title">
+    <div class="section-head reveal">
+      <div>
+        <p class="eyebrow">Zona retro</p>
+        <h2 id="retro-title">Todas las épocas, una mesa.</h2>
+        <p>Del Family a la PS4. Si tuvo un mando, en Lili’s Play tiene un lugar.</p>
+      </div>
+    </div>
+
+    <div class="retro-grid">
+      <article class="retro-card reveal">
+        <img src="/img/user/controles-retro.jpg" alt="Mandos de Nintendo Entertainment System y GameCube" loading="lazy" decoding="async">
+        <div class="retro-copy">
+          <span class="pill">Mandos</span>
+          <h3>De NES a GameCube.</h3>
+          <p>Dos clásicos que nunca pasan de moda.</p>
+        </div>
+      </article>
+
+      <article class="retro-card reveal">
+        <img src="/img/stock/ps4-duo.png" alt="Dos consolas PlayStation 4 con su mando" loading="lazy" decoding="async">
+        <div class="retro-copy">
+          <span class="pill">PlayStation 4</span>
+          <h3>De Atari a PS4.</h3>
+          <p>La historia del juego, en una pared.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="reserve-wrap" id="reservar" aria-labelledby="reserva-title">
+    <div class="reserve-card">
+      <img src="/img/stock/restaurant.jpg" alt="Interior del salón de Lili’s Play" loading="lazy" decoding="async">
+      <div class="reserve-copy">
+        <p class="eyebrow">Reserva tu mesa</p>
+        <h2 id="reserva-title">La noche empieza aquí.</h2>
+        <p>Elige consola, pide tu combo y quédate hasta que se termine la partida. Dinos cuántos vienen y te guardamos el mejor lugar.</p>
+        <div class="reserve-actions">
+          <a class="btn btn-primary" href="#reservar">Reservar por WhatsApp <span>→</span></a>
+          <a class="btn btn-ghost" href="#reservar">Ver ubicación</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <section class="social-banner" aria-label="Nuestras redes sociales">
+      <div class="social-banner__inner">
+        <picture>
+          <source srcset="/img/redes-sociales-gamer.webp" type="image/webp">
+          <img class="social-banner__img" src="/img/redes-sociales-gamer.png" alt="Síguenos en nuestras redes: WhatsApp, Facebook, Instagram, Gmail y YouTube" width="1536" height="1024" loading="lazy" decoding="async">
+        </picture>
+        <a class="social-banner__link social-banner__link--whatsapp" href="#" aria-label="WhatsApp" title="WhatsApp"></a>
+        <a class="social-banner__link social-banner__link--facebook" href="#" aria-label="Facebook" title="Facebook"></a>
+        <a class="social-banner__link social-banner__link--instagram" href="#" aria-label="Instagram" title="Instagram"></a>
+        <a class="social-banner__link social-banner__link--gmail" href="#" aria-label="Gmail" title="Gmail"></a>
+        <a class="social-banner__link social-banner__link--youtube" href="#" aria-label="YouTube" title="YouTube"></a>
+      </div>
+    </section>
+
+    <p class="legal">
+      <span>Creado y Diseñado por QBASwing Designer y Freeman y Diseños © 2026. Todos los derechos reservados.</span>
+      <a href="#inicio">Volver arriba ↑</a>
+    </p>
+  </div>
+</footer>
+
+<script src="/js/welcome.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+.social-banner {
+  width: 100%;
+  max-width: 1180px;
+  margin: 30px auto 0;
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #03050a;
+  isolation: isolate;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, .55),
+    0 0 0 1px rgba(0, 240, 255, .12),
+    0 0 55px rgba(255, 0, 127, .10);
+}
+
+.social-banner__inner {
+  position: relative;
+  line-height: 0;
+}
+
+.social-banner picture,
+.social-banner__img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.social-banner__link {
+  --glow: #22e6ff;
+  position: absolute;
+  display: block;
+  border-radius: 16px;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 2;
+}
+
+.social-banner__link::after {
+  content: '';
+  position: absolute;
+  inset: 13%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, .95) 0%, var(--glow) 26%, transparent 70%);
+  box-shadow: 0 0 28px var(--glow);
+  opacity: 0;
+  transform: scale(.62);
+  transition: opacity .18s ease, transform .18s ease;
+  mix-blend-mode: screen;
+  filter: blur(5px);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.social-banner__link:active::after,
+.social-banner__link.is-flash::after {
+  opacity: .95;
+  transform: scale(1);
+}
+
+.social-banner__link:focus-visible {
+  outline: 3px solid #22e6ff;
+  outline-offset: 2px;
+  box-shadow: 0 0 30px rgba(34, 230, 255, .55);
+}
+
+.social-banner__link:focus-visible::after {
+  opacity: .55;
+  transform: scale(1);
+}
+
+.social-banner__link--whatsapp  { left: 6.0%;  top: 36.4%; width: 14.1%; height: 25.0%; --glow: #25d366; }
+.social-banner__link--facebook  { left: 21.9%; top: 36.4%; width: 13.8%; height: 25.0%; --glow: #1877f2; }
+.social-banner__link--instagram { left: 37.9%; top: 36.4%; width: 13.7%; height: 25.0%; --glow: #dd2a7b; }
+.social-banner__link--gmail     { left: 53.8%; top: 36.4%; width: 14.0%; height: 25.0%; --glow: #ea4335; }
+.social-banner__link--youtube   { left: 68.6%; top: 38.0%; width: 11.0%; height: 19.8%; --glow: #ff1a1a; }
+
+@media (max-width: 700px) {
+  .social-banner { margin-top: 20px; border-radius: 16px; }
+}

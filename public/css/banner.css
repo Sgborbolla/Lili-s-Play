@@ -1,0 +1,26 @@
+.hero-banner {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #03050a;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, .55),
+    0 0 0 1px rgba(0, 240, 255, .12),
+    0 0 55px rgba(255, 0, 127, .10);
+}
+
+.hero-banner picture,
+.hero-banner img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 700px) {
+  .hero-banner {
+    border-radius: 16px;
+  }
+}

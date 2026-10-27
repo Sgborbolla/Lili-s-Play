@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vista previa final · Lili's Play</title>
+<link rel="stylesheet" href="/css/social.css">
+<link rel="stylesheet" href="/css/banner.css">
+<style>
+  @font-face { font-family: 'Syne'; src: url('/fonts/Syne.ttf') format('truetype'); font-weight: 400 800; font-display: swap; }
+  @font-face { font-family: 'Space Grotesk'; src: url('/fonts/SpaceGrotesk.ttf') format('truetype'); font-weight: 300 700; font-display: swap; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 22px 16px 46px; background: #eef3f9; font-family: 'Space Grotesk', system-ui, sans-serif; color: #0b1220; }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+  h1 { font-family: 'Syne', sans-serif; font-size: 22px; margin: 0 0 4px; }
+  p.lead { margin: 0 0 20px; color: #5b6b7f; font-size: 13px; }
+  .card { border-radius: 22px; padding: 24px 20px; margin-bottom: 16px; background: #fff; border: 1px solid #e3ebf4; box-shadow: 0 18px 44px rgba(11,18,32,.10); }
+  .card.dark { background: radial-gradient(600px 260px at 20% 0%, rgba(0,240,255,.12), transparent 60%), radial-gradient(500px 260px at 100% 100%, rgba(255,0,127,.12), transparent 55%), #070c14; border-color: #1c2a42; }
+  .label-eyebrow { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: #7a8ba1; font-weight: 700; margin: 0 0 10px 4px; }
+
+  .head-mock { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 13px; text-decoration: none; color: inherit; }
+  .brand-badge { position: relative; width: 54px; height: 54px; border-radius: 16px; background: #000; overflow: hidden; flex: none;
+    box-shadow: 0 9px 18px rgba(0,0,0,.38), 0 3px 0 rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.16), 0 0 22px rgba(0,240,255,.20); }
+  .brand-badge img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .brand-badge::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0) 42%); pointer-events: none; }
+  .brand-text { display: flex; flex-direction: column; line-height: 1; }
+  .brand-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 26px; letter-spacing: -.02em; text-shadow: 0 2px 0 rgba(11,18,32,.06), 0 10px 20px rgba(11,18,32,.14); }
+  .brand-name em { font-style: normal; background: linear-gradient(100deg, #5847ff, #b62fd0 52%, #ff3d8b); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .brand-sub { margin-top: 6px; font-size: 9px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #00a6c9; text-shadow: 0 1px 0 rgba(255,255,255,.8); }
+  .nav-mock { display: flex; gap: 15px; margin-left: auto; font-size: 12px; color: #5b6b7f; }
+  .nav-mock span { padding: 6px 0; border-bottom: 2px solid transparent; }
+  .nav-mock span.on { color: #0b1220; border-color: #00a6c9; }
+  .cart-mock { display: inline-flex; align-items: center; gap: 8px; padding: 11px 15px; border-radius: 999px; color: #fff; font-size: 12px; font-weight: 700;
+    background: linear-gradient(180deg, #16233a, #0b1220); box-shadow: 0 6px 0 #05080f, 0 12px 20px rgba(11,18,32,.28), inset 0 1px 0 rgba(255,255,255,.18); }
+
+  .logo-3d { position: relative; display: inline-flex; align-items: center; justify-content: center; background: #000; border-radius: 22px; padding: 16px 22px; max-width: 100%;
+    box-shadow: 0 22px 45px rgba(0,0,0,.42), 0 6px 0 #000, inset 0 1px 0 rgba(255,255,255,.12), 0 0 32px rgba(255,0,127,.14); overflow: hidden; }
+  .logo-3d img { width: 100%; max-width: 520px; height: auto; display: block; }
+  .logo-3d::after { content: ''; position: absolute; inset: 0; background: linear-gradient(160deg, rgba(255,255,255,.12), rgba(255,255,255,0) 42%); pointer-events: none; }
+  .logo-row { display: flex; justify-content: center; }
+
+  .socials { --social-bg: #070c14; display: flex; gap: 22px; justify-content: center; align-items: flex-end; flex-wrap: wrap; padding: 34px 16px 30px;
+    border-radius: 24px; background: radial-gradient(420px 200px at 50% 0%, rgba(0,240,255,.08), transparent 65%), #070c14;
+    border: 1px solid #1c2a42; box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 24px 50px rgba(7,12,20,.35); }
+  .social-item { display: flex; flex-direction: column; align-items: center; gap: 11px; }
+  .social-btn { position: relative; display: grid; place-items: center; width: 80px; height: 80px; border-radius: 26px; text-decoration: none; color: var(--brand, #fff); touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+    background: radial-gradient(120% 120% at 32% 18%, rgba(255,255,255,.12), transparent 46%), linear-gradient(145deg, #152238, #060a12 72%);
+    box-shadow: inset 3px 4px 8px rgba(0,0,0,.88), inset -2px -3px 6px rgba(255,255,255,.055), 0 10px 18px rgba(0,0,0,.6), 0 2px 0 rgba(255,255,255,.05);
+    transition: transform .12s ease, box-shadow .12s ease; }
+  .social-btn::before { content: ''; position: absolute; left: 13px; right: 13px; top: 7px; height: 32%; border-radius: 50%; background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,0)); filter: blur(2px); pointer-events: none; z-index: 1; }
+  .social-btn svg { width: 62px; height: 62px; position: relative; z-index: 2; overflow: visible;
+    filter: drop-shadow(0 2px 0 rgba(0,0,0,.75)) drop-shadow(0 6px 7px rgba(0,0,0,.55)) drop-shadow(0 -1px 0 rgba(255,255,255,.16));
+    transition: filter .12s ease, transform .12s ease; }
+  .social-btn:hover { transform: translateY(-2px); box-shadow: inset 3px 4px 8px rgba(0,0,0,.88), inset -2px -3px 6px rgba(255,255,255,.07), 0 14px 24px rgba(0,0,0,.62), 0 2px 0 rgba(255,255,255,.07); }
+  .social-btn:active, .social-btn.is-pressed { transform: translateY(6px) scale(.96);
+    box-shadow: inset 6px 8px 14px rgba(0,0,0,.95), inset -1px -1px 3px rgba(255,255,255,.04), 0 3px 7px rgba(0,0,0,.5); }
+  .social-btn:active svg, .social-btn.is-pressed svg { filter: drop-shadow(0 1px 0 rgba(0,0,0,.8)) drop-shadow(0 2px 3px rgba(0,0,0,.5)); transform: translateY(1px); }
+
+  .social-btn--ps5 { width: 112px; height: 148px; border-radius: 26px; padding: 0; overflow: hidden; }
+  .social-btn--ps5 img { height: 132px; width: auto; display: block; position: relative; z-index: 2; transition: transform .12s ease;
+    filter: drop-shadow(0 8px 10px rgba(0,0,0,.55)); }
+  .social-btn--ps5 .yt-badge { position: absolute; left: 66%; top: 37%; transform: translate(-50%, -50%); z-index: 3; width: 46px; height: 32px; border-radius: 8px; display: grid; place-items: center;
+    background: #ff0000; box-shadow: 0 3px 8px rgba(0,0,0,.35); }
+  .yt-badge svg { width: 20px; height: 20px; margin-left: 3px; filter: drop-shadow(0 1px 1px rgba(0,0,0,.35)); }
+  .social-btn--ps5:active img, .social-btn--ps5.is-pressed img { transform: scale(.96); }
+  .social-btn--ps5::before { z-index: 4; }
+
+  .social-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand, #fff); white-space: nowrap;
+    text-shadow: 0 1px 0 rgba(0,0,0,.9), 0 0 14px color-mix(in srgb, var(--brand, #fff) 45%, transparent); }
+  .social-item--ps5 .social-label { color: #ff3b3b; }
+  .note { font-size: 12px; color: #6b7c91; margin: 8px 4px 0; line-height: 1.55; }
+  @media (max-width: 680px) { .nav-mock { display: none; } .brand-name { font-size: 22px; } .socials { gap: 16px; } .social-btn { width: 72px; height: 72px; } .social-btn svg { width: 56px; height: 56px; } .social-btn--ps5 { width: 100px; height: 136px; } .social-btn--ps5 img { height: 122px; } .social-btn--ps5 .yt-badge { left: 64%; width: 42px; height: 29px; border-radius: 7px; } .yt-badge svg { width: 18px; height: 18px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Lili’s Play · vista previa final</h1>
+  <p class="lead">Footer social exacto. Toca un ícono: solo destella, la foto no se mueve.</p>
+
+  <p class="label-eyebrow">Encabezado del menú · fondo claro</p>
+  <div class="card">
+    <div class="head-mock">
+      <a class="brand" href="#">
+        <span class="brand-badge"><img src="/logo-icon.png" alt=""></span>
+        <span class="brand-text">
+          <span class="brand-name">Lili’s <em>Play</em></span>
+          <span class="brand-sub">Salón Gamer y Bistró</span>
+        </span>
+      </a>
+      <div class="nav-mock"><span class="on">Combos</span><span>PlayStation</span><span>Xbox</span><span>Nintendo</span><span>Postres</span></div>
+      <span class="cart-mock">🛒 Carrito</span>
+    </div>
+  </div>
+
+  <p class="label-eyebrow">Banner principal · portada</p>
+  <figure class="hero-banner">
+    <picture>
+      <source srcset="/img/banner-lili.webp" type="image/webp">
+      <img src="/img/banner-lili.jpg" alt="Lili's Play · Salón Gamer y Bistró" width="1264" height="843" decoding="async">
+    </picture>
+  </figure>
+
+  <p class="label-eyebrow">Logo completo · relieve sobre negro</p>
+  <div class="card">
+    <div class="logo-row"><span class="logo-3d"><img src="/logo.png" alt="Logo Lili's Play"></span></div>
+  </div>
+
+  <p class="label-eyebrow">Redes · diseño final exacto</p>
+  <section class="social-banner" aria-label="Nuestras redes sociales">
+    <div class="social-banner__inner">
+      <picture>
+        <source srcset="/img/redes-sociales-gamer.webp" type="image/webp">
+        <img class="social-banner__img" src="/img/redes-sociales-gamer.png" alt="Síguenos en nuestras redes: WhatsApp, Facebook, Instagram, Gmail y YouTube" width="1536" height="1024" decoding="async">
+      </picture>
+      <a class="social-banner__link social-banner__link--whatsapp" href="#" aria-label="WhatsApp" title="WhatsApp"></a>
+      <a class="social-banner__link social-banner__link--facebook" href="#" aria-label="Facebook" title="Facebook"></a>
+      <a class="social-banner__link social-banner__link--instagram" href="#" aria-label="Instagram" title="Instagram"></a>
+      <a class="social-banner__link social-banner__link--gmail" href="#" aria-label="Gmail" title="Gmail"></a>
+      <a class="social-banner__link social-banner__link--youtube" href="#" aria-label="YouTube" title="YouTube"></a>
+    </div>
+  </section>
+  <p class="note">La foto queda intacta; los enlaces están encima de cada ícono y solo agregan un destello al tocar. Los enlaces se configuran desde el panel.</p>
+</div>
+<style>
+  .shape { fill: none; stroke: currentColor; stroke-width: 5; stroke-linejoin: round; stroke-linecap: round; }
+  .social-disc { fill: var(--social-bg, #070c14); }
+</style>
+<script>
+  document.querySelectorAll('.social-banner__link').forEach((a) => {
+    a.addEventListener('click', (e) => e.preventDefault());
+    a.addEventListener('pointerdown', () => {
+      a.classList.add('is-flash');
+      setTimeout(() => a.classList.remove('is-flash'), 260);
+    });
+  });
+</script>
+</body>
+</html>
