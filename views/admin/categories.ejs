@@ -1,0 +1,60 @@
+<%- include('../partials/admin-top', { title: 'Categorías', active: 'categories' }) %>
+
+<div class="toolbar">
+  <p class="muted" style="font-size: 11px;">Organiza el menú por secciones. El orden define cómo aparecen en la carta.</p>
+  <span class="spacer"></span>
+  <a class="btn btn-primary" href="/admin/categorias/nueva">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    Nueva categoría
+  </a>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Categoría</th>
+          <th>Productos</th>
+          <th>Orden</th>
+          <th>Estado</th>
+          <th style="text-align: right;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (!categories.length) { %>
+        <tr><td class="cell-empty" colspan="5">No hay categorías. Crea la primera para empezar a organizar el menú.</td></tr>
+        <% } %>
+        <% categories.forEach((category) => { %>
+        <tr>
+          <td>
+            <div class="cell-main">
+              <span class="thumb"><%= category.icon || '🏷️' %></span>
+              <span>
+                <span class="cell-name"><%= category.name %></span>
+                <span class="cell-sub"><%= category.subtitle || 'Sin descripción' %></span>
+              </span>
+            </div>
+          </td>
+          <td class="num"><span class="swatch" style="background: <%= category.accent %>;"></span> <%= category.product_count %></td>
+          <td class="num"><%= category.sort_order %></td>
+          <td><span class="badge <%= category.active ? 'tone-green' : 'tone-gray' %>"><%= category.active ? 'Activa' : 'Oculta' %></span></td>
+          <td>
+            <div class="cell-actions">
+              <a class="btn btn-outline btn-sm" href="/admin/categorias/<%= category.id %>/editar">Editar</a>
+              <form class="inline-form" method="post" action="/admin/categorias/<%= category.id %>/alternar">
+                <button class="btn btn-ghost btn-sm" type="submit"><%= category.active ? 'Ocultar' : 'Activar' %></button>
+              </form>
+              <form class="inline-form" method="post" action="/admin/categorias/<%= category.id %>/eliminar" data-confirm="¿Eliminar “<%= category.name %>” y sus <%= category.product_count %> productos? Esta acción no se puede deshacer.">
+                <button class="btn btn-danger-soft btn-sm" type="submit">Eliminar</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/admin-bottom') %>

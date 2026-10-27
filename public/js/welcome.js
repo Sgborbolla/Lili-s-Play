@@ -46,8 +46,40 @@ if ('IntersectionObserver' in window) {
   revealItems.forEach((item) => item.classList.add('is-visible'));
 }
 
+const openStatus = document.getElementById('open-status');
+const openHours = document.getElementById('open-hours');
+const openSep = document.getElementById('open-sep');
+if (openStatus || openHours) {
+  fetch('/api/public-info', { headers: { Accept: 'application/json' } })
+    .then((response) => (response.ok ? response.json() : null))
+    .then((info) => {
+      if (!info) return;
+      if (openStatus) {
+        openStatus.textContent = info.opening_status || '';
+        openStatus.hidden = !info.opening_status;
+      }
+      if (openHours) {
+        openHours.textContent = info.opening_hours || '';
+        openHours.hidden = !info.opening_hours;
+      }
+      if (openSep) openSep.hidden = !info.opening_status || !info.opening_hours;
+    })
+    .catch(() => { /* se mantiene el horario de respaldo */ });
+}
+
+const station = new URLSearchParams(window.location.search).get('station');
+if (station) {
+  const menuUrl = `/?station=${encodeURIComponent(station)}`;
+  document.querySelectorAll('[data-menu-link]').forEach((link) => {
+    link.setAttribute('href', menuUrl);
+  });
+}
+
 document.querySelectorAll('.social-banner__link').forEach((link) => {
-  link.addEventListener('click', (event) => event.preventDefault());
+  const empty = link.getAttribute('href') === '#' || link.hasAttribute('data-empty');
+  link.addEventListener('click', (event) => {
+    if (empty) event.preventDefault();
+  });
   link.addEventListener('pointerdown', () => {
     link.classList.add('is-flash');
     window.setTimeout(() => link.classList.remove('is-flash'), 280);

@@ -1,0 +1,36 @@
+<%
+  const waRaw = String(settings.social_whatsapp || '').trim();
+  const fbRaw = String(settings.social_facebook || '').trim();
+  const igRaw = String(settings.social_instagram || '').trim();
+  const mailRaw = String(settings.social_email || '').trim();
+  const ytRaw = String(settings.social_youtube || '').trim();
+  const waHref = waRaw ? (/^https?:\/\//i.test(waRaw) ? waRaw : `https://wa.me/${waRaw.replace(/\D/g, '')}`) : '';
+  const fbHref = fbRaw ? (/^https?:\/\//i.test(fbRaw) ? fbRaw : `https://${fbRaw}`) : '';
+  const igHref = igRaw ? (/^https?:\/\//i.test(igRaw) ? igRaw : `https://${igRaw}`) : '';
+  const mailHref = mailRaw ? (/^mailto:/i.test(mailRaw) ? mailRaw : `mailto:${mailRaw}`) : '';
+  const ytHref = ytRaw ? (/^https?:\/\//i.test(ytRaw) ? ytRaw : (/^(www\.)?(youtube\.com|youtu\.be)/i.test(ytRaw) ? `https://${ytRaw}` : `https://youtube.com/@${ytRaw.replace(/^@/, '')}`)) : '';
+  const socialLinks = [
+    { key: 'whatsapp', href: waHref, label: 'WhatsApp' },
+    { key: 'facebook', href: fbHref, label: 'Facebook' },
+    { key: 'instagram', href: igHref, label: 'Instagram' },
+    { key: 'gmail', href: mailHref, label: 'Gmail' },
+    { key: 'youtube', href: ytHref, label: 'YouTube' },
+  ];
+%>
+<section class="social-banner" aria-label="Nuestras redes sociales">
+  <div class="social-banner__inner">
+    <picture>
+      <source srcset="/img/redes-sociales-gamer.webp" type="image/webp">
+      <img class="social-banner__img" src="/img/redes-sociales-gamer.png" alt="Síguenos en nuestras redes: WhatsApp, Facebook, Instagram, Gmail y YouTube" width="1536" height="1024" loading="lazy" decoding="async">
+    </picture>
+    <% socialLinks.forEach((item) => { %>
+    <a
+      class="social-banner__link social-banner__link--<%= item.key %>"
+      href="<%= item.href || '#' %>"
+      aria-label="<%= item.label %>"
+      title="<%= item.label %>"
+      <%= item.href ? 'target="_blank" rel="noopener"' : 'data-empty="1"' %>
+    ></a>
+    <% }) %>
+  </div>
+</section>

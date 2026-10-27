@@ -1,0 +1,114 @@
+<%- include('partials/public-top', { title: `Pedido ${order.code} · Lili's Play`, page: 'order' }) %>
+<%
+  const sequence = ['nuevo', 'preparando', 'listo', 'entregado'];
+  const currentIndex = sequence.indexOf(order.status);
+  const cancelled = order.status === 'cancelado';
+  const meta = statusMeta(order.status);
+  const stepClass = (index) => {
+    if (cancelled) return '';
+    if (index < currentIndex) return 'is-done';
+    if (index === currentIndex) return 'is-current';
+    return '';
+  };
+%>
+<main class="order-main">
+  <div class="wrap">
+    <div class="order-grid">
+      <section class="order-card" aria-labelledby="order-title">
+        <div class="order-head">
+          <div>
+            <p class="eyebrow">Pedido confirmado</p>
+            <h1 id="order-title"><%= order.code %></h1>
+            <p class="order-sub">Hecho el <%= fmtDate(order.created_at) %> · Estación #<%= order.station %></p>
+          </div>
+          <span class="badge order-status tone-<%= meta.tone %>" id="order-status-badge"><%= meta.label %></span>
+        </div>
+
+        <div class="order-meta">
+          <div><span>Estación</span><strong>#<%= order.station %></strong></div>
+          <div><span>Cliente</span><strong><%= order.customer || 'Sin nombre' %></strong></div>
+          <div><span>Artículos</span><strong><%= items.reduce((sum, item) => sum + item.qty, 0) %></strong></div>
+          <div><span>Estado</span><strong id="order-status-text"><%= meta.label %></strong></div>
+        </div>
+
+        <% if (cancelled) { %>
+        <div class="order-cancelled" id="order-cancelled">
+          Este pedido fue cancelado. Habla con el personal si necesitas ayuda.
+        </div>
+        <% } else { %>
+        <div class="stepper" id="order-stepper" aria-label="Progreso del pedido">
+          <% sequence.forEach((statusKey, index) => { %>
+          <div class="step <%= stepClass(index) %>" data-step="<%= statusKey %>">
+            <span class="step-dot"><%= index + 1 %></span>
+            <span class="step-label"><%= STATUS[statusKey].label %></span>
+          </div>
+          <% }) %>
+        </div>
+        <% } %>
+
+        <ul class="order-items">
+          <% items.forEach((item) => { %>
+          <li class="order-item">
+            <span class="oi-qty">×<%= item.qty %></span>
+            <span class="oi-name"><%= item.name %></span>
+            <span class="oi-price"><%= money(item.price_cents * item.qty) %></span>
+          </li>
+          <% }) %>
+        </ul>
+
+        <div class="order-totals">
+          <div class="summary-row"><span>Subtotal</span><span><%= money(order.subtotal_cents) %></span></div>
+          <% if (order.tax_cents > 0) { %>
+          <div class="summary-row"><span>Servicio</span><span><%= money(order.tax_cents) %></span></div>
+          <% } %>
+          <div class="summary-row total"><span>Total</span><strong><%= money(order.total_cents) %></strong></div>
+        </div>
+
+        <% if (order.note) { %>
+        <div class="order-note">
+          <b>Nota para la cocina</b>
+          <%= order.note %>
+        </div>
+        <% } %>
+      </section>
+
+      <aside class="order-side">
+        <div class="side-card">
+          <span class="live-dot"><i></i> Actualización automática</span>
+          <h2 style="margin-top: 8px;">Sigue tu pedido</h2>
+          <p>Esta página se actualiza sola cada pocos segundos. También puedes consultar el estado mostrando tu código en la barra.</p>
+          <div class="side-actions">
+            <button class="btn btn-outline" id="order-refresh" type="button">Actualizar ahora</button>
+            <a class="btn btn-primary" href="/">Pedir algo más</a>
+          </div>
+        </div>
+
+        <div class="side-card">
+          <div class="order-code">
+            <span>Tu código</span>
+            <strong><%= order.code %></strong>
+          </div>
+          <p style="margin-top: 11px;">Menciónalo en la barra o muéstralo al personal cuando llegue tu pedido.</p>
+          <div class="side-actions">
+            <button class="btn btn-ghost" type="button" id="order-print">Imprimir recibo</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
+
+<script>
+window.ORDER = {
+  code: <%- JSON.stringify(order.code).replace(/</g, '\\u003c') %>,
+  status: <%- JSON.stringify(order.status).replace(/</g, '\\u003c') %>,
+  sequence: <%- JSON.stringify(sequence) %>,
+  labels: <%- JSON.stringify(Object.fromEntries(sequence.map((key) => [key, STATUS[key].label]))) %>
+};
+</script>
+<script src="/js/site.js"></script>
+<script src="/js/order.js"></script>
+</body>
+</html>

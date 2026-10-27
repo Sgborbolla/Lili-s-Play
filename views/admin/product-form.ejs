@@ -1,0 +1,119 @@
+<%- include('../partials/admin-top', { title: isNew ? 'Nuevo producto' : 'Editar producto', active: 'products' }) %>
+
+<% if (error) { %>
+<div class="alert alert-err" role="alert"><%= error %></div>
+<% } %>
+
+<form class="form-layout" method="post" action="<%= isNew ? '/admin/productos' : `/admin/productos/${product.id}` %>" enctype="multipart/form-data">
+  <div class="form-card">
+    <div class="form-card-head">
+      <h2>Datos del producto</h2>
+      <p>Nombre, categoría y precios que verá el cliente en el menú.</p>
+    </div>
+    <div class="form-body">
+      <div class="field">
+        <label for="name">Nombre</label>
+        <input id="name" name="name" type="text" maxlength="90" value="<%= product.name %>" required autofocus>
+      </div>
+
+      <div class="field">
+        <label for="description">Descripción</label>
+        <textarea id="description" name="description" maxlength="400" placeholder="Ingredientes, tamaño o lo que quieras destacar…"><%= product.description %></textarea>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="category_id">Categoría</label>
+          <select id="category_id" name="category_id" required>
+            <option value="">Elige una categoría</option>
+            <% categories.forEach((category) => { %>
+            <option value="<%= category.id %>" <%= Number(product.category_id) === category.id ? 'selected' : '' %>><%= category.icon ? `${category.icon} ` : '' %><%= category.name %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="field">
+          <label for="sort_order">Orden</label>
+          <input id="sort_order" name="sort_order" type="number" min="0" step="1" value="<%= product.sort_order || 0 %>">
+          <span class="hint">Menor número aparece primero.</span>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <p class="form-section-title">Precios</p>
+        <div class="field-row">
+          <div class="field">
+            <label for="price">Precio en USD</label>
+            <input id="price" name="price" type="text" inputmode="decimal" value="<%= product.price_input || '' %>" placeholder="9.99">
+            <span class="hint">Ejemplo: 9.99 o 9,99.</span>
+          </div>
+          <div class="field">
+            <label for="price_cuc">Precio en CUC</label>
+            <input id="price_cuc" name="price_cuc" type="text" inputmode="decimal" value="<%= product.price_cuc_input || '' %>" placeholder="2400">
+            <span class="hint">Si lo dejas vacío, se usa el mismo valor.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <p class="form-section-title">Presentación</p>
+        <div class="field-row-3">
+          <div class="field">
+            <label for="emoji">Emoji</label>
+            <input id="emoji" name="emoji" type="text" maxlength="8" value="<%= product.emoji %>" placeholder="🍔">
+          </div>
+          <div class="field">
+            <label for="badge">Etiqueta destacada</label>
+            <input id="badge" name="badge" type="text" maxlength="28" value="<%= product.badge %>" placeholder="+1 Hora gratis">
+          </div>
+          <div class="field">
+            <label for="tag">Cinta / Tag</label>
+            <input id="tag" name="tag" type="text" maxlength="28" value="<%= product.tag %>" placeholder="Edición PS4">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit"><%= isNew ? 'Crear producto' : 'Guardar cambios' %></button>
+        <a class="btn btn-ghost" href="/admin/productos">Cancelar</a>
+      </div>
+    </div>
+  </div>
+
+  <aside class="form-card">
+    <div class="form-card-head">
+      <h2>Imagen y estado</h2>
+      <p>La foto se muestra en la tarjeta del menú.</p>
+    </div>
+    <div class="form-body">
+      <div class="image-preview" data-image-preview>
+        <% if (product.image) { %>
+        <img src="<%= product.image %>" alt="Imagen actual de <%= product.name %>">
+        <% } else if (product.emoji) { %>
+        <span class="preview-emoji"><%= product.emoji %></span>
+        <% } else { %>
+        <span>Sin imagen</span>
+        <% } %>
+      </div>
+
+      <div class="field">
+        <label for="image">Subir imagen</label>
+        <input id="image" name="image" type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-image-input>
+        <span class="hint">PNG, JPG, WEBP o GIF. Se recorta en la tarjeta.</span>
+      </div>
+
+      <% if (!isNew && product.image) { %>
+      <label class="check">
+        <input type="checkbox" name="remove_image">
+        <span><strong>Quitar imagen actual</strong><small>Se usará el emoji o el ícono por defecto.</small></span>
+      </label>
+      <% } %>
+
+      <label class="check">
+        <input type="checkbox" name="active" <%= product.active ? 'checked' : '' %>>
+        <span><strong>Visible en el menú</strong><small>Si lo desmarcas, queda oculto para los clientes.</small></span>
+      </label>
+    </div>
+  </aside>
+</form>
+
+<%- include('../partials/admin-bottom') %>

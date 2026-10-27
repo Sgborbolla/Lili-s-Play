@@ -1,0 +1,16 @@
+<%- include('partials/public-top', { title: `${title} · Lili's Play`, page: 'error' }) %>
+<main class="error-page">
+  <div>
+    <p class="error-code">404</p>
+    <h1><%= title %></h1>
+    <p>La página que buscas no existe o el enlace cambió. Vuelve al menú y sigue la partida.</p>
+    <a class="btn btn-primary" href="/">Volver al menú</a>
+    <a class="btn btn-outline" href="/bienvenida.html" style="margin-left: 6px;">Ir a la bienvenida</a>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
+
+<script src="/js/site.js"></script>
+</body>
+</html>

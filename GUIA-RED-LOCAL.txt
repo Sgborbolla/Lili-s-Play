@@ -1,0 +1,247 @@
+LILI'S PLAY — GUÍA DE RED LOCAL
+================================
+
+Esta guía explica cómo funciona el menú en una red local, cómo entrar al
+panel de administración y cómo evitar problemas cuando cambia la IP o se
+usa una VPN.
+
+
+1. CÓMO FUNCIONA
+----------------
+
+- La PC es el servidor. Allí corre Lili's Play y guarda todo:
+  base de datos en data/ e imágenes en public/uploads/.
+- El servidor escucha en el puerto 3000 y en todas las interfaces de red
+  (0.0.0.0), así que funciona con la IP que tenga la PC en ese momento.
+- El router le asigna una IP a la PC, por ejemplo 192.168.1.50.
+- Los teléfonos deben estar conectados al mismo router o Wi-Fi que la PC.
+- El QR se genera con la IP de la red local de la PC y abre la
+  bienvenida, por ejemplo:
+  http://192.168.1.50:3000/bienvenida.html
+- El cliente escanea el QR, ve la bienvenida, entra al menú, pide y
+  sigue su pedido.
+- El cliente NUNCA ve el panel de administración. El panel no está
+  enlazado en el menú público ni en el QR.
+- No hace falta internet para operar. Solo se necesita internet para
+  instalar dependencias o actualizar el programa.
+- Si la PC se apaga, se suspende o se desconecta de la red, el menú deja
+  de responder para los teléfonos.
+
+
+2. DIRECCIONES IMPORTANTES
+--------------------------
+
+En la misma PC:
+  Menú:  http://localhost:3000
+  Panel: http://localhost:3000/admin
+
+Desde un teléfono u otra PC en la misma red:
+  Menú:  http://IP-DE-LA-PC:3000
+  Panel: http://IP-DE-LA-PC:3000/admin
+
+Ejemplo:
+  Menú:  http://192.168.1.50:3000
+  Panel: http://192.168.1.50:3000/admin
+
+El servidor imprime estas direcciones al arrancar. También se pueden ver
+en el panel, en Ajustes y en Códigos QR.
+
+Acceso rápido al panel (solo personal):
+  - En la PC: abrir http://localhost:3000/admin y guardarlo en favoritos.
+  - Desde el menú público: Ctrl + Shift + A.
+  - En pantalla táctil: mantener presionado el logo de Lili's Play
+    durante 1.4 segundos.
+
+El acceso rápido no muestra ningún enlace visible al cliente. La
+protección real es el usuario y la contraseña del panel.
+
+
+3. PRIMERA VEZ EN LA PC
+-----------------------
+
+1. Conectar la PC al Wi-Fi o cable del local.
+2. Abrir el programa o ejecutar el servidor.
+3. En la PC, abrir http://localhost:3000/admin
+4. Entrar con el usuario inicial:
+     Usuario: freeman
+     Contraseña: 12345678
+5. Cambiar la contraseña en Ajustes.
+6. Revisar en Ajustes el nombre del salón, la moneda y el enlace del QR.
+7. Permitir el programa o el puerto 3000 en el firewall de Windows,
+   en red privada.
+8. Generar un QR en Códigos QR y probarlo con un teléfono conectado a la
+   misma red.
+9. Reservar la IP de la PC en el router para que no cambie.
+
+
+4. CÓMO FIJAR LA IP
+-------------------
+
+Opción A: reserva en el router (recomendada)
+--------------------------------------------
+
+La PC sigue usando DHCP, pero el router siempre le entrega la misma IP.
+
+Pasos generales:
+1. Entrar a la página del router desde un navegador.
+   Suele ser 192.168.1.1, 192.168.0.1 o la puerta de enlace que muestra
+   ipconfig.
+2. Buscar DHCP, "Reserva de direcciones", "Static DHCP" o "IP Binding".
+3. Agregar una reserva con la MAC de la PC y una IP libre, por ejemplo
+   192.168.1.50.
+4. Guardar y reiniciar la conexión de red de la PC.
+
+Para ver la MAC de la PC en Windows:
+  Abrir CMD y ejecutar:  ipconfig /all
+  Buscar el adaptador Wi-Fi o Ethernet y copiar la "Dirección física".
+
+Ventaja: si se usa VPN, la reserva sigue aplicándose a la tarjeta real
+de Wi-Fi/Ethernet. La VPN no cambia esa reserva.
+
+Opción B: IP fija en Windows
+----------------------------
+
+Se configura en la PC y no depende del router, pero hay que conocer la
+puerta de enlace y el DNS.
+
+Pasos en Windows 10/11:
+1. Configuración > Red e Internet > Wi-Fi (o Ethernet).
+2. Abrir las propiedades de la red conectada.
+3. Asignación de IP > Editar > Manual > IPv4 activado.
+4. Completar:
+     IP:       192.168.1.50  (fuera del rango que reparte el DHCP)
+     Máscara:  255.255.255.0
+     Puerta de enlace: la del router, por ejemplo 192.168.1.1
+     DNS:      1.1.1.1  y  8.8.8.8
+5. Guardar y reconectar.
+
+Importante: si la PC se lleva a otra red, la IP fija puede dejar de
+funcionar. La reserva en el router es más flexible.
+
+
+5. VPN: QUÉ PASA Y CÓMO EVITAR PROBLEMAS
+----------------------------------------
+
+Una VPN no cambia la IP de la tarjeta Wi-Fi/Ethernet. Agrega una
+interfaz virtual (WireGuard, Tailscale, OpenVPN, etc.). El programa
+escucha en todas las interfaces, pero la detección automática del QR
+podría elegir la IP de la VPN en lugar de la IP del local.
+
+Solución principal:
+  En el panel, ir a Ajustes > Enlace público del QR y escribir la IP
+  real de la PC en la red local, por ejemplo:
+     http://192.168.1.50:3000
+  Así el QR siempre usa esa dirección, aunque la VPN esté activa.
+
+Cómo saber cuál es la IP correcta:
+  En Windows, abrir CMD y ejecutar:  ipconfig
+  Usar la IPv4 del adaptador "Wi-Fi" o "Ethernet".
+  Ignorar adaptadores de VPN, por ejemplo:
+     - Tailscale: suele usar 100.x.x.x
+     - WireGuard u OpenVPN: 10.x.x.x o 172.x.x.x
+     - Adaptadores virtuales de VirtualBox/VMware
+
+Si la VPN bloquea la red local:
+  - Activar en la VPN la opción "permitir tráfico de red local" o
+    "Allow LAN access".
+  - Si no existe, desconectar la VPN mientras se usan los teléfonos.
+  - Algunos antivirus/firewalls también bloquean la red privada.
+
+Recomendación:
+  Usar la VPN solo cuando sea necesario. Para el servicio del salón, lo
+  más estable es no tenerla activa o fijar la URL del QR en Ajustes.
+
+
+6. FIREWALL DE WINDOWS
+----------------------
+
+Si los teléfonos no pueden abrir el menú:
+
+1. Abrir Firewall de Windows Defender > Permitir una aplicación.
+2. Permitir Lili's Play o Node.js en redes privadas.
+3. Si se usa el puerto 3000, permitir también ese puerto.
+4. Verificar que la red de la PC esté marcada como "Privada", no como
+   "Pública".
+
+
+7. PROBLEMAS FRECUENTES
+-----------------------
+
+El teléfono no abre el menú:
+  - Verificar que esté en el mismo Wi-Fi que la PC.
+  - Verificar que la PC esté encendida y el servidor corriendo.
+  - Probar en la PC: http://localhost:3000
+  - Probar desde el teléfono con la IP correcta: http://IP:3000
+  - Revisar firewall y "aislamiento de clientes" del router.
+  - En redes de invitados, a veces los equipos no se ven entre sí.
+
+El QR ya no funciona:
+  - La IP de la PC cambió. Generar un QR nuevo.
+  - O fijar la IP en el router y volver a generar el QR.
+  - O configurar la URL fija en Ajustes > Enlace público del QR.
+
+El QR abre localhost o 127.0.0.1 en el teléfono:
+  - Ese QR se generó con la dirección local. Configurar en Ajustes la
+    URL con la IP de la red, por ejemplo http://192.168.1.50:3000, y
+    generar el QR de nuevo.
+
+La VPN aparece como IP del QR:
+  - Fijar la IP real en Ajustes > Enlace público del QR.
+  - O desconectar la VPN al generar el QR.
+
+El puerto 3000 está ocupado:
+  - Cerrar la otra instancia del programa.
+  - O usar otro puerto con la variable PORT, por ejemplo:
+      set PORT=3001
+      npm start
+
+
+8. RESPALDO
+-----------
+
+Copiar estas dos carpetas para guardar todo:
+  data/             base de datos, usuarios y ajustes
+  public/uploads/   imágenes subidas de productos
+
+Con eso se puede restaurar el menú, los pedidos y las fotos en otra PC.
+
+
+9. ABRIR COMO PROGRAMA (SIN PARECER NAVEGADOR)
+----------------------------------------------
+
+El menú se puede instalar como aplicación desde Chrome/Edge:
+  Menú del navegador > Instalar aplicación (o "Guardar y compartir" >
+  Instalar Lili's Play).
+
+También se puede abrir en modo ventana, sin barra de direcciones, con
+Chrome o Edge y el parámetro --app:
+  chrome.exe --app=http://localhost:3000
+  msedge.exe --app=http://localhost:3000/admin
+
+Para el panel, lo práctico es crear un acceso directo en el escritorio
+con esa dirección y abrirlo en modo ventana.
+
+
+10. SEGURIDAD DEL PANEL
+-----------------------
+
+- El panel vive en /admin y no está enlazado en las páginas públicas.
+- El panel usa una cuenta principal de administrador. La sección Usuarios
+  queda disponible por si se quieren crear otros administradores.
+- La página pública es anónima: los clientes no crean cuentas, no inician
+  sesión y no dejan contraseña. Solo escanean el QR, ven el menú y piden.
+- Cambiar la contraseña inicial y no compartirla.
+- El menú público y el panel pueden convivir en la misma PC y puerto:
+  los clientes solo acceden a las páginas públicas.
+
+
+RESUMEN RÁPIDO
+--------------
+
+1. PC encendida y conectada al Wi-Fi del local.
+2. Servidor corriendo en el puerto 3000.
+3. Reservar la IP de la PC en el router.
+4. Si hay VPN, fijar la IP real en Ajustes > Enlace público del QR.
+5. Probar el menú desde un teléfono con la IP de la PC.
+6. Guardar http://localhost:3000/admin en favoritos de la PC.
+7. Cambiar la contraseña inicial.

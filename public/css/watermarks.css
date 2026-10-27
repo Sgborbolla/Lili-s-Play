@@ -75,6 +75,22 @@
 .wm-17 { top: 6%; right: 38%; --r: 9deg; --fs: 11px; opacity: .035; }
 .wm-18 { bottom: 13%; right: 9%; --r: -16deg; --fs: 13px; opacity: .04; }
 
+.watermarks--light { color: #006fcd; }
+
+.watermarks--light::before {
+  opacity: .045;
+  mix-blend-mode: multiply;
+  filter: saturate(1.1) contrast(1.05);
+}
+
+.watermarks--light .wm {
+  opacity: .055;
+  filter: none;
+}
+
+.watermarks--light .wm-text { color: #121826; }
+.watermarks--light .wm-btn { text-shadow: none; }
+
 @media (max-width: 760px) {
   .watermarks::before {
     inset: -18%;

@@ -1,0 +1,245 @@
+<%- include('../partials/admin-top', { title: 'Ajustes', active: 'settings' }) %>
+
+<form class="settings-grid" method="post" action="/admin/ajustes">
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    <section class="form-card">
+      <div class="form-card-head">
+        <h2>Identidad del salón</h2>
+        <p>Marca, estación por defecto y tema del menú público.</p>
+      </div>
+      <div class="form-body">
+        <div class="field-row">
+          <div class="field">
+            <label for="brand_name">Nombre de la marca</label>
+            <input id="brand_name" name="brand_name" type="text" maxlength="60" value="<%= settings.brand_name %>">
+          </div>
+          <div class="field">
+            <label for="brand_sub">Subtítulo</label>
+            <input id="brand_sub" name="brand_sub" type="text" maxlength="80" value="<%= settings.brand_sub %>">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="default_station">Estación por defecto</label>
+            <input id="default_station" name="default_station" type="text" maxlength="40" value="<%= settings.default_station %>">
+            <span class="hint">Se usa cuando el cliente no indica estación.</span>
+          </div>
+          <div class="field">
+            <label for="default_theme">Tema del menú</label>
+            <select id="default_theme" name="default_theme">
+              <option value="light" <%= settings.default_theme !== 'dark' ? 'selected' : '' %>>Claro</option>
+              <option value="dark" <%= settings.default_theme === 'dark' ? 'selected' : '' %>>Oscuro</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card">
+      <div class="form-card-head">
+        <h2>Moneda e impuestos</h2>
+        <p>Cómo se muestran y cobran los precios del menú.</p>
+      </div>
+      <div class="form-body">
+        <div class="field-row-3">
+          <div class="field">
+            <label for="currency_mode">Modo</label>
+            <select id="currency_mode" name="currency_mode">
+              <option value="USD" <%= settings.currency_mode === 'USD' ? 'selected' : '' %>>Solo USD</option>
+              <option value="CUC" <%= settings.currency_mode === 'CUC' ? 'selected' : '' %>>Solo CUC</option>
+              <option value="BOTH" <%= settings.currency_mode === 'BOTH' ? 'selected' : '' %>>USD y CUC</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="currency_symbol">Símbolo USD</label>
+            <input id="currency_symbol" name="currency_symbol" type="text" maxlength="8" value="<%= settings.currency_symbol %>">
+          </div>
+          <div class="field">
+            <label for="currency_symbol_cuc">Símbolo CUC</label>
+            <input id="currency_symbol_cuc" name="currency_symbol_cuc" type="text" maxlength="8" value="<%= settings.currency_symbol_cuc %>">
+          </div>
+        </div>
+        <div class="field-row-3">
+          <div class="field">
+            <label for="currency_code">Código USD</label>
+            <input id="currency_code" name="currency_code" type="text" maxlength="8" value="<%= settings.currency_code %>">
+          </div>
+          <div class="field">
+            <label for="currency_locale">Formato USD</label>
+            <input id="currency_locale" name="currency_locale" type="text" maxlength="12" value="<%= settings.currency_locale %>">
+            <span class="hint">Ejemplo: en-US.</span>
+          </div>
+          <div class="field">
+            <label for="currency_locale_cuc">Formato CUC</label>
+            <input id="currency_locale_cuc" name="currency_locale_cuc" type="text" maxlength="12" value="<%= settings.currency_locale_cuc %>">
+            <span class="hint">Ejemplo: es-CU.</span>
+          </div>
+        </div>
+        <div class="field" style="max-width: 190px;">
+          <label for="tax_percent">Impuesto (%)</label>
+          <input id="tax_percent" name="tax_percent" type="number" min="0" max="100" step="0.01" value="<%= settings.tax_percent %>">
+          <span class="hint">0 si no cobras impuesto.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card">
+      <div class="form-card-head">
+        <h2>Portada del menú</h2>
+        <p>El bloque principal que ve el cliente al entrar.</p>
+      </div>
+      <div class="form-body">
+        <div class="field">
+          <label for="hero_eyebrow">Texto pequeño superior</label>
+          <input id="hero_eyebrow" name="hero_eyebrow" type="text" maxlength="80" value="<%= settings.hero_eyebrow %>">
+        </div>
+        <div class="field">
+          <label for="hero_title">Título principal</label>
+          <input id="hero_title" name="hero_title" type="text" maxlength="120" value="<%= settings.hero_title %>">
+        </div>
+        <div class="field">
+          <label for="hero_text">Texto descriptivo</label>
+          <textarea id="hero_text" name="hero_text" maxlength="400"><%= settings.hero_text %></textarea>
+        </div>
+        <div class="field">
+          <label for="featured_product_id">Producto destacado</label>
+          <select id="featured_product_id" name="featured_product_id">
+            <option value="">Automático (el primero del menú)</option>
+            <% products.forEach((product) => { %>
+            <option value="<%= product.id %>" <%= String(settings.featured_product_id) === String(product.id) ? 'selected' : '' %>><%= product.name %></option>
+            <% }) %>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card">
+      <div class="form-card-head">
+        <h2>Operación</h2>
+        <p>Mensajes de servicio y crédito del pie de página.</p>
+      </div>
+      <div class="form-body">
+        <div class="field-row">
+          <div class="field">
+            <label for="opening_status">Estado visible en la bienvenida</label>
+            <input id="opening_status" name="opening_status" type="text" maxlength="80" value="<%= settings.opening_status %>" placeholder="Abierto hoy">
+          </div>
+          <div class="field">
+            <label for="opening_hours">Horario de apertura</label>
+            <input id="opening_hours" name="opening_hours" type="text" maxlength="80" value="<%= settings.opening_hours %>" placeholder="8 am a 8 pm">
+          </div>
+        </div>
+        <div class="field">
+          <label for="kitchen_hours">Horario de cocina</label>
+          <input id="kitchen_hours" name="kitchen_hours" type="text" maxlength="120" value="<%= settings.kitchen_hours %>">
+        </div>
+        <div class="field">
+          <label for="service_note">Nota de servicio</label>
+          <input id="service_note" name="service_note" type="text" maxlength="160" value="<%= settings.service_note %>">
+        </div>
+        <div class="field">
+          <label for="footer_credit">Crédito del pie de página</label>
+          <textarea id="footer_credit" name="footer_credit" maxlength="400"><%= settings.footer_credit %></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card">
+      <div class="form-card-head">
+        <h2>Redes y contacto</h2>
+        <p>Los enlaces aparecen en el banner de redes sociales del pie.</p>
+      </div>
+      <div class="form-body">
+        <div class="field-row">
+          <div class="field">
+            <label for="social_whatsapp">WhatsApp</label>
+            <input id="social_whatsapp" name="social_whatsapp" type="url" maxlength="400" value="<%= settings.social_whatsapp %>" placeholder="https://wa.me/5355555555">
+          </div>
+          <div class="field">
+            <label for="social_instagram">Instagram</label>
+            <input id="social_instagram" name="social_instagram" type="url" maxlength="400" value="<%= settings.social_instagram %>" placeholder="https://instagram.com/…">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="social_facebook">Facebook</label>
+            <input id="social_facebook" name="social_facebook" type="url" maxlength="400" value="<%= settings.social_facebook %>" placeholder="https://facebook.com/…">
+          </div>
+          <div class="field">
+            <label for="social_youtube">YouTube</label>
+            <input id="social_youtube" name="social_youtube" type="url" maxlength="400" value="<%= settings.social_youtube %>" placeholder="https://youtube.com/…">
+          </div>
+        </div>
+        <div class="field">
+          <label for="social_email">Correo electrónico</label>
+          <input id="social_email" name="social_email" type="email" maxlength="400" value="<%= settings.social_email %>" placeholder="hola@lilisplay.com">
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card">
+      <div class="form-card-head">
+        <h2>Enlace público del QR</h2>
+        <p>Normalmente se deja vacío para usar la IP de la PC automáticamente.</p>
+      </div>
+      <div class="form-body">
+        <div class="field">
+          <label for="qr_public_url">URL pública</label>
+          <input id="qr_public_url" name="qr_public_url" type="url" maxlength="400" value="<%= settings.qr_public_url %>" placeholder="http://192.168.1.50:3000">
+          <span class="hint">Vacío = se usa <code>http://<%= lanIp %>:<%= port %></code>. Si usas un dominio o IP fija, escríbelo aquí.</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <aside class="settings-side">
+    <section class="form-card">
+      <div class="form-card-head">
+        <h2>Guardar</h2>
+        <p>Los cambios se ven al instante en el menú.</p>
+      </div>
+      <div class="form-body">
+        <button class="btn btn-primary" type="submit" style="width: 100%;">Guardar ajustes</button>
+        <a class="btn btn-outline" href="/" target="_blank" rel="noopener" style="width: 100%; margin-top: 8px;">Ver menú</a>
+        <div class="side-note" style="margin-top: 12px;">
+          <b>Red local</b>
+          Menú: <code>http://<%= lanIp %>:<%= port %></code><br>
+          Panel: <code>/admin</code>
+        </div>
+      </div>
+    </section>
+
+    <div class="side-note">
+      <b>El panel es privado</b>
+      No se enlaza desde el menú ni desde el QR. Los clientes solo ven las páginas públicas.
+    </div>
+  </aside>
+</form>
+
+<section class="form-card" style="margin-top: 16px; max-width: 680px;">
+  <div class="form-card-head">
+    <h2>Cambiar mi contraseña</h2>
+    <p>Se aplica a tu cuenta (<%= adminUser.username %>).</p>
+  </div>
+  <div class="form-body">
+    <form method="post" action="/admin/password">
+      <div class="field-row-3">
+        <div class="field">
+          <label for="current_password">Contraseña actual</label>
+          <input id="current_password" name="current_password" type="password" autocomplete="current-password" required>
+        </div>
+        <div class="field">
+          <label for="new_password">Nueva contraseña</label>
+          <input id="new_password" name="new_password" type="password" autocomplete="new-password" minlength="6" required>
+        </div>
+        <div class="field">
+          <label for="confirm_password">Repetir nueva</label>
+          <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="6" required>
+        </div>
+      </div>
+      <button class="btn btn-outline" type="submit">Actualizar contraseña</button>
+    </form>
+  </div>
+</section>
+
+<%- include('../partials/admin-bottom') %>

@@ -8,8 +8,11 @@ Sitio web de **Lili's Play**, salón gamer y bistró: bienvenida, menú, pedidos
 - Tema visual inspirado en PlayStation, con dorado PS4 como contenido principal: dos estaciones PS4.
 - Precios preparados para **USD**, **CUC** o **ambos** (`currency_mode`: `USD`, `CUC`, `BOTH`).
 - Cada producto guarda precio en USD (`price_cents`) y precio en CUC (`price_cuc_cents`).
-- Backend Express con SQLite para menú, pedidos, productos, categorías, usuarios y ajustes.
-- La interfaz EJS de administración está en desarrollo; las rutas del servidor ya están implementadas.
+- Backend Express con SQLite para menú, pedidos, productos, categorías, usuarios administradores y ajustes.
+- Página pública anónima: los clientes no crean cuentas ni inician sesión.
+- Menú con vista expandida del producto: imagen, precio, descripción, etiquetas y cantidad, con animación de ida y vuelta a la tarjeta.
+- Horario visible en la bienvenida y horario de cocina editables desde **Ajustes**.
+- Panel de administración completo con una cuenta principal y opción de crear otras.
 
 ## Requisitos
 

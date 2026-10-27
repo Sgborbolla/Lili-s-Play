@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<%- include('../partials/head', { title: 'Ingresar · Panel', themeColor: '#f6f8fc', pageCss: ['/css/admin.css', '/css/watermarks.css'], robots: 'noindex,nofollow,noarchive' }) %>
+</head>
+<body class="login-body">
+<%- include('../partials/watermarks', { watermarkClass: 'watermarks--light' }) %>
+
+<div class="login-wrap">
+  <section class="login-brand">
+    <%- include('../partials/brand', { brandHref: '/' }) %>
+    <div>
+      <h2>Modo<br><span>administrador</span></h2>
+      <p>Pedidos, productos, precios y ajustes del salón. Esta zona es solo para el personal de Lili’s Play.</p>
+    </div>
+    <span class="login-symbols" aria-hidden="true"><span>△</span><span>○</span><span>✕</span><span>□</span></span>
+  </section>
+
+  <section class="login-form">
+    <p class="eyebrow" style="margin-bottom: 6px;">Acceso privado</p>
+    <h1>Entrar al panel</h1>
+    <p class="lead">Usa tu usuario y contraseña de administrador. Los clientes nunca ven esta página.</p>
+
+    <% if (error) { %>
+    <div class="alert alert-err" role="alert"><%= error %></div>
+    <% } %>
+
+    <form method="post" action="/admin/login" autocomplete="on">
+      <input type="hidden" name="next" value="<%= next %>">
+
+      <div class="field">
+        <label for="username">Usuario</label>
+        <input id="username" name="username" type="text" value="<%= username %>" autocomplete="username" autocapitalize="none" spellcheck="false" required autofocus>
+      </div>
+
+      <div class="field">
+        <label for="password">Contraseña</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+      </div>
+
+      <button class="btn btn-primary" type="submit">Entrar al panel</button>
+    </form>
+
+    <p class="login-back"><a href="/">← Volver al menú público</a></p>
+  </section>
+</div>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>

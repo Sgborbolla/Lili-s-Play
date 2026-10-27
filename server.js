@@ -175,9 +175,13 @@ app.get('/', (req, res) => {
   const featuredId = Number(res.locals.settings.featured_product_id) || 0;
   const featured = products.find((p) => p.id === featuredId) || products[0] || null;
   const station = String(req.query.station || '').trim().slice(0, 40) || res.locals.settings.default_station;
+  const categoryById = new Map(categories.map((category) => [category.id, category]));
   const productsForJs = products.map((p) => ({
     id: p.id,
     name: p.name,
+    description: p.description,
+    badge: p.badge,
+    tag: p.tag,
     price: p.price_cents,
     price_cuc_cents: p.price_cuc_cents,
     price_label: formatPrice(p, res.locals.settings),
@@ -186,6 +190,8 @@ app.get('/', (req, res) => {
     emoji: p.emoji || '🍽️',
     image: p.image || '',
     category_id: p.category_id,
+    category: categoryById.get(p.category_id)?.name || '',
+    category_accent: categoryById.get(p.category_id)?.accent || '#006fcd',
   }));
 
   res.render('menu', {
@@ -196,6 +202,14 @@ app.get('/', (req, res) => {
     stationFromQuery: Boolean(req.query.station),
     productsForJs,
     page: 'menu',
+  });
+});
+
+app.get('/api/public-info', (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({
+    opening_status: res.locals.settings.opening_status || '',
+    opening_hours: res.locals.settings.opening_hours || '',
   });
 });
 
@@ -266,7 +280,7 @@ app.post('/api/orders', (req, res) => {
       try { db.exec('ROLLBACK'); } catch { /* ignore */ }
     }
     console.error('Error creando pedido:', err);
-    return res.status(500).json({ ok: false, error: 'No se pudo enviar el pedido. Intentá de nuevo.' });
+    return res.status(500).json({ ok: false, error: 'No se pudo enviar el pedido. Intenta de nuevo.' });
   }
 });
 
@@ -608,7 +622,7 @@ app.post('/admin/ajustes', requireAdmin, (req, res) => {
   const body = req.body || {};
   const textKeys = [
     'brand_name', 'brand_sub', 'currency_code', 'currency_symbol', 'currency_symbol_cuc', 'currency_locale', 'currency_locale_cuc',
-    'default_station', 'kitchen_hours', 'service_note', 'hero_eyebrow', 'hero_title',
+    'default_station', 'opening_status', 'opening_hours', 'kitchen_hours', 'service_note', 'hero_eyebrow', 'hero_title',
     'hero_text', 'footer_credit', 'qr_public_url', 'social_facebook', 'social_instagram', 'social_whatsapp', 'social_email', 'social_youtube',
   ];
   for (const key of textKeys) {
@@ -654,22 +668,27 @@ function qrBaseUrl(settings) {
   return `http://${getLanIp()}:${PORT}`;
 }
 
+function qrTargetUrl(settings, station) {
+  const base = qrBaseUrl(settings);
+  const query = station ? `?station=${encodeURIComponent(station)}` : '';
+  return `${base}/bienvenida.html${query}`;
+}
+
 app.get('/admin/qr', requireAdmin, (req, res) => {
   const station = String(req.query.station || '').trim().slice(0, 40);
   const base = qrBaseUrl(res.locals.settings);
-  const url = station ? `${base}/?station=${encodeURIComponent(station)}` : `${base}/`;
+  const url = qrTargetUrl(res.locals.settings, station);
   res.render('admin/qr', { title: 'Código QR', station, base, url });
 });
 
 app.get('/admin/qr.png', requireAdmin, async (req, res) => {
   try {
     const station = String(req.query.station || '').trim().slice(0, 40);
-    const base = qrBaseUrl(res.locals.settings);
-    const url = station ? `${base}/?station=${encodeURIComponent(station)}` : `${base}/`;
+    const url = qrTargetUrl(res.locals.settings, station);
     const buffer = await QRCode.toBuffer(url, {
       type: 'png',
-      width: 900,
-      margin: 2,
+      width: 2400,
+      margin: 4,
       errorCorrectionLevel: 'H',
       color: { dark: '#0b1220', light: '#ffffff' },
     });
@@ -680,6 +699,27 @@ app.get('/admin/qr.png', requireAdmin, async (req, res) => {
     res.send(buffer);
   } catch (err) {
     console.error('QR error:', err);
+    res.status(500).send('No se pudo generar el QR.');
+  }
+});
+
+app.get('/admin/qr.svg', requireAdmin, async (req, res) => {
+  try {
+    const station = String(req.query.station || '').trim().slice(0, 40);
+    const url = qrTargetUrl(res.locals.settings, station);
+    const svg = await QRCode.toString(url, {
+      type: 'svg',
+      margin: 4,
+      errorCorrectionLevel: 'H',
+      color: { dark: '#0b1220', light: '#ffffff' },
+    });
+    res.setHeader('Content-Type', 'image/svg+xml');
+    if (req.query.download === '1') {
+      res.setHeader('Content-Disposition', `attachment; filename="lilis-play-qr${station ? `-${station.replace(/[^a-z0-9]/gi, '')}` : ''}.svg"`);
+    }
+    res.send(svg);
+  } catch (err) {
+    console.error('QR SVG error:', err);
     res.status(500).send('No se pudo generar el QR.');
   }
 });
@@ -701,9 +741,10 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log('  ------------------------------------------');
   console.log(`  Menú local:    http://localhost:${PORT}`);
   console.log(`  Menú en LAN:   http://${ip}:${PORT}`);
-  console.log(`  Panel admin:   http://${ip}:${PORT}/admin`);
+  console.log(`  Panel local:   http://localhost:${PORT}/admin`);
+  console.log(`  Panel en LAN:  http://${ip}:${PORT}/admin`);
   console.log('  Usuario inicial: freeman  ·  Contraseña: 12345678');
-  console.log('  Cambiá la contraseña en Admin > Ajustes.');
+  console.log('  Cambia la contraseña en Admin > Ajustes.');
   console.log('');
 });
 

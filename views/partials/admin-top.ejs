@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<%- include('head', { title: `${title} · Panel`, themeColor: '#0b1220', pageCss: ['/css/admin.css', '/css/watermarks.css'], robots: 'noindex,nofollow,noarchive' }) %>
+</head>
+<body class="admin-body">
+<%- include('watermarks', { watermarkClass: 'watermarks--light' }) %>
+<%
+  const navItems = [
+    {
+      key: 'dashboard', href: '/admin', label: 'Resumen',
+      icon: '<rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/>',
+    },
+    {
+      key: 'orders', href: '/admin/pedidos', label: 'Pedidos',
+      icon: '<path d="M7 3h10a1 1 0 0 1 1 1v17l-3-2-3 2-3-2-3 2V4a1 1 0 0 1 1-1Z"/><path d="M9.5 8h5M9.5 12h5M9.5 16h3"/>',
+    },
+    {
+      key: 'products', href: '/admin/productos', label: 'Productos',
+      icon: '<path d="M4 7.5 12 3l8 4.5-8 4.5-8-4.5Z"/><path d="M4 7.5v9L12 21l8-4.5v-9"/><path d="M12 12v9"/>',
+    },
+    {
+      key: 'categories', href: '/admin/categorias', label: 'Categorías',
+      icon: '<path d="M20 12.2 12.2 20 3.5 11.3V4h7.3L20 12.2Z"/><circle cx="7.4" cy="7.4" r="1.4"/>',
+    },
+    {
+      key: 'users', href: '/admin/usuarios', label: 'Usuarios',
+      icon: '<circle cx="9" cy="8" r="3.4"/><path d="M2.8 20c0-3.5 2.8-6.3 6.2-6.3s6.2 2.8 6.2 6.3"/><path d="M17 5a2.8 2.8 0 0 1 0 5.6M18.4 14.2c1.8.8 2.9 2.6 2.9 4.7"/>',
+    },
+    {
+      key: 'settings', href: '/admin/ajustes', label: 'Ajustes',
+      icon: '<circle cx="12" cy="12" r="3.1"/><path d="M12 2.6v2.8M12 18.6v2.8M2.6 12h2.8M18.6 12h2.8M5.4 5.4l2 2M16.6 16.6l2 2M18.6 5.4l-2 2M7.4 16.6l-2 2"/>',
+    },
+    {
+      key: 'qr', href: '/admin/qr', label: 'Códigos QR',
+      icon: '<rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="3" width="7" height="7" rx="1.2"/><rect x="3" y="14" width="7" height="7" rx="1.2"/><path d="M14 14h3v3h-3zM20.5 14v3M14 20.5h3M20.5 20.5h.5"/>',
+    },
+  ];
+  const userInitials = String(adminUser.display_name || adminUser.username || '?').trim().slice(0, 2);
+%>
+<input type="checkbox" id="admin-nav-toggle" class="admin-nav-toggle" aria-hidden="true">
+<label for="admin-nav-toggle" class="admin-overlay" aria-hidden="true"></label>
+
+<aside class="admin-side">
+  <%- include('brand', { brandHref: '/admin' }) %>
+
+  <nav class="admin-nav" aria-label="Navegación del panel">
+    <span class="admin-nav-label">Operación</span>
+    <% navItems.slice(0, 5).forEach((item) => { %>
+    <a href="<%= item.href %>" class="<%= active === item.key ? 'is-active' : '' %>">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><%- item.icon %></svg>
+      <span><%= item.label %></span>
+    </a>
+    <% }) %>
+    <span class="admin-nav-label">Configuración</span>
+    <% navItems.slice(5).forEach((item) => { %>
+    <a href="<%= item.href %>" class="<%= active === item.key ? 'is-active' : '' %>">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><%- item.icon %></svg>
+      <span><%= item.label %></span>
+    </a>
+    <% }) %>
+  </nav>
+
+  <div class="admin-user">
+    <span class="avatar"><%= userInitials %></span>
+    <div class="admin-user-info">
+      <strong><%= adminUser.display_name || adminUser.username %></strong>
+      <span><%= adminUser.role %> · <%= adminUser.username %></span>
+    </div>
+  </div>
+  <form class="logout-form" method="post" action="/admin/logout">
+    <button class="logout-btn" type="submit">Cerrar sesión</button>
+  </form>
+</aside>
+
+<div class="admin-main">
+  <header class="admin-topbar">
+    <label for="admin-nav-toggle" class="admin-burger" aria-label="Abrir menú">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </label>
+    <div>
+      <p class="eyebrow">Panel de control</p>
+      <h1><%= title %></h1>
+    </div>
+    <div class="topbar-actions">
+      <a class="topbar-link" href="/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3h7v7M21 3l-8.5 8.5"/><path d="M19 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/></svg>
+        <span>Ver menú</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="admin-content">
+    <% if (notice) { %>
+    <div class="alert alert-ok" role="status"><%= notice %></div>
+    <% } %>
+    <% if (warning) { %>
+    <div class="alert alert-err" role="alert"><%= warning %></div>
+    <% } %>

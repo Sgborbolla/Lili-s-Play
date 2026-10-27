@@ -1,0 +1,77 @@
+<%- include('../partials/admin-top', { title: 'Código QR', active: 'qr' }) %>
+
+<%
+  const stationQuery = station ? `?station=${encodeURIComponent(station)}` : '';
+  const downloadQuery = station ? `?station=${encodeURIComponent(station)}&download=1` : '?download=1';
+  const isLocal = /localhost|127\.0\.0\.1/.test(base);
+%>
+
+<div class="toolbar">
+  <form method="get" action="/admin/qr" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+    <input name="station" type="text" maxlength="40" value="<%= station %>" placeholder="Estación (ej. 14)" aria-label="Estación para el QR" style="height: 38px; padding: 0 11px; border: 1px solid var(--line); border-radius: 9px; background: #fff; font-size: 11.5px;">
+    <button class="btn btn-primary btn-sm" type="submit">Generar QR</button>
+    <% if (station) { %><a class="btn btn-ghost btn-sm" href="/admin/qr">Quitar estación</a><% } %>
+  </form>
+  <span class="spacer"></span>
+  <a class="btn btn-outline btn-sm" href="/admin/qr.png<%= downloadQuery %>">PNG alta definición</a>
+  <a class="btn btn-outline btn-sm" href="/admin/qr.svg<%= downloadQuery %>">SVG para imprimir</a>
+  <button class="btn btn-outline btn-sm" type="button" data-print>Imprimir</button>
+</div>
+
+<div class="qr-layout">
+  <div class="qr-box">
+    <img src="/admin/qr.png<%= stationQuery %>" alt="Código QR de la bienvenida<%= station ? ` para la estación ${station}` : '' %>">
+    <% if (station) { %>
+    <p class="badge tone-cyan" style="margin-top: 12px;">Estación #<%= station %></p>
+    <% } else { %>
+    <p class="badge tone-gray" style="margin-top: 12px;">Menú general</p>
+    <% } %>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 14px;">
+    <section class="form-card">
+      <div class="form-card-head">
+        <h2>Enlace del QR</h2>
+        <p>El cliente escanea, ve la bienvenida y desde ahí entra al menú.</p>
+      </div>
+      <div class="form-body">
+        <div class="qr-url"><%= url %></div>
+        <div class="form-actions" style="border-top: 0; margin-top: 12px; padding-top: 0;">
+          <button class="btn btn-outline btn-sm" type="button" data-copy="<%= url %>">Copiar enlace</button>
+          <a class="btn btn-ghost btn-sm" href="<%= url %>" target="_blank" rel="noopener">Abrir bienvenida</a>
+        </div>
+        <% if (isLocal) { %>
+        <div class="alert alert-warn" style="margin: 12px 0 0;">
+          Este enlace usa <code>localhost</code> y solo funciona en la PC. Para los teléfonos, usa la IP de la red o configura la URL pública en Ajustes.
+        </div>
+        <% } %>
+      </div>
+    </section>
+
+    <section class="form-card">
+      <div class="form-card-head">
+        <h2>Cómo usarlo</h2>
+      </div>
+      <div class="form-body">
+        <div class="side-note">
+          <b>1. Misma red</b>
+          La PC y el teléfono deben estar conectados al mismo router.
+        </div>
+        <div class="side-note" style="margin-top: 9px;">
+          <b>2. PC encendida</b>
+          El menú vive en la PC. Si se apaga o se duerme, el QR deja de responder.
+        </div>
+        <div class="side-note" style="margin-top: 9px;">
+          <b>3. IP fija</b>
+          Reserva la IP de la PC en el router para que el QR no cambie. También puedes fijar la URL en Ajustes.
+        </div>
+        <div class="side-note" style="margin-top: 9px;">
+          <b>Dirección de esta PC</b>
+          <code>http://<%= lanIp %>:<%= port %></code>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<%- include('../partials/admin-bottom') %>

@@ -1,0 +1,78 @@
+<%- include('../partials/admin-top', { title: 'Productos', active: 'products' }) %>
+
+<%
+  const categoryMap = new Map();
+  products.forEach((product) => categoryMap.set(product.category_id, { id: product.category_id, name: product.category_name }));
+%>
+
+<div class="toolbar">
+  <div class="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+    <input type="search" placeholder="Buscar producto…" aria-label="Buscar producto" data-table-search>
+  </div>
+  <select aria-label="Filtrar por categoría" data-table-category>
+    <option value="all">Todas las categorías</option>
+    <% categoryMap.forEach((category) => { %>
+    <option value="<%= category.id %>"><%= category.name %></option>
+    <% }) %>
+  </select>
+  <span class="spacer"></span>
+  <a class="btn btn-primary" href="/admin/productos/nuevo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    Nuevo producto
+  </a>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Categoría</th>
+          <th>Precio USD</th>
+          <th>Precio CUC</th>
+          <th>Orden</th>
+          <th>Estado</th>
+          <th style="text-align: right;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (!products.length) { %>
+        <tr><td class="cell-empty" colspan="7">No hay productos. Crea el primero para que aparezca en el menú.</td></tr>
+        <% } %>
+        <% products.forEach((product) => { %>
+        <tr data-row data-search="<%= `${product.name} ${product.category_name} ${product.badge} ${product.tag}` %>" data-category="<%= product.category_id %>">
+          <td>
+            <div class="cell-main">
+              <span class="thumb"><% if (product.image) { %><img src="<%= product.image %>" alt=""><% } else { %><%= product.emoji || '🍽️' %><% } %></span>
+              <span>
+                <span class="cell-name"><%= product.name %></span>
+                <span class="cell-sub"><%= product.badge || product.tag || 'Sin etiqueta' %></span>
+              </span>
+            </div>
+          </td>
+          <td><span class="swatch" style="background: <%= product.category_accent %>;"></span> <%= product.category_name %></td>
+          <td class="num"><%= money(product.price_cents, 'USD') %></td>
+          <td class="num"><%= money(Number(product.price_cuc_cents) || product.price_cents, 'CUC') %></td>
+          <td class="num"><%= product.sort_order %></td>
+          <td><span class="badge <%= product.active ? 'tone-green' : 'tone-gray' %>"><%= product.active ? 'Activo' : 'Oculto' %></span></td>
+          <td>
+            <div class="cell-actions">
+              <a class="btn btn-outline btn-sm" href="/admin/productos/<%= product.id %>/editar">Editar</a>
+              <form class="inline-form" method="post" action="/admin/productos/<%= product.id %>/alternar">
+                <button class="btn btn-ghost btn-sm" type="submit"><%= product.active ? 'Ocultar' : 'Activar' %></button>
+              </form>
+              <form class="inline-form" method="post" action="/admin/productos/<%= product.id %>/eliminar" data-confirm="¿Eliminar “<%= product.name %>”? Esta acción no se puede deshacer.">
+                <button class="btn btn-danger-soft btn-sm" type="submit">Eliminar</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/admin-bottom') %>

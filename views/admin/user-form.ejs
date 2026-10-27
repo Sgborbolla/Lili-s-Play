@@ -1,0 +1,74 @@
+<%- include('../partials/admin-top', { title: isNew ? 'Nuevo administrador' : 'Editar administrador', active: 'users' }) %>
+
+<%
+  const isSelf = !isNew && user.id === adminUser.id;
+%>
+
+<% if (error) { %>
+<div class="alert alert-err" role="alert"><%= error %></div>
+<% } %>
+
+<form class="form-layout" method="post" action="<%= isNew ? '/admin/usuarios' : `/admin/usuarios/${user.id}` %>">
+  <div class="form-card">
+    <div class="form-card-head">
+      <h2>Datos de acceso</h2>
+      <p><%= isNew ? 'Crea una cuenta para otra persona del personal.' : 'Actualiza el nombre o la contraseña de esta cuenta.' %></p>
+    </div>
+    <div class="form-body">
+      <div class="field">
+        <label for="username">Usuario</label>
+        <input id="username" name="username" type="text" maxlength="24" value="<%= user.username %>" autocomplete="off" autocapitalize="none" spellcheck="false" <%= isNew ? 'required' : 'readonly' %>>
+        <span class="hint"><%= isNew ? 'Entre 3 y 24 caracteres: letras, números, punto o guion.' : 'El nombre de usuario no se puede cambiar.' %></span>
+      </div>
+
+      <div class="field">
+        <label for="display_name">Nombre visible</label>
+        <input id="display_name" name="display_name" type="text" maxlength="60" value="<%= user.display_name %>" placeholder="Nombre del administrador">
+        <span class="hint">Es el nombre que aparece en el panel.</span>
+      </div>
+
+      <div class="field">
+        <label for="password"><%= isNew ? 'Contraseña' : 'Nueva contraseña (opcional)' %></label>
+        <input id="password" name="password" type="password" autocomplete="new-password" <%= isNew ? 'required' : '' %> placeholder="<%= isNew ? 'Mínimo 6 caracteres' : 'Déjala vacía para no cambiarla' %>">
+        <span class="hint">Mínimo 6 caracteres.</span>
+      </div>
+
+      <div class="form-section">
+        <p class="form-section-title">Permisos</p>
+        <label class="check">
+          <input type="checkbox" name="active" <%= user.active ? 'checked' : '' %> <%= isSelf ? 'disabled' : '' %>>
+          <span>
+            <strong>Cuenta activa</strong>
+            <small><%= isSelf ? 'No puedes desactivar tu propia cuenta.' : 'Si la desactivas, no podrá entrar al panel.' %></small>
+          </span>
+        </label>
+        <% if (isSelf) { %><input type="hidden" name="active" value="on"><% } %>
+        <p class="side-note">Rol: <b style="display: inline;">administrador</b>. Todos los usuarios ven pedidos, productos, categorías, ajustes y QR.</p>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit"><%= isNew ? 'Crear administrador' : 'Guardar cambios' %></button>
+        <a class="btn btn-ghost" href="/admin/usuarios">Cancelar</a>
+      </div>
+    </div>
+  </div>
+
+  <aside class="form-card">
+    <div class="form-card-head">
+      <h2>Seguridad</h2>
+      <p>Recomendaciones para el panel.</p>
+    </div>
+    <div class="form-body">
+      <div class="side-note">
+        <b>Contraseñas únicas</b>
+        No compartas la cuenta principal. Crea un usuario para cada persona del salón y desactívalo cuando ya no trabaje allí.
+      </div>
+      <div class="side-note" style="margin-top: 12px;">
+        <b>Panel privado</b>
+        El panel no aparece en el menú público ni en el QR. Solo se entra por <code>/admin</code>.
+      </div>
+    </div>
+  </aside>
+</form>
+
+<%- include('../partials/admin-bottom') %>

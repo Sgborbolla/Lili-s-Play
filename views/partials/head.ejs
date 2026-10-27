@@ -1,0 +1,24 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="<%= typeof themeColor !== 'undefined' ? themeColor : '#f6f8fc' %>">
+<title><%= title %></title>
+<meta name="description" content="<%= typeof description !== 'undefined' ? description : 'Lili’s Play · Salón Gamer y Bistró' %>">
+<% if (typeof robots !== 'undefined' && robots) { %><meta name="robots" content="<%= robots %>"><% } %>
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<% if (typeof manifest !== 'undefined' && manifest) { %>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Lili's Play">
+<% } %>
+<link rel="preload" href="/fonts/Syne.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="/fonts/SpaceGrotesk.ttf" as="font" type="font/ttf" crossorigin>
+<%
+  const cssFiles = typeof pageCss !== 'undefined' ? pageCss : ['/css/app.css'];
+  for (const file of cssFiles) {
+%>
+<link rel="stylesheet" href="<%= file %>">
+<% } %>

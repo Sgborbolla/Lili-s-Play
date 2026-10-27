@@ -1,0 +1,59 @@
+<%- include('../partials/admin-top', { title: 'Usuarios', active: 'users' }) %>
+
+<div class="toolbar">
+  <p class="muted" style="font-size: 11px;">Personas con acceso al panel. Cada una entra con su propio usuario y contraseña.</p>
+  <span class="spacer"></span>
+  <a class="btn btn-primary" href="/admin/usuarios/nuevo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    Nuevo administrador
+  </a>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Administrador</th>
+          <th>Rol</th>
+          <th>Creado</th>
+          <th>Estado</th>
+          <th style="text-align: right;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (!users.length) { %>
+        <tr><td class="cell-empty" colspan="5">No hay usuarios.</td></tr>
+        <% } %>
+        <% users.forEach((user) => { const isSelf = user.id === adminUser.id; const initials = String(user.display_name || user.username).trim().slice(0, 2); %>
+        <tr>
+          <td>
+            <div class="cell-main">
+              <span class="avatar"><%= initials %></span>
+              <span>
+                <span class="cell-name"><%= user.display_name || user.username %> <% if (isSelf) { %><span class="badge tone-cyan">Tú</span><% } %></span>
+                <span class="cell-sub">@<%= user.username %></span>
+              </span>
+            </div>
+          </td>
+          <td><span class="badge"><%= user.role %></span></td>
+          <td class="cell-sub"><%= fmtDate(user.created_at) %></td>
+          <td><span class="badge <%= user.active ? 'tone-green' : 'tone-gray' %>"><%= user.active ? 'Activo' : 'Inactivo' %></span></td>
+          <td>
+            <div class="cell-actions">
+              <a class="btn btn-outline btn-sm" href="/admin/usuarios/<%= user.id %>/editar">Editar</a>
+              <% if (!isSelf) { %>
+              <form class="inline-form" method="post" action="/admin/usuarios/<%= user.id %>/eliminar" data-confirm="¿Eliminar al administrador @<%= user.username %>?">
+                <button class="btn btn-danger-soft btn-sm" type="submit">Eliminar</button>
+              </form>
+              <% } %>
+            </div>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/admin-bottom') %>

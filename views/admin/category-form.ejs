@@ -1,0 +1,70 @@
+<%- include('../partials/admin-top', { title: isNew ? 'Nueva categoría' : 'Editar categoría', active: 'categories' }) %>
+
+<% if (error) { %>
+<div class="alert alert-err" role="alert"><%= error %></div>
+<% } %>
+
+<form class="form-layout" method="post" action="<%= isNew ? '/admin/categorias' : `/admin/categorias/${category.id}` %>">
+  <div class="form-card">
+    <div class="form-card-head">
+      <h2>Datos de la categoría</h2>
+      <p>Es el título de la sección en el menú del cliente.</p>
+    </div>
+    <div class="form-body">
+      <div class="field">
+        <label for="name">Nombre</label>
+        <input id="name" name="name" type="text" maxlength="60" value="<%= category.name %>" placeholder="Combos Legendarios" required autofocus>
+      </div>
+
+      <div class="field">
+        <label for="subtitle">Subtítulo</label>
+        <input id="subtitle" name="subtitle" type="text" maxlength="140" value="<%= category.subtitle %>" placeholder="Combustible gamer para sesiones intensas">
+        <span class="hint">Aparece debajo del nombre. Puedes dejarlo vacío.</span>
+      </div>
+
+      <div class="field-row-3">
+        <div class="field">
+          <label for="icon">Ícono</label>
+          <input id="icon" name="icon" type="text" maxlength="8" value="<%= category.icon %>" placeholder="🎮">
+          <span class="hint">Un emoji.</span>
+        </div>
+        <div class="field">
+          <label for="accent">Color</label>
+          <input id="accent" name="accent" type="color" value="<%= category.accent || '#00a6c9' %>">
+        </div>
+        <div class="field">
+          <label for="sort_order">Orden</label>
+          <input id="sort_order" name="sort_order" type="number" min="0" step="1" value="<%= category.sort_order || 0 %>">
+        </div>
+      </div>
+
+      <label class="check">
+        <input type="checkbox" name="active" <%= category.active ? 'checked' : '' %>>
+        <span><strong>Visible en el menú</strong><small>Si la ocultas, sus productos no se muestran a los clientes.</small></span>
+      </label>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit"><%= isNew ? 'Crear categoría' : 'Guardar cambios' %></button>
+        <a class="btn btn-ghost" href="/admin/categorias">Cancelar</a>
+      </div>
+    </div>
+  </div>
+
+  <aside class="form-card">
+    <div class="form-card-head">
+      <h2>Vista previa</h2>
+      <p>Así se verá el encabezado de la sección.</p>
+    </div>
+    <div class="form-body">
+      <div class="side-note" style="border-left: 4px solid <%= category.accent || '#00a6c9' %>;">
+        <b><%= category.icon ? `${category.icon} ` : '' %><%= category.name || 'Nombre de la categoría' %></b>
+        <%= category.subtitle || 'El subtítulo aparecerá aquí.' %>
+      </div>
+      <div class="side-note" style="margin-top: 12px;">
+        El color se usa en el menú para el acento de la sección. Usa tonos vivos para que combine con el tema gamer.
+      </div>
+    </div>
+  </aside>
+</form>
+
+<%- include('../partials/admin-bottom') %>

@@ -1,0 +1,71 @@
+<%- include('../partials/admin-top', { title: 'Pedidos', active: 'orders' }) %>
+
+<%
+  const statusKeys = Object.keys(STATUS);
+  const counts = { all: orders.length };
+  statusKeys.forEach((key) => { counts[key] = orders.filter((order) => order.status === key).length; });
+%>
+
+<div class="toolbar">
+  <div class="filter-tabs" style="margin: 0;">
+    <button type="button" class="filter-tab is-active" data-order-filter="all">Todos <span class="count"><%= counts.all %></span></button>
+    <% statusKeys.forEach((key) => { const meta = STATUS[key]; %>
+    <button type="button" class="filter-tab" data-order-filter="<%= key %>"><%= meta.label %> <span class="count"><%= counts[key] %></span></button>
+    <% }) %>
+  </div>
+  <span class="spacer"></span>
+  <a class="btn btn-outline btn-sm" href="/admin/pedidos">Actualizar</a>
+</div>
+
+<% if (!orders.length) { %>
+<div class="empty">
+  <strong>Todavía no hay pedidos</strong>
+  Cuando un cliente envíe su pedido desde el menú, aparecerá aquí para que lo gestiones.
+</div>
+<% } %>
+
+<div class="order-list">
+  <% orders.forEach((order) => { const meta = statusMeta(order.status); %>
+  <article class="order-admin" data-order-status="<%= order.status %>">
+    <header class="order-admin-head">
+      <h2><%= order.code %></h2>
+      <span class="meta"><%= fmtDate(order.created_at) %> · Estación #<%= order.station %></span>
+      <% if (order.customer) { %><span class="badge"><%= order.customer %></span><% } %>
+      <span class="badge tone-<%= meta.tone %>"><%= meta.label %></span>
+    </header>
+    <div class="order-admin-body">
+      <div>
+        <ul class="order-admin-items">
+          <% order.items.forEach((item) => { %>
+          <li>
+            <span class="qty"><%= item.qty %>×</span>
+            <span class="name"><%= item.name %></span>
+            <span class="line"><%= money(item.price_cents * item.qty) %></span>
+          </li>
+          <% }) %>
+        </ul>
+        <% if (order.note) { %>
+        <div class="order-admin-note"><strong>Nota:</strong> <%= order.note %></div>
+        <% } %>
+      </div>
+      <div class="order-admin-side">
+        <% if (Number(order.tax_cents) > 0) { %>
+        <div class="total"><span>Subtotal</span><span><%= money(order.subtotal_cents) %></span></div>
+        <div class="total"><span>Impuesto</span><span><%= money(order.tax_cents) %></span></div>
+        <% } %>
+        <div class="total"><span>Total</span><strong><%= money(order.total_cents) %></strong></div>
+        <form class="status-form" method="post" action="/admin/pedidos/<%= order.id %>/estado">
+          <select name="status" aria-label="Cambiar estado del pedido <%= order.code %>">
+            <% Object.entries(STATUS).forEach(([key, value]) => { %>
+            <option value="<%= key %>" <%= order.status === key ? 'selected' : '' %>><%= value.label %></option>
+            <% }) %>
+          </select>
+          <button class="btn btn-primary btn-sm" type="submit">Guardar</button>
+        </form>
+      </div>
+    </div>
+  </article>
+  <% }) %>
+</div>
+
+<%- include('../partials/admin-bottom') %>

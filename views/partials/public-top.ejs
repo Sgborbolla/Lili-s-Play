@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<%- include('head', { title, themeColor: '#f6f8fc', pageCss: ['/css/app.css', '/css/social.css', '/css/watermarks.css'], manifest: true }) %>
+</head>
+<body class="page-<%= typeof page !== 'undefined' ? page : 'simple' %>" id="top">
+<%- include('watermarks', { watermarkClass: 'watermarks--light' }) %>
+<header class="menu-header simple-header">
+  <div class="wrap header-row">
+    <%- include('brand', { brandHref: '/' }) %>
+    <nav class="header-links" aria-label="Navegación principal">
+      <a href="/">Menú</a>
+      <a href="/bienvenida.html">Bienvenida</a>
+      <a href="/#carrito">Mi pedido</a>
+    </nav>
+  </div>
+</header>
