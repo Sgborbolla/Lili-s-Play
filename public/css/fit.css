@@ -1,0 +1,163 @@
+/* ==========================================================================
+   Ajuste general de pantalla
+   Hace que todas las páginas aprovechen el ancho real del teléfono sin
+   desbordarse hacia los lados ni quedar reducidas o recortadas.
+   ========================================================================== */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Evita que un ancho mínimo fijo desborde pantallas pequeñas */
+body {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+/* Ningún recurso más ancho que la pantalla y sin deformarse */
+img,
+video {
+  height: auto;
+}
+
+img,
+picture,
+video,
+canvas,
+iframe,
+svg {
+  max-width: 100%;
+}
+
+/* Contenedores principales: usan el ancho disponible y respetan el notch */
+@media (max-width: 640px) {
+  .wrap,
+  .header-inner,
+  .hero,
+  .section,
+  .reserve-wrap,
+  .about-map-section,
+  .admin-topbar,
+  .admin-content,
+  .admin-foot {
+    padding-left: calc(14px + env(safe-area-inset-left, 0px));
+    padding-right: calc(14px + env(safe-area-inset-right, 0px));
+  }
+}
+
+@media (max-width: 380px) {
+  .wrap,
+  .header-inner,
+  .hero,
+  .section,
+  .reserve-wrap,
+  .about-map-section,
+  .admin-topbar,
+  .admin-content,
+  .admin-foot {
+    padding-left: calc(11px + env(safe-area-inset-left, 0px));
+    padding-right: calc(11px + env(safe-area-inset-right, 0px));
+  }
+
+  .brand-name { font-size: 17px; }
+  .brand-sub { letter-spacing: .1em; }
+  .product-grid { gap: 8px; }
+  .product-media { height: 112px; }
+  .hero-copy h1 { font-size: clamp(29px, 12vw, 40px); }
+  .section-head h2 { font-size: clamp(26px, 9vw, 34px); }
+}
+
+/* Celdas flexibles: nunca empujan el ancho de la página */
+.hero-grid > *,
+.section-head > *,
+.order-grid > *,
+.order-card,
+.order-side,
+.order-meta > *,
+.product-grid > *,
+.product-card,
+.product-body,
+.about-story-grid > *,
+.about-map-head > *,
+.admin-main,
+.admin-content,
+.card,
+.panel,
+.form-card,
+.stat-card {
+  min-width: 0;
+}
+
+/* Textos largos (códigos de pedido, correos, direcciones) sin desbordar */
+.order-code,
+.order-sub,
+.product-desc,
+.about-story-body p,
+.about-map-address,
+.admin-user-info strong,
+.data-table td,
+.summary-row > * {
+  overflow-wrap: anywhere;
+}
+
+/* Tablas del panel: desplazamiento suave en pantallas táctiles */
+.table-wrap {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Formularios cómodos y sin zoom automático en móvil */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    max-width: 100%;
+  }
+
+  .btn {
+    max-width: 100%;
+  }
+}
+
+/* ==========================================================================
+   Imagen de redes sociales de borde a borde en todas las páginas
+   (se fuerza al final para que ningún otro CSS la vuelva a encajonar)
+   ========================================================================== */
+
+.site-footer {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.site-footer .footer-inner {
+  width: 100%;
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.site-footer .footer-inner > .social-banner {
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.site-footer .footer-inner > .legal {
+  width: min(1180px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: calc(16px + env(safe-area-inset-left, 0px));
+  padding-right: calc(16px + env(safe-area-inset-right, 0px));
+}
+
