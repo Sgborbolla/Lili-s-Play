@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<%- include('../partials/head', { title: 'Ingresar · Panel', themeColor: '#f6f8fc', pageCss: ['/css/admin.css', '/css/watermarks.css'], robots: 'noindex,nofollow,noarchive' }) %>
+<%- include('../partials/head', { title: 'Ingresar · Panel', themeColor: '#f6f8fc', pageCss: ['/css/admin.css?v=5', '/css/watermarks.css?v=2'], robots: 'noindex,nofollow,noarchive' }) %>
 </head>
-<body class="login-body">
-<%- include('../partials/watermarks', { watermarkClass: 'watermarks--light' }) %>
+<body class="login-body" id="top">
+<%- include('../partials/watermarks', { watermarkClass: 'watermarks--admin' }) %>
 
 <div class="login-wrap">
   <section class="login-brand">
     <%- include('../partials/brand', { brandHref: '/' }) %>
     <div>
       <h2>Modo<br><span>administrador</span></h2>
-      <p>Pedidos, productos, precios y ajustes del salón. Esta zona es solo para el personal de Lili’s Play.</p>
+      <p>Pedidos, productos, precios y ajustes del salón. Esta zona es solo para el personal de Lily's Plays.</p>
     </div>
     <span class="login-symbols" aria-hidden="true"><span>△</span><span>○</span><span>✕</span><span>□</span></span>
   </section>
@@ -44,6 +44,13 @@
     <p class="login-back"><a href="/">← Volver al menú público</a></p>
   </section>
 </div>
+
+<footer class="admin-foot admin-foot--login">
+  <p class="legal">
+    <span><%= settings.footer_credit %></span>
+    <a href="#top">Volver arriba</a>
+  </p>
+</footer>
 
 <script src="/js/admin.js"></script>
 </body>

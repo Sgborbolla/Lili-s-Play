@@ -49,7 +49,8 @@ if ('IntersectionObserver' in window) {
 const openStatus = document.getElementById('open-status');
 const openHours = document.getElementById('open-hours');
 const openSep = document.getElementById('open-sep');
-if (openStatus || openHours) {
+const socialLinkEls = document.querySelectorAll('[data-social]');
+if (openStatus || openHours || socialLinkEls.length) {
   fetch('/api/public-info', { headers: { Accept: 'application/json' } })
     .then((response) => (response.ok ? response.json() : null))
     .then((info) => {
@@ -63,8 +64,17 @@ if (openStatus || openHours) {
         openHours.hidden = !info.opening_hours;
       }
       if (openSep) openSep.hidden = !info.opening_status || !info.opening_hours;
+      socialLinkEls.forEach((link) => {
+        const href = info.social?.[link.dataset.social];
+        if (!href) return;
+        const waText = link.dataset.waText;
+        link.setAttribute('href', waText ? `${href}${href.includes('?') ? '&' : '?'}text=${encodeURIComponent(waText)}` : href);
+        link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'noopener');
+        link.removeAttribute('data-empty');
+      });
     })
-    .catch(() => { /* se mantiene el horario de respaldo */ });
+    .catch(() => { /* se mantiene el horario y los enlaces de respaldo */ });
 }
 
 const station = new URLSearchParams(window.location.search).get('station');
@@ -76,9 +86,8 @@ if (station) {
 }
 
 document.querySelectorAll('.social-banner__link').forEach((link) => {
-  const empty = link.getAttribute('href') === '#' || link.hasAttribute('data-empty');
   link.addEventListener('click', (event) => {
-    if (empty) event.preventDefault();
+    if (link.getAttribute('href') === '#' || link.hasAttribute('data-empty')) event.preventDefault();
   });
   link.addEventListener('pointerdown', () => {
     link.classList.add('is-flash');

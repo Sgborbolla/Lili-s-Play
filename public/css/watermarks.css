@@ -107,3 +107,36 @@
 @media print {
   .watermarks { display: none; }
 }
+
+.watermarks--admin { color: #006fcd; }
+
+.watermarks--admin::before {
+  opacity: .055;
+  mix-blend-mode: multiply;
+  filter: saturate(1.18) contrast(1.04);
+}
+
+.watermarks--admin .wm {
+  opacity: .075;
+  filter: drop-shadow(0 0 10px rgba(10, 185, 230, .16));
+}
+
+.watermarks--admin .wm-text { color: #121826; }
+.watermarks--admin .wm-btn { text-shadow: 0 0 16px currentColor; opacity: .08; }
+.watermarks--admin .wm-2,
+.watermarks--admin .wm-5,
+.watermarks--admin .wm-11,
+.watermarks--admin .wm-13 { color: #006fcd; }
+.watermarks--admin .wm-3,
+.watermarks--admin .wm-6,
+.watermarks--admin .wm-12,
+.watermarks--admin .wm-14 { color: #7928ca; }
+.watermarks--admin .wm-1,
+.watermarks--admin .wm-4,
+.watermarks--admin .wm-15,
+.watermarks--admin .wm-18 { color: #ff3c28; }
+
+@media (max-width: 760px) {
+  .watermarks--admin::before { opacity: .045; }
+  .watermarks--admin .wm { opacity: .06; }
+}

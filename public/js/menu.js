@@ -7,7 +7,7 @@
   const mode = currency.mode || 'USD';
 
   const cart = new Map();
-  const STORAGE_KEY = 'lilis-play-cart';
+  const STORAGE_KEY = 'lilys-plays-cart';
 
   const drawer = document.getElementById('carrito');
   const backdrop = document.getElementById('cart-backdrop');
@@ -52,7 +52,7 @@
   function money(cents, code) {
     const isCuc = code === 'CUC';
     const locale = isCuc ? (currency.localeCuc || 'es-CU') : (currency.locale || 'en-US');
-    const symbol = isCuc ? (currency.symbolCuc || 'CUC$') : (currency.symbol || 'US$');
+    const symbol = isCuc ? (currency.symbolCuc || '$') : (currency.symbol || 'US$');
     const value = (Number(cents) || 0) / 100;
     try {
       return `${symbol}${new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)}`;

@@ -36,7 +36,7 @@
 </g>
 <text x="88" y="103" font-family="Space Grotesk, DejaVu Sans, sans-serif" font-size="12" font-weight="700" letter-spacing="4" fill="#7a8ba1">SEGUINOS</text>
 <text x="88" y="150" font-family="Syne, DejaVu Sans, sans-serif" font-size="34" font-weight="800" fill="#ffffff">Nuestras redes</text>
-<text x="88" y="179" font-family="Space Grotesk, DejaVu Sans, sans-serif" font-size="14" fill="#8fa0b5">Conectá con Lili’s Play y enterate de todo.</text>
+<text x="88" y="179" font-family="Space Grotesk, DejaVu Sans, sans-serif" font-size="14" fill="#8fa0b5">Conectá con Lily's Plays y enterate de todo.</text>
 <rect x="88" y="194" width="54" height="3" rx="1.5" fill="url(#accent)"/>
 
   <rect x="262" y="372" width="114" height="112" rx="34" fill="#000" opacity=".55" filter="url(#blur8)"/>
@@ -110,6 +110,6 @@
 <text x="876.0" y="505" text-anchor="middle" font-family="Space Grotesk, DejaVu Sans, sans-serif" font-size="12" font-weight="700" letter-spacing="1.5" fill="#FF3B3B">YOUTUBE</text>
 
 <line x1="88" y1="548" x2="1112" y2="548" stroke="#ffffff" stroke-opacity=".07" stroke-width="1"/>
-<text x="88" y="576" font-family="Space Grotesk, DejaVu Sans, sans-serif" font-size="12" fill="#5f7188">Lili’s Play · Salón Gamer y Bistró</text>
+<text x="88" y="576" font-family="Space Grotesk, DejaVu Sans, sans-serif" font-size="12" fill="#5f7188">Lily's Plays · Salón Gamer y Bistró</text>
 <text x="1112" y="576" text-anchor="end" font-family="Space Grotesk, DejaVu Sans, sans-serif" font-size="12" fill="#5f7188">Tocá un ícono para seguirnos</text>
 </svg>

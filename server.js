@@ -7,7 +7,7 @@ const multer = require('multer');
 const QRCode = require('qrcode');
 
 const { db, getSettings, setSetting } = require('./lib/db');
-const { formatMoney, formatPrice, orderUnitPrice, parsePriceToCents, formatDate, nowLocal, statusMeta, STATUS } = require('./lib/format');
+const { formatMoney, formatAmount, formatPrice, orderUnitPrice, parsePriceToCents, formatDate, nowLocal, statusMeta, STATUS } = require('./lib/format');
 const { hashPassword, verifyPassword, createToken, verifyToken, parseCookies, serializeCookie } = require('./lib/auth');
 
 const app = express();
@@ -57,6 +57,7 @@ app.use((req, res, next) => {
   const settings = getSettings();
   res.locals.settings = settings;
   res.locals.money = (cents, code) => formatMoney(cents, settings, code);
+  res.locals.amount = (cents, code) => formatAmount(cents, settings, code);
   res.locals.price = (product) => formatPrice(product, settings);
   res.locals.fmtDate = formatDate;
   res.locals.statusMeta = statusMeta;
@@ -195,7 +196,7 @@ app.get('/', (req, res) => {
   }));
 
   res.render('menu', {
-    title: "Menú · Lili's Play",
+    title: "Menú · Lily's Plays",
     categories: grouped,
     featured,
     station,
@@ -205,11 +206,42 @@ app.get('/', (req, res) => {
   });
 });
 
+function publicSocialLinks(settings) {
+  const raw = (value) => String(value || '').trim();
+  const asUrl = (value) => {
+    const text = raw(value);
+    if (!text) return '';
+    return /^https?:\/\//i.test(text) ? text : `https://${text}`;
+  };
+  const wa = raw(settings.social_whatsapp);
+  const mail = raw(settings.social_email);
+  const yt = raw(settings.social_youtube);
+  return {
+    whatsapp: wa ? (/^https?:\/\//i.test(wa) ? wa : `https://wa.me/${wa.replace(/\D/g, '')}`) : '',
+    facebook: asUrl(settings.social_facebook),
+    instagram: asUrl(settings.social_instagram),
+    email: mail ? (/^mailto:/i.test(mail) ? mail : `mailto:${mail}`) : '',
+    youtube: yt
+      ? (/^https?:\/\//i.test(yt)
+        ? yt
+        : (/^(www\.)?(youtube\.com|youtu\.be)/i.test(yt) ? `https://${yt}` : `https://youtube.com/@${yt.replace(/^@/, '')}`))
+      : '',
+    website: asUrl(settings.social_website),
+  };
+}
+
 app.get('/api/public-info', (req, res) => {
   res.set('Cache-Control', 'no-store');
   res.json({
     opening_status: res.locals.settings.opening_status || '',
     opening_hours: res.locals.settings.opening_hours || '',
+    social: publicSocialLinks(res.locals.settings),
+  });
+});
+
+app.get('/acerca', (req, res) => {
+  return res.render('about', {
+    title: "Acerca de Lily's Plays · Salón Gamer y Bistró",
   });
 });
 
@@ -357,6 +389,25 @@ function loadOrdersWithItems(limit = 100) {
 app.get('/admin/pedidos', requireAdmin, (req, res) => {
   const orderList = loadOrdersWithItems(100);
   res.render('admin/orders', { title: 'Pedidos', orders: orderList });
+});
+
+app.post('/admin/pedidos/limpiar', requireAdmin, (req, res) => {
+  const total = Number(db.prepare('SELECT COUNT(*) AS c FROM orders').get().c) || 0;
+  try {
+    db.exec('BEGIN');
+    db.prepare('DELETE FROM order_items').run();
+    db.prepare('DELETE FROM orders').run();
+    db.prepare("DELETE FROM sqlite_sequence WHERE name IN ('orders', 'order_items')").run();
+    db.exec('COMMIT');
+  } catch (error) {
+    try { db.exec('ROLLBACK'); } catch {}
+    console.error('No se pudieron limpiar los pedidos:', error);
+    return res.redirect(flash('/admin/pedidos', 'err', 'No se pudieron limpiar los pedidos. Inténtalo de nuevo.'));
+  }
+  const message = total
+    ? `Se eliminaron ${total} ${total === 1 ? 'pedido' : 'pedidos'} y se reiniciaron los resúmenes.`
+    : 'No había pedidos para limpiar. Los resúmenes ya están en cero.';
+  return res.redirect(flash('/admin/pedidos', 'ok', message));
 });
 
 app.post('/admin/pedidos/:id/estado', requireAdmin, (req, res) => {
@@ -623,10 +674,21 @@ app.post('/admin/ajustes', requireAdmin, (req, res) => {
   const textKeys = [
     'brand_name', 'brand_sub', 'currency_code', 'currency_symbol', 'currency_symbol_cuc', 'currency_locale', 'currency_locale_cuc',
     'default_station', 'opening_status', 'opening_hours', 'kitchen_hours', 'service_note', 'hero_eyebrow', 'hero_title',
-    'hero_text', 'footer_credit', 'qr_public_url', 'social_facebook', 'social_instagram', 'social_whatsapp', 'social_email', 'social_youtube',
+    'hero_text', 'footer_credit', 'qr_public_url', 'social_facebook', 'social_instagram', 'social_whatsapp', 'social_website', 'social_email', 'social_youtube',
+    'about_eyebrow', 'about_title_primary', 'about_title_accent', 'about_subtitle', 'about_intro',
+    'about_story_eyebrow', 'about_story_title', 'about_story_intro', 'about_story_text', 'about_quote',
+    'about_future_eyebrow', 'about_future_title', 'about_future_accent', 'about_future_text', 'about_future_platforms',
+    'about_map_eyebrow', 'about_map_title', 'about_map_text', 'about_address', 'about_map_caption', 'about_map_url',
   ];
+  const longTextKeys = new Set([
+    'about_story_text', 'about_intro', 'about_story_intro', 'about_future_text',
+    'about_map_text', 'about_address', 'about_quote', 'about_map_url',
+  ]);
   for (const key of textKeys) {
-    if (body[key] !== undefined) setSetting(key, String(body[key]).trim().slice(0, 400));
+    if (body[key] !== undefined) {
+      const max = key === 'about_story_text' ? 6000 : longTextKeys.has(key) ? 800 : 400;
+      setSetting(key, String(body[key]).trim().slice(0, max));
+    }
   }
   if (body.currency_mode !== undefined) {
     const mode = ['USD', 'CUC', 'BOTH'].includes(body.currency_mode) ? body.currency_mode : 'USD';
@@ -694,7 +756,7 @@ app.get('/admin/qr.png', requireAdmin, async (req, res) => {
     });
     res.setHeader('Content-Type', 'image/png');
     if (req.query.download === '1') {
-      res.setHeader('Content-Disposition', `attachment; filename="lilis-play-qr${station ? `-${station.replace(/[^a-z0-9]/gi, '')}` : ''}.png"`);
+      res.setHeader('Content-Disposition', `attachment; filename="lilys-plays-qr${station ? `-${station.replace(/[^a-z0-9]/gi, '')}` : ''}.png"`);
     }
     res.send(buffer);
   } catch (err) {
@@ -715,7 +777,7 @@ app.get('/admin/qr.svg', requireAdmin, async (req, res) => {
     });
     res.setHeader('Content-Type', 'image/svg+xml');
     if (req.query.download === '1') {
-      res.setHeader('Content-Disposition', `attachment; filename="lilis-play-qr${station ? `-${station.replace(/[^a-z0-9]/gi, '')}` : ''}.svg"`);
+      res.setHeader('Content-Disposition', `attachment; filename="lilys-plays-qr${station ? `-${station.replace(/[^a-z0-9]/gi, '')}` : ''}.svg"`);
     }
     res.send(svg);
   } catch (err) {
@@ -737,7 +799,7 @@ app.use((err, req, res, next) => {
 const server = app.listen(PORT, '0.0.0.0', () => {
   const ip = getLanIp();
   console.log('');
-  console.log("  Lili's Play · Salón Gamer y Bistró");
+  console.log("  Lily's Plays · Salón Gamer y Bistró");
   console.log('  ------------------------------------------');
   console.log(`  Menú local:    http://localhost:${PORT}`);
   console.log(`  Menú en LAN:   http://${ip}:${PORT}`);

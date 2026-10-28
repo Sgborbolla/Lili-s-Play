@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<%- include('partials/head', {
+  title: settings.about_subtitle + ' · ' + settings.brand_name,
+  description: settings.about_intro,
+  themeColor: '#06080c',
+  pageCss: ['/css/social.css?v=4', '/css/watermarks.css', '/css/welcome.css?v=7', '/css/ps4-theme.css?v=8', '/css/about.css?v=11'],
+  manifest: true
+}) %>
+</head>
+<body class="page-about" id="top">
+<%- include('partials/watermarks') %>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="header-logo" href="/bienvenida.html" aria-label="Lily's Plays, inicio">
+      <img src="/img/logo-header.png" alt="Lily's Plays · Salón Gamer y Bistró" width="1772" height="592">
+    </a>
+  </div>
+</header>
+
+<main id="inicio">
+  <section class="hero about-intro" aria-labelledby="about-title">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow"><%= settings.about_eyebrow %></p>
+        <h1 id="about-title"><%= settings.about_title_primary %><br><span><%= settings.about_title_accent %></span></h1>
+        <p class="about-hero-subtitle"><%= settings.about_subtitle %></p>
+        <p class="lead"><%= settings.about_intro %></p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="/" data-menu-link>Ver el menú <span>→</span></a>
+          <a class="btn btn-ghost" href="/bienvenida.html">Ver inicio</a>
+        </div>
+        <div class="hero-meta">
+          <span class="dot"></span>
+          <span id="open-status"><%= settings.opening_status %></span>
+          <span id="open-sep"> · </span>
+          <span id="open-hours"><%= settings.opening_hours %></span>
+          <span class="sep"></span>
+          <span>Palma Soriano</span>
+          <span class="sep"></span>
+          <span>Reservas</span>
+        </div>
+        <div class="ps-buttons" aria-hidden="true">
+          <span style="--c:#5efc8d">△</span>
+          <span style="--c:#ff4d6d">○</span>
+          <span style="--c:#5bbcff">✕</span>
+          <span style="--c:#ff6bd6">□</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker" aria-label="Próximamente en Lily's Plays">
+    <div class="ticker-track">
+      <span><b>Muy pronto</b> · PS5, Xbox y PC se suman a Lily's Plays</span>
+      <span><i>Más jugadores</i> · Más consolas, más espacio para compartir</span>
+      <span><b>Lo que viene</b> · Una zona gamer preparada para todos</span>
+      <span><i>Lily's Plays</i> · Del Family a la PS4, y ahora mucho más</span>
+      <span><b>Muy pronto</b> · PS5, Xbox y PC se suman a Lily's Plays</span>
+      <span><i>Más jugadores</i> · Más consolas, más espacio para compartir</span>
+      <span><b>Lo que viene</b> · Una zona gamer preparada para todos</span>
+      <span><i>Lily's Plays</i> · Del Family a la PS4, y ahora mucho más</span>
+    </div>
+  </div>
+
+  <section class="section" id="historia" aria-labelledby="story-title">
+    <div class="section-head reveal">
+      <div>
+        <p class="eyebrow"><%= settings.about_story_eyebrow %></p>
+        <h2 id="story-title"><%= settings.about_story_title %></h2>
+        <p><%= settings.about_story_intro %></p>
+      </div>
+      <a class="link-more" href="#ubicacion">Estamos aquí →</a>
+    </div>
+
+    <div class="about-story-grid">
+      <div class="about-story-body reveal">
+        <% const storyParagraphs = String(settings.about_story_text || '').split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean); %>
+        <% storyParagraphs.forEach((paragraph) => { %>
+        <p><%= paragraph %></p>
+        <% }); %>
+      </div>
+
+      <aside class="about-quote reveal" aria-label="Nuestra esencia">
+        <span aria-hidden="true">“</span>
+        <p><%= settings.about_quote %></p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="reserve-wrap about-future" id="muy-pronto" aria-labelledby="future-title">
+    <div class="reserve-card">
+      <img src="/img/stock/restaurant.jpg" alt="Interior del salón de Lily's Plays" loading="lazy" decoding="async">
+      <div class="reserve-copy">
+        <p class="eyebrow"><%= settings.about_future_eyebrow %></p>
+        <h2 id="future-title"><%= settings.about_future_title %><br><span><%= settings.about_future_accent %></span></h2>
+        <p><%= settings.about_future_text %></p>
+        <div class="future-platforms" aria-label="Próximas plataformas">
+          <% String(settings.about_future_platforms || '').split(',').map((platform) => platform.trim()).filter(Boolean).forEach((platform) => { %>
+          <span><%= platform %></span>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-map-section" id="ubicacion" aria-labelledby="map-title">
+    <div class="about-map-head reveal">
+      <div>
+        <p class="eyebrow"><%= settings.about_map_eyebrow %></p>
+        <h2 id="map-title"><%= settings.about_map_title %></h2>
+        <p><%= settings.about_map_text %></p>
+        <p class="about-map-address"><%= settings.about_address %></p>
+      </div>
+      <a class="link-more" href="<%= settings.about_map_url %>" target="_blank" rel="noopener">Abrir en Google Maps →</a>
+    </div>
+
+    <figure class="about-map reveal">
+      <img src="/img/ubicacion/lilys-plays-satelital-limpia.jpg" alt="Foto satelital de Lily's Plays en Palma Soriano" width="1000" height="700" loading="lazy" decoding="async">
+      <span class="map-marker" aria-hidden="true">
+        <span class="map-marker__logo"><img src="/logo-icon.png" alt="" width="512" height="512" loading="lazy" decoding="async"></span>
+        <span class="map-marker__arrow"></span>
+        <span class="map-marker__halo"></span>
+      </span>
+      <figcaption><%= settings.about_map_caption %></figcaption>
+    </figure>
+  </section>
+</main>
+
+<%- include('partials/footer') %>
+
+<script src="/js/welcome.js?v=2"></script>
+</body>
+</html>

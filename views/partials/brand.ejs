@@ -1,9 +1,9 @@
 <%
   const brandHrefValue = typeof brandHref !== 'undefined' ? brandHref : '/';
-  const brandWords = String(settings.brand_name || "Lili's Play").trim().split(/\s+/);
+  const brandWords = String(settings.brand_name || "Lily's Plays").trim().split(/\s+/);
   const brandLast = brandWords.length > 1 ? brandWords.pop() : '';
 %>
-<a class="brand" href="<%= brandHrefValue %>" aria-label="<%= settings.brand_name || "Lili's Play" %>, inicio">
+<a class="brand" href="<%= brandHrefValue %>" aria-label="<%= settings.brand_name || "Lily's Plays" %>, inicio">
   <span class="brand-badge"><img src="/logo-icon.png" alt="" width="512" height="512"></span>
   <span class="brand-text">
     <span class="brand-name"><%= brandWords.join(' ') %> <em><%= brandLast %></em></span>

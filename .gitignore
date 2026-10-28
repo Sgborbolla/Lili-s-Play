@@ -4,3 +4,6 @@ public/uploads/
 *.log
 .env
 .DS_Store
+tmp-img/
+.server.pid
+Reportes/

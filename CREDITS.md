@@ -7,5 +7,7 @@
 ## Fotos de stock de la bienvenida
 
 - Consolas, gaming y comida: [Unsplash](https://unsplash.com/license). Fotos usadas como material de muestra; se pueden reemplazar por fotos propias.
-- Fotos de controles, juegos y marcas de consolas: proporcionadas por el cliente en `Pictures/Lili's Play`.
-- Banner principal: `Logo Lili 2.jpg`, proporcionado por el cliente.
+- Fotos de controles, juegos y marcas de consolas: proporcionadas por el cliente en su carpeta de imágenes.
+- Banner principal: `Bienvenida 2 Lilys.jpg`, proporcionado por el cliente.
+- Logotipo: `Logotipo 2 Lily.jpg`, proporcionado por el cliente.
+- Banner de redes sociales: `Redes Sociales new.jpg`, proporcionado por el cliente.

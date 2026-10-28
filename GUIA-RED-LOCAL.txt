@@ -1,4 +1,4 @@
-LILI'S PLAY — GUÍA DE RED LOCAL
+LILY'S PLAYS — GUÍA DE RED LOCAL
 ================================
 
 Esta guía explica cómo funciona el menú en una red local, cómo entrar al
@@ -9,7 +9,7 @@ usa una VPN.
 1. CÓMO FUNCIONA
 ----------------
 
-- La PC es el servidor. Allí corre Lili's Play y guarda todo:
+- La PC es el servidor. Allí corre Lily's Plays y guarda todo:
   base de datos en data/ e imágenes en public/uploads/.
 - El servidor escucha en el puerto 3000 y en todas las interfaces de red
   (0.0.0.0), así que funciona con la IP que tenga la PC en ese momento.
@@ -49,7 +49,7 @@ en el panel, en Ajustes y en Códigos QR.
 Acceso rápido al panel (solo personal):
   - En la PC: abrir http://localhost:3000/admin y guardarlo en favoritos.
   - Desde el menú público: Ctrl + Shift + A.
-  - En pantalla táctil: mantener presionado el logo de Lili's Play
+  - En pantalla táctil: mantener presionado el logo de Lily's Plays
     durante 1.4 segundos.
 
 El acceso rápido no muestra ningún enlace visible al cliente. La
@@ -158,7 +158,7 @@ Recomendación:
 Si los teléfonos no pueden abrir el menú:
 
 1. Abrir Firewall de Windows Defender > Permitir una aplicación.
-2. Permitir Lili's Play o Node.js en redes privadas.
+2. Permitir Lily's Plays o Node.js en redes privadas.
 3. Si se usa el puerto 3000, permitir también ese puerto.
 4. Verificar que la red de la PC esté marcada como "Privada", no como
    "Pública".
@@ -211,7 +211,7 @@ Con eso se puede restaurar el menú, los pedidos y las fotos en otra PC.
 
 El menú se puede instalar como aplicación desde Chrome/Edge:
   Menú del navegador > Instalar aplicación (o "Guardar y compartir" >
-  Instalar Lili's Play).
+  Instalar Lily's Plays).
 
 También se puede abrir en modo ventana, sin barra de direcciones, con
 Chrome o Edge y el parámetro --app:

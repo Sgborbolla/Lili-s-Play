@@ -15,6 +15,9 @@
   </div>
   <span class="spacer"></span>
   <a class="btn btn-outline btn-sm" href="/admin/pedidos">Actualizar</a>
+  <form class="inline-form" method="post" action="/admin/pedidos/limpiar" data-confirm="¿Borrar todos los pedidos y reiniciar los resúmenes? Se eliminarán los pedidos y sus detalles. Esta acción no se puede deshacer.">
+    <button class="btn btn-danger-soft btn-sm" type="submit" <%= orders.length ? '' : 'disabled' %>>Limpiar pedidos</button>
+  </form>
 </div>
 
 <% if (!orders.length) { %>

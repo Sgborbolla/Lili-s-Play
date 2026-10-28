@@ -622,3 +622,273 @@ body {
   font-weight: 700;
   letter-spacing: .02em;
 }
+
+/* Prioridad final para el fondo gamer del menú expandido */
+
+@media (max-width: 900px) {
+  .site-header .nav {
+    border-color: rgba(94, 252, 141, .26);
+    background:
+      repeating-linear-gradient(0deg, rgba(125, 244, 255, .035) 0 1px, transparent 1px 5px),
+      radial-gradient(460px 260px at 4% 0%, rgba(34, 230, 255, .22), transparent 64%),
+      radial-gradient(420px 250px at 100% 100%, rgba(255, 43, 214, .18), transparent 64%),
+      radial-gradient(360px 240px at 50% 45%, rgba(94, 252, 141, .08), transparent 68%),
+      linear-gradient(145deg, #071426, #160a30 52%, #260914);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .10),
+      inset 0 0 70px rgba(34, 230, 255, .045),
+      0 30px 76px rgba(0, 0, 0, .64),
+      0 0 50px rgba(34, 230, 255, .12);
+  }
+}
+
+/* Menú desplegable de bienvenida: botón y enlaces con acabado gamer */
+
+@media (max-width: 900px) {
+  .site-header .nav {
+    inset: 78px 8px auto;
+    padding: 18px;
+    border: 1px solid rgba(94, 252, 141, .30);
+    border-radius: 24px;
+    background:
+      repeating-linear-gradient(0deg, rgba(125, 244, 255, .04) 0 1px, transparent 1px 5px),
+      radial-gradient(460px 260px at 4% 0%, rgba(34, 230, 255, .24), transparent 64%),
+      radial-gradient(420px 250px at 100% 100%, rgba(255, 43, 214, .20), transparent 64%),
+      radial-gradient(360px 240px at 50% 45%, rgba(94, 252, 141, .09), transparent 68%),
+      linear-gradient(145deg, #071426, #160a30 52%, #260914);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .12),
+      inset 0 0 70px rgba(34, 230, 255, .05),
+      0 30px 76px rgba(0, 0, 0, .64),
+      0 0 50px rgba(34, 230, 255, .14);
+  }
+
+  .site-header .nav a {
+    padding: 14px 15px;
+    border-bottom: 1px solid rgba(125, 244, 255, .12);
+    border-radius: 11px;
+    color: #f2fbff;
+    font-family: "Syne", sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: .055em;
+    text-transform: uppercase;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, .55), 0 0 14px rgba(34, 230, 255, .12);
+  }
+
+  .site-header .nav a::before {
+    content: "▸";
+    margin-right: 9px;
+    color: #5efc8d;
+    text-shadow: 0 0 10px rgba(94, 252, 141, .75);
+  }
+
+  .site-header .nav a:hover,
+  .site-header .nav a:focus-visible {
+    padding-left: 20px;
+    color: #fff;
+    background: linear-gradient(90deg, rgba(34, 230, 255, .18), rgba(255, 43, 214, .10));
+  }
+
+  .site-header .nav a:last-child {
+    border-bottom: 0;
+  }
+
+  .site-header .nav-toggle {
+    border-color: rgba(125, 244, 255, .40);
+    color: #eaffff;
+    background: linear-gradient(135deg, #0058b8, #7928ca 58%, #d92c3f);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .24),
+      0 3px 0 #041e3e,
+      0 9px 18px rgba(0, 0, 0, .38),
+      0 0 20px rgba(34, 230, 255, .12);
+    font-family: "Syne", sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  .site-header .nav-toggle[aria-expanded="true"] {
+    color: #06121f;
+    background: linear-gradient(135deg, #7df4ff, #5efc8d 55%, #ffd166);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .55),
+      0 2px 0 #063a72,
+      0 0 24px rgba(34, 230, 255, .38);
+  }
+}
+
+/* Menú expandible: dibujos más visibles y enlaces con efecto de mando */
+
+@media (max-width: 900px) {
+  .site-header .nav-deco__btn {
+    opacity: .42;
+    filter: drop-shadow(0 0 9px currentColor);
+  }
+
+  .site-header .nav-deco__game {
+    opacity: .26;
+    text-shadow: 0 0 12px rgba(125, 244, 255, .28);
+  }
+
+  .site-header .nav-deco__icon {
+    opacity: .22;
+    filter: drop-shadow(0 0 10px rgba(125, 244, 255, .28));
+  }
+
+  .site-header .nav a {
+    top: 0;
+    transition:
+      top .14s ease,
+      transform .14s ease,
+      padding-left .14s ease,
+      background .14s ease,
+      box-shadow .14s ease,
+      filter .14s ease;
+  }
+
+  @media (hover: hover) {
+    .site-header .nav a:hover {
+      top: -2px;
+      transform: translateY(-1px);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .12),
+        0 4px 0 rgba(2, 16, 34, .8),
+        0 10px 22px rgba(0, 0, 0, .35),
+        0 0 18px rgba(34, 230, 255, .10);
+      filter: brightness(1.08);
+    }
+  }
+
+  .site-header .nav a:active {
+    top: 2px;
+    transform: translateY(2px) scale(.985);
+    color: #fff;
+    background: linear-gradient(90deg, rgba(125, 244, 255, .24), rgba(255, 43, 214, .14));
+    box-shadow:
+      inset 0 4px 10px rgba(0, 0, 0, .55),
+      inset 0 1px 0 rgba(255, 255, 255, .08);
+    filter: brightness(.84) saturate(.94);
+  }
+}
+
+/* ===== Botones PlayStation 3D (bienvenida y acerca) ===== */
+.ps-buttons {
+  gap: 12px;
+}
+
+.ps-buttons span {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border: 1px solid color-mix(in srgb, var(--c) 56%, transparent);
+  border-radius: 50%;
+  color: var(--c);
+  background:
+    radial-gradient(circle at 34% 25%, rgba(255, 255, 255, .55), transparent 31%),
+    radial-gradient(circle at 50% 68%, color-mix(in srgb, var(--c) 20%, #05080e) 0%, #05080e 72%);
+  box-shadow:
+    inset 0 2px 2px rgba(255, 255, 255, .38),
+    inset 0 -5px 8px rgba(0, 0, 0, .72),
+    inset 0 0 14px color-mix(in srgb, var(--c) 30%, transparent),
+    0 5px 0 color-mix(in srgb, var(--c) 18%, #02050a),
+    0 9px 16px rgba(0, 0, 0, .42),
+    0 0 22px color-mix(in srgb, var(--c) 36%, transparent);
+  font-size: 21px;
+  text-shadow: 0 0 9px var(--c), 0 2px 0 rgba(0, 0, 0, .6);
+  transform: translateY(0);
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+
+.ps-buttons span::after {
+  content: "";
+  position: absolute;
+  top: 12%;
+  left: 21%;
+  width: 32%;
+  height: 22%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .52), transparent);
+  filter: blur(.4px);
+  pointer-events: none;
+}
+
+.ps-buttons span:hover {
+  filter: brightness(1.12);
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 2px 2px rgba(255, 255, 255, .42),
+    inset 0 -5px 8px rgba(0, 0, 0, .7),
+    inset 0 0 16px color-mix(in srgb, var(--c) 38%, transparent),
+    0 7px 0 color-mix(in srgb, var(--c) 20%, #02050a),
+    0 12px 22px rgba(0, 0, 0, .45),
+    0 0 30px color-mix(in srgb, var(--c) 48%, transparent);
+}
+
+.ps-buttons span:active {
+  transform: translateY(3px);
+  box-shadow:
+    inset 0 2px 3px rgba(0, 0, 0, .45),
+    inset 0 -3px 6px rgba(0, 0, 0, .65),
+    0 2px 0 color-mix(in srgb, var(--c) 14%, #02050a),
+    0 5px 10px rgba(0, 0, 0, .38),
+    0 0 16px color-mix(in srgb, var(--c) 28%, transparent);
+}
+
+@media (max-width: 620px) {
+  .ps-buttons span {
+    width: 40px;
+    height: 40px;
+    font-size: 19px;
+  }
+}
+
+/* ===== Legibilidad de textos pequeños ===== */
+.hero-copy .eyebrow {
+  color: #064fc4;
+  font-size: 10px;
+  letter-spacing: .18em;
+}
+
+.hero-copy .lead {
+  color: #243b52;
+}
+
+.hero-copy .hero-meta {
+  color: #3a5068;
+  font-size: 11px;
+}
+
+.ticker-track {
+  color: #223142;
+  font-size: 10px;
+}
+
+.ticker-track b {
+  color: #0055d4;
+}
+
+.ticker-track i {
+  color: #0066f5;
+}
+
+.section-head p {
+  color: #d5e3f1;
+  font-size: 14px;
+}
+
+.stat span {
+  color: #b6c8da;
+  font-size: 11px;
+}
+
+.promo-copy p,
+.game-copy p,
+.console-body p,
+.retro-copy p,
+.reserve-copy p {
+  color: #d2e1ef;
+  font-size: 13px;
+}

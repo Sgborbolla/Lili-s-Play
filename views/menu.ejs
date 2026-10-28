@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<%- include('partials/head', { title: "Menú · Lili's Play", themeColor: '#f6f8fc', pageCss: ['/css/app.css', '/css/social.css', '/css/watermarks.css'], manifest: true }) %>
+<%- include('partials/head', { title: "Menú · Lily's Plays", themeColor: '#f6f8fc', pageCss: ['/css/app.css?v=5', '/css/social.css?v=4', '/css/watermarks.css'], manifest: true }) %>
 </head>
 <body class="page-menu" id="top">
 <%- include('partials/watermarks', { watermarkClass: 'watermarks--light' }) %>
@@ -21,7 +21,8 @@
     <%- include('partials/brand', { brandHref: '/' }) %>
     <span class="station-pill"><i></i> Estación #<%= station %></span>
     <nav class="header-links" aria-label="Navegación principal">
-      <a href="/bienvenida.html">← Bienvenida</a>
+      <a class="back-link" href="/bienvenida.html" aria-label="Volver a la bienvenida" title="Volver a la bienvenida">← Bienvenida</a>
+      <a href="/acerca">Acerca</a>
     </nav>
     <button class="cart-btn" id="cart-open" type="button" aria-controls="carrito" aria-expanded="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l1.4 13H4.6L6 7Z"/><path d="M9 7V5.5a3 3 0 0 1 6 0V7"/></svg>
@@ -58,8 +59,8 @@
 
         <div class="hero-art">
           <picture>
-            <source srcset="/img/banner-lili.webp" type="image/webp">
-            <img src="/img/banner-lili.jpg" alt="Letrero neón de Lili’s Play" width="1264" height="843" loading="eager" decoding="async">
+            <source srcset="/img/banner-lilys-plays.webp" type="image/webp">
+            <img src="/img/banner-lilys-plays.jpg" alt="Letrero neón de Lily's Plays" width="1264" height="843" loading="eager" decoding="async">
           </picture>
           <span class="hero-art-badge">● En vivo en sala</span>
           <div class="hero-art-caption">
@@ -240,7 +241,7 @@ window.LP = <%- JSON.stringify({
   currency: {
     mode: currencyMode,
     symbol: settings.currency_symbol || 'US$',
-    symbolCuc: settings.currency_symbol_cuc || 'CUC$',
+    symbolCuc: settings.currency_symbol_cuc || '$',
     locale: settings.currency_locale || 'en-US',
     localeCuc: settings.currency_locale_cuc || 'es-CU'
   },

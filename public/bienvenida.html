@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#06080c">
 <meta http-equiv="Cache-Control" content="no-store">
-<title>Lili’s Play · Bienvenido</title>
-<meta name="description" content="Consolas, juegos, comida y torneos en Lili’s Play. Entra al menú, reserva tu mesa y vive la noche gamer.">
+<title>Lily's Plays · Bienvenido</title>
+<meta name="description" content="Consolas, juegos, comida y torneos en Lily's Plays. Entra al menú, reserva tu mesa y vive la noche gamer.">
 <link rel="preload" href="/fonts/Syne.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="preload" href="/fonts/SpaceGrotesk.ttf" as="font" type="font/ttf" crossorigin>
-<link rel="stylesheet" href="/css/social.css">
+<link rel="stylesheet" href="/css/social.css?v=4">
 <link rel="stylesheet" href="/css/watermarks.css">
-<link rel="stylesheet" href="/css/welcome.css">
-<link rel="stylesheet" href="/css/ps4-theme.css?v=3">
+<link rel="stylesheet" href="/css/welcome.css?v=7">
+<link rel="stylesheet" href="/css/ps4-theme.css?v=8">
 <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -68,10 +68,10 @@
 
 <header class="site-header">
   <div class="header-inner">
-    <a class="brand" href="/bienvenida.html" aria-label="Lili’s Play, inicio">
+    <a class="brand" href="/bienvenida.html" aria-label="Lily's Plays, inicio">
       <span class="brand-badge"><img src="/logo-icon.png" alt="" width="512" height="512"></span>
       <span class="brand-text">
-        <span class="brand-name">Lili’s <em>Play</em></span>
+        <span class="brand-name">Lily's <em>Plays</em></span>
         <span class="brand-sub">Salón Gamer y Bistró</span>
       </span>
     </a>
@@ -84,7 +84,18 @@
       <a href="#juegos">Juegos</a>
       <a href="#menu">Menú</a>
       <a href="#promos">Promos</a>
+      <a href="/acerca">Acerca</a>
       <a href="#reservar">Reservar</a>
+      <span class="nav-deco" aria-hidden="true">
+        <span class="nav-deco__btn nav-deco__btn--tri">△</span>
+        <span class="nav-deco__btn nav-deco__btn--circle">○</span>
+        <span class="nav-deco__btn nav-deco__btn--cross">✕</span>
+        <span class="nav-deco__btn nav-deco__btn--square">□</span>
+        <span class="nav-deco__game nav-deco__game--tekken">TEKKEN</span>
+        <span class="nav-deco__game nav-deco__game--gta">GTA</span>
+        <svg class="nav-deco__icon nav-deco__icon--pad"><use href="#wm-pad"></use></svg>
+        <svg class="nav-deco__icon nav-deco__icon--disc"><use href="#wm-disc"></use></svg>
+      </span>
     </nav>
 
     <a class="header-cta" href="/" data-menu-link>Entrar al menú <span>→</span></a>
@@ -98,8 +109,8 @@
       <div class="hero-art">
         <span class="hero-badge"><i></i> Nuevo · Zona gamer</span>
         <picture>
-          <source srcset="/img/banner-lili.webp" type="image/webp">
-          <img src="/img/banner-lili.jpg" alt="Letrero neón de Lili’s Play, Salón Gamer y Bistró" width="1264" height="843" loading="eager" decoding="async">
+          <source srcset="/img/banner-lilys-plays.webp" type="image/webp">
+          <img src="/img/banner-lilys-plays.jpg" alt="Letrero neón de Lily's Plays, Salón Gamer y Bistró" width="1264" height="843" loading="eager" decoding="async">
         </picture>
       </div>
 
@@ -144,7 +155,7 @@
     </div>
   </div>
 
-  <section class="stats" aria-label="Números de Lili’s Play">
+  <section class="stats" aria-label="Números de Lily's Plays">
     <div class="stat"><strong>2 consolas</strong><span>PlayStation 4 · Full HD</span></div>
     <div class="stat"><strong>+30 juegos</strong><span>De clásicos a torneos</span></div>
     <div class="stat"><strong>Cocina propia</strong><span>Comida y bebida</span></div>
@@ -323,7 +334,7 @@
       <div>
         <p class="eyebrow">Zona retro</p>
         <h2 id="retro-title">Todas las épocas, una mesa.</h2>
-        <p>Del Family a la PS4. Si tuvo un mando, en Lili’s Play tiene un lugar.</p>
+        <p>Del Family a la PS4. Si tuvo un mando, en Lily's Plays tiene un lugar.</p>
       </div>
     </div>
 
@@ -350,14 +361,14 @@
 
   <section class="reserve-wrap" id="reservar" aria-labelledby="reserva-title">
     <div class="reserve-card">
-      <img src="/img/stock/restaurant.jpg" alt="Interior del salón de Lili’s Play" loading="lazy" decoding="async">
+      <img src="/img/stock/restaurant.jpg" alt="Interior del salón de Lily's Plays" loading="lazy" decoding="async">
       <div class="reserve-copy">
         <p class="eyebrow">Reserva tu mesa</p>
         <h2 id="reserva-title">La noche empieza aquí.</h2>
         <p>Elige consola, pide tu combo y quédate hasta que se termine la partida. Dinos cuántos vienen y te guardamos el mejor lugar.</p>
         <div class="reserve-actions">
-          <a class="btn btn-primary" href="#reservar">Reservar por WhatsApp <span>→</span></a>
-          <a class="btn btn-ghost" href="#reservar">Ver ubicación</a>
+          <a class="btn btn-primary" href="https://wa.me/5352740665?text=Hola%2C%20quiero%20reservar%20en%20Lily%27s%20Plays." target="_blank" rel="noopener" data-social="whatsapp" data-wa-text="Hola, quiero reservar en Lily's Plays.">Reservar por WhatsApp <span>→</span></a>
+          <a class="btn btn-ghost" href="/acerca">Acerca de Lily's Plays</a>
         </div>
       </div>
     </div>
@@ -371,13 +382,14 @@
       <div class="social-banner__inner">
         <picture>
           <source srcset="/img/redes-sociales-gamer.webp" type="image/webp">
-          <img class="social-banner__img" src="/img/redes-sociales-gamer.png" alt="Síguenos en nuestras redes: WhatsApp, Facebook, Instagram, Gmail y YouTube" width="1536" height="1024" loading="lazy" decoding="async">
+          <img class="social-banner__img" src="/img/redes-sociales-gamer.jpg" alt="Síguenos en nuestras redes: WhatsApp, Facebook, Instagram, Gmail, YouTube y Sitio web" width="1264" height="843" loading="lazy" decoding="async">
         </picture>
-        <a class="social-banner__link social-banner__link--whatsapp" href="#" aria-label="WhatsApp" title="WhatsApp"></a>
-        <a class="social-banner__link social-banner__link--facebook" href="#" aria-label="Facebook" title="Facebook"></a>
-        <a class="social-banner__link social-banner__link--instagram" href="#" aria-label="Instagram" title="Instagram"></a>
-        <a class="social-banner__link social-banner__link--gmail" href="#" aria-label="Gmail" title="Gmail"></a>
-        <a class="social-banner__link social-banner__link--youtube" href="#" aria-label="YouTube" title="YouTube"></a>
+        <a class="social-banner__link social-banner__link--whatsapp" href="#" aria-label="WhatsApp" title="WhatsApp" data-social="whatsapp"></a>
+        <a class="social-banner__link social-banner__link--facebook" href="#" aria-label="Facebook" title="Facebook" data-social="facebook"></a>
+        <a class="social-banner__link social-banner__link--instagram" href="#" aria-label="Instagram" title="Instagram" data-social="instagram"></a>
+        <a class="social-banner__link social-banner__link--gmail" href="#" aria-label="Gmail" title="Gmail" data-social="email"></a>
+        <a class="social-banner__link social-banner__link--youtube" href="#" aria-label="YouTube" title="YouTube" data-social="youtube"></a>
+        <a class="social-banner__link social-banner__link--web" href="#" aria-label="Sitio web" title="Sitio web" data-social="website"></a>
       </div>
     </section>
 
@@ -388,6 +400,6 @@
   </div>
 </footer>
 
-<script src="/js/welcome.js"></script>
+<script src="/js/welcome.js?v=2"></script>
 </body>
 </html>

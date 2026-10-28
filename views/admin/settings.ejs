@@ -113,6 +113,114 @@
       </div>
     </section>
 
+    <section class="form-card" id="acerca">
+      <div class="form-card-head">
+        <h2>Página Acerca de Lily's Plays</h2>
+        <p>Textos e información de la página pública <code>/acerca</code>.</p>
+      </div>
+      <div class="form-body">
+        <div class="field-row">
+          <div class="field">
+            <label for="about_eyebrow">Texto pequeño superior</label>
+            <input id="about_eyebrow" name="about_eyebrow" type="text" maxlength="80" value="<%= settings.about_eyebrow %>">
+          </div>
+          <div class="field">
+            <label for="about_subtitle">Subtítulo</label>
+            <input id="about_subtitle" name="about_subtitle" type="text" maxlength="80" value="<%= settings.about_subtitle %>">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="about_title_primary">Título · primera línea</label>
+            <input id="about_title_primary" name="about_title_primary" type="text" maxlength="60" value="<%= settings.about_title_primary %>">
+          </div>
+          <div class="field">
+            <label for="about_title_accent">Título · segunda línea</label>
+            <input id="about_title_accent" name="about_title_accent" type="text" maxlength="60" value="<%= settings.about_title_accent %>">
+          </div>
+        </div>
+        <div class="field">
+          <label for="about_intro">Introducción de la portada</label>
+          <textarea id="about_intro" name="about_intro" maxlength="800" rows="3"><%= settings.about_intro %></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="about_story_eyebrow">Texto pequeño de la historia</label>
+            <input id="about_story_eyebrow" name="about_story_eyebrow" type="text" maxlength="80" value="<%= settings.about_story_eyebrow %>">
+          </div>
+          <div class="field">
+            <label for="about_story_title">Título de la historia</label>
+            <input id="about_story_title" name="about_story_title" type="text" maxlength="120" value="<%= settings.about_story_title %>">
+          </div>
+        </div>
+        <div class="field">
+          <label for="about_story_intro">Resumen de la historia</label>
+          <textarea id="about_story_intro" name="about_story_intro" maxlength="800" rows="2"><%= settings.about_story_intro %></textarea>
+        </div>
+        <div class="field">
+          <label for="about_story_text">Párrafos de la historia</label>
+          <textarea id="about_story_text" name="about_story_text" maxlength="6000" rows="10"><%= settings.about_story_text %></textarea>
+          <span class="hint">Separa cada párrafo con una línea en blanco.</span>
+        </div>
+        <div class="field">
+          <label for="about_quote">Frase destacada</label>
+          <textarea id="about_quote" name="about_quote" maxlength="800" rows="2"><%= settings.about_quote %></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="about_future_eyebrow">Texto pequeño de “Muy pronto”</label>
+            <input id="about_future_eyebrow" name="about_future_eyebrow" type="text" maxlength="80" value="<%= settings.about_future_eyebrow %>">
+          </div>
+          <div class="field">
+            <label for="about_future_platforms">Plataformas</label>
+            <input id="about_future_platforms" name="about_future_platforms" type="text" maxlength="120" value="<%= settings.about_future_platforms %>" placeholder="PS5, XBOX, PC">
+            <span class="hint">Sepáralas con comas.</span>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="about_future_title">Título de “Muy pronto” · primera línea</label>
+            <input id="about_future_title" name="about_future_title" type="text" maxlength="60" value="<%= settings.about_future_title %>">
+          </div>
+          <div class="field">
+            <label for="about_future_title_accent">Título de “Muy pronto” · segunda línea</label>
+            <input id="about_future_title_accent" name="about_future_accent" type="text" maxlength="80" value="<%= settings.about_future_accent %>">
+          </div>
+        </div>
+        <div class="field">
+          <label for="about_future_text">Texto de “Muy pronto”</label>
+          <textarea id="about_future_text" name="about_future_text" maxlength="800" rows="3"><%= settings.about_future_text %></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="about_map_eyebrow">Texto pequeño de ubicación</label>
+            <input id="about_map_eyebrow" name="about_map_eyebrow" type="text" maxlength="80" value="<%= settings.about_map_eyebrow %>">
+          </div>
+          <div class="field">
+            <label for="about_map_title">Título de ubicación</label>
+            <input id="about_map_title" name="about_map_title" type="text" maxlength="120" value="<%= settings.about_map_title %>">
+          </div>
+        </div>
+        <div class="field">
+          <label for="about_map_text">Texto de ubicación</label>
+          <textarea id="about_map_text" name="about_map_text" maxlength="800" rows="3"><%= settings.about_map_text %></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="about_address">Dirección visible</label>
+            <textarea id="about_address" name="about_address" maxlength="800" rows="3"><%= settings.about_address %></textarea>
+          </div>
+          <div class="field">
+            <label for="about_map_caption">Texto bajo el mapa</label>
+            <input id="about_map_caption" name="about_map_caption" type="text" maxlength="160" value="<%= settings.about_map_caption %>">
+            <label for="about_map_url" style="margin-top: 12px;">Enlace de Google Maps</label>
+            <input id="about_map_url" name="about_map_url" type="text" maxlength="800" value="<%= settings.about_map_url %>">
+          </div>
+        </div>
+        <a class="btn btn-outline" href="/acerca" target="_blank" rel="noopener">Ver página Acerca</a>
+      </div>
+    </section>
+
     <section class="form-card">
       <div class="form-card-head">
         <h2>Operación</h2>
@@ -147,7 +255,7 @@
     <section class="form-card">
       <div class="form-card-head">
         <h2>Redes y contacto</h2>
-        <p>Los enlaces aparecen en el banner de redes sociales del pie.</p>
+        <p>Los enlaces aparecen en el banner de redes sociales del pie. El sitio web usa el ícono SITIO WEB.</p>
       </div>
       <div class="form-body">
         <div class="field-row">
@@ -172,7 +280,12 @@
         </div>
         <div class="field">
           <label for="social_email">Correo electrónico</label>
-          <input id="social_email" name="social_email" type="email" maxlength="400" value="<%= settings.social_email %>" placeholder="hola@lilisplay.com">
+          <input id="social_email" name="social_email" type="email" maxlength="400" value="<%= settings.social_email %>" placeholder="hola@lilysplays.com">
+        </div>
+        <div class="field">
+          <label for="social_website">Sitio web (ícono SITIO WEB)</label>
+          <input id="social_website" name="social_website" type="text" inputmode="url" maxlength="400" value="<%= settings.social_website %>" placeholder="https://lilysplays.com">
+          <span class="hint">Vacío = el ícono no abre ninguna página.</span>
         </div>
       </div>
     </section>

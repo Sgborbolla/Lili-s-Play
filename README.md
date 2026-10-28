@@ -1,6 +1,6 @@
-# Lili's Play
+# Lily's Plays
 
-Sitio web de **Lili's Play**, salón gamer y bistró: bienvenida, menú, pedidos, productos, categorías y ajustes.
+Sitio web de **Lily's Plays**, salón gamer y bistró: bienvenida, menú, pedidos, productos, categorías y ajustes.
 
 ## Estado actual
 
@@ -12,6 +12,7 @@ Sitio web de **Lili's Play**, salón gamer y bistró: bienvenida, menú, pedidos
 - Página pública anónima: los clientes no crean cuentas ni inician sesión.
 - Menú con vista expandida del producto: imagen, precio, descripción, etiquetas y cantidad, con animación de ida y vuelta a la tarjeta.
 - Horario visible en la bienvenida y horario de cocina editables desde **Ajustes**.
+- Banner de redes con enlaces configurables desde **Ajustes**, incluido el sitio web.
 - Panel de administración completo con una cuenta principal y opción de crear otras.
 
 ## Requisitos
