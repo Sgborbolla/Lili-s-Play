@@ -69,10 +69,21 @@ svg {
 
   .brand-name { font-size: 17px; }
   .brand-sub { letter-spacing: .1em; }
+  .header-actions { gap: 6px; }
+  .about-btn { min-height: 32px; padding: 6px 10px; font-size: 10.5px; }
+  .cart-btn { padding: 8px 10px; }
   .product-grid { gap: 8px; }
   .product-media { height: 112px; }
   .hero-copy h1 { font-size: clamp(29px, 12vw, 40px); }
   .section-head h2 { font-size: clamp(26px, 9vw, 34px); }
+}
+
+/* Pantallas muy estrechas: el carrito siempre visible */
+@media (max-width: 340px) {
+  .brand-text { display: none; }
+  .header-actions { gap: 5px; }
+  .about-btn { padding: 6px 8px; font-size: 10px; }
+  .cart-btn { padding: 7px 9px; }
 }
 
 /* Celdas flexibles: nunca empujan el ancho de la página */

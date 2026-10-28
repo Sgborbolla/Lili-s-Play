@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<%- include('partials/head', { title: "Menú · Lily's Plays", themeColor: '#f6f8fc', pageCss: ['/css/app.css?v=5', '/css/social.css?v=4', '/css/watermarks.css'], manifest: true }) %>
+<%- include('partials/head', { title: "Menú · Lily's Plays", themeColor: '#f6f8fc', pageCss: ['/css/app.css?v=6', '/css/social.css?v=4', '/css/watermarks.css'], manifest: true }) %>
 </head>
 <body class="page-menu" id="top">
 <%- include('partials/watermarks', { watermarkClass: 'watermarks--light' }) %>
@@ -18,17 +18,19 @@
 %>
 <header class="menu-header">
   <div class="wrap header-row">
-    <%- include('partials/brand', { brandHref: '/' }) %>
-    <span class="station-pill"><i></i> Estación #<%= station %></span>
-    <nav class="header-links" aria-label="Navegación principal">
+    <div class="brand-stack">
+      <%- include('partials/brand', { brandHref: '/' }) %>
       <a class="back-link" href="/bienvenida.html" aria-label="Volver a la bienvenida" title="Volver a la bienvenida">← Bienvenida</a>
-      <a href="/acerca">Acerca</a>
-    </nav>
-    <button class="cart-btn" id="cart-open" type="button" aria-controls="carrito" aria-expanded="false">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l1.4 13H4.6L6 7Z"/><path d="M9 7V5.5a3 3 0 0 1 6 0V7"/></svg>
-      <span class="cart-label">Carrito</span>
-      <span class="cart-count" id="cart-count">0</span>
-    </button>
+    </div>
+    <span class="station-pill"><i></i> Estación #<%= station %></span>
+    <div class="header-actions">
+      <button class="cart-btn" id="cart-open" type="button" aria-controls="carrito" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l1.4 13H4.6L6 7Z"/><path d="M9 7V5.5a3 3 0 0 1 6 0V7"/></svg>
+        <span class="cart-label">Carrito</span>
+        <span class="cart-count" id="cart-count">0</span>
+      </button>
+      <a class="about-btn" href="/acerca">Acerca</a>
+    </div>
   </div>
 </header>
 
