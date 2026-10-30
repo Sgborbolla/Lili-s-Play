@@ -914,37 +914,89 @@ main, .site-footer { position: relative; z-index: 1; }
 }
 
 .retro-buttons {
+  --cell: 14px;
+  --gap: 2px;
   position: absolute;
-  top: 11px;
-  right: 11px;
-  z-index: 2;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 4px;
-  width: 50px;
-  opacity: .70;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(3, var(--cell));
+  grid-template-rows: repeat(3, var(--cell));
+  gap: var(--gap);
+  justify-content: end;
+  opacity: .92;
   pointer-events: none;
+  perspective: 140px;
+}
+
+.retro-buttons.is-pair {
+  grid-template-columns: repeat(2, var(--cell));
+  grid-template-rows: var(--cell);
+}
+
+.retro-buttons.is-row {
+  grid-template-columns: repeat(3, var(--cell));
+  grid-template-rows: var(--cell);
+}
+
+.retro-buttons.is-six {
+  grid-template-columns: repeat(3, var(--cell));
+  grid-template-rows: repeat(2, var(--cell));
+}
+
+.retro-buttons.is-one {
+  grid-template-columns: calc(var(--cell) * 1.5);
+  grid-template-rows: calc(var(--cell) * 1.5);
+  top: 12px;
+  right: 12px;
 }
 
 .retro-buttons i {
+  position: relative;
   display: grid;
   place-items: center;
-  width: 16px;
-  height: 16px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, .22);
-  background: var(--accent);
-  color: #07101c;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, .78) 0 12%, rgba(255, 255, 255, .28) 26%, transparent 46%),
+    radial-gradient(circle at 50% 118%, rgba(0, 0, 0, .55), transparent 62%),
+    var(--btn, #222);
+  box-shadow:
+    inset 0 1px 1.5px rgba(255, 255, 255, .45),
+    inset 0 -2px 3px rgba(0, 0, 0, .6),
+    inset 0 0 0 1px rgba(0, 0, 0, .25),
+    0 2px 3px rgba(0, 0, 0, .7),
+    0 0 0 1px rgba(0, 0, 0, .35);
+  color: var(--glyph, #fff);
   font-family: "Space Grotesk", sans-serif;
-  font-size: 8px;
+  font-size: calc(var(--cell) * .5);
   font-style: normal;
   font-weight: 700;
   line-height: 1;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, .35);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, .45);
+  transform: translateZ(0) rotateX(8deg);
 }
 
-.retro-buttons i:nth-child(even) { background: var(--accent2); }
+.retro-buttons i::after {
+  content: "";
+  position: absolute;
+  top: 8%;
+  left: 18%;
+  right: 18%;
+  height: 26%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0));
+  opacity: .55;
+  pointer-events: none;
+}
+
+.retro-buttons .b-top { grid-area: 1 / 2; }
+.retro-buttons .b-right { grid-area: 2 / 3; }
+.retro-buttons .b-bottom { grid-area: 3 / 2; }
+.retro-buttons .b-left { grid-area: 2 / 1; }
+.retro-buttons.is-one i { font-size: 0; }
 
 .retro-media {
   position: relative;
@@ -998,8 +1050,8 @@ main, .site-footer { position: relative; z-index: 1; }
   .retro-card { min-height: 230px; }
   .retro-media { height: 120px; padding: 10px 10px 0; }
   .retro-card::after { font-size: 12px; letter-spacing: .1em; }
-  .retro-buttons { top: 8px; right: 8px; width: 38px; gap: 3px; }
-  .retro-buttons i { width: 12px; height: 12px; font-size: 6px; }
+  .retro-buttons { --cell: 11px; --gap: 1.5px; top: 7px; right: 7px; }
+  .retro-buttons.is-one { top: 9px; right: 9px; }
   .retro-copy { padding: 8px 10px 12px; }
   .retro-copy h3 { font-size: 14px; }
   .retro-copy p { font-size: 9px; }
