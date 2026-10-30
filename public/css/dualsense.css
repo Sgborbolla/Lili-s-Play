@@ -228,3 +228,28 @@
   .ds-caption { flex-direction: column; align-items: flex-start; gap: 3px; }
   .ds-caption-actions { width: 100%; justify-content: space-between; }
 }
+
+@media (min-width: 901px) and (max-width: 1100px) and (orientation: portrait) and (hover: none) and (pointer: coarse) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+  .hero-copy {
+    order: -1;
+  }
+  .hero-art {
+    max-width: 760px;
+  }
+  .hero-pad {
+    width: calc(100% + 48px);
+    max-width: none;
+    margin-left: -24px;
+    margin-right: -24px;
+  }
+  .ds-svg {
+    aspect-ratio: 584 / 560;
+    height: auto;
+  }
+  .ds-caption {
+    padding-inline: 16px;
+  }
+}
