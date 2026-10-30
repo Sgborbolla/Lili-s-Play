@@ -7,3 +7,7 @@ public/uploads/
 tmp-img/
 .server.pid
 Reportes/
+
+__pycache__/
+*.pyc
+.venv/

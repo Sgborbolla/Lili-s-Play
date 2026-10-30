@@ -33,19 +33,6 @@
   if (searchInput) searchInput.addEventListener('input', filterTable);
   if (categorySelect) categorySelect.addEventListener('change', filterTable);
 
-  const orderFilters = Array.from(document.querySelectorAll('[data-order-filter]'));
-  const orderCards = Array.from(document.querySelectorAll('[data-order-status]'));
-
-  orderFilters.forEach((button) => {
-    button.addEventListener('click', () => {
-      const filter = button.dataset.orderFilter || 'all';
-      orderFilters.forEach((item) => item.classList.toggle('is-active', item === button));
-      orderCards.forEach((card) => {
-        card.hidden = filter !== 'all' && card.dataset.orderStatus !== filter;
-      });
-    });
-  });
-
   const imageInput = document.querySelector('[data-image-input]');
   const imagePreview = document.querySelector('[data-image-preview]');
   if (imageInput && imagePreview) {

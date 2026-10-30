@@ -4,6 +4,7 @@
   const byId = new Map(products.map((p) => [Number(p.id), p]));
   const currency = data.currency || {};
   const taxPercent = Number(data.taxPercent) || 0;
+  const texts = data.texts || {};
   const mode = currency.mode || 'USD';
 
   const cart = new Map();
@@ -124,7 +125,7 @@
     let count = 0;
     cart.forEach((qty) => { count += qty; });
     countEl.textContent = String(count);
-    if (headCountEl) headCountEl.textContent = `${count} ${count === 1 ? 'artículo' : 'artículos'}`;
+    if (headCountEl) headCountEl.textContent = `${count} ${count === 1 ? (texts.itemSingular || 'artículo') : (texts.itemPlural || 'artículos')}`;
 
     if (itemsEl) {
       itemsEl.replaceChildren();
@@ -309,11 +310,11 @@
     if (pmSpecs) {
       pmSpecs.replaceChildren();
       const specs = [];
-      if (product.category) specs.push(['Categoría', product.category]);
-      if (data.station) specs.push(['Estación', `#${data.station}`]);
-      if (product.badge) specs.push(['Etiqueta', product.badge]);
-      if (product.tag) specs.push(['Nota', product.tag]);
-      if (taxPercent > 0) specs.push(['Impuesto', `${taxPercent}%`]);
+      if (product.category) specs.push([texts.specCategory || 'Categoría', product.category]);
+      if (data.station) specs.push([texts.specStation || 'Estación', `#${data.station}`]);
+      if (product.badge) specs.push([texts.specBadge || 'Etiqueta', product.badge]);
+      if (product.tag) specs.push([texts.specNote || 'Nota', product.tag]);
+      if (taxPercent > 0) specs.push([texts.specTax || 'Impuesto', `${taxPercent}%`]);
       specs.forEach(([label, value]) => {
         const row = document.createElement('div');
         const dt = document.createElement('dt');
@@ -565,7 +566,7 @@
       const noteInput = document.getElementById('cart-note');
 
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Enviando pedido…';
+      submitBtn.textContent = texts.sendingLabel || 'Enviando pedido…';
 
       try {
         const response = await fetch('/api/orders', {
@@ -580,17 +581,17 @@
         });
         const payload = await response.json().catch(() => ({}));
         if (!response.ok || !payload.ok) {
-          throw new Error(payload.error || 'No se pudo enviar el pedido.');
+          throw new Error(payload.error || texts.errorSend || 'No se pudo enviar el pedido.');
         }
         try { window.sessionStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
         window.location.href = `/pedido/${encodeURIComponent(payload.code)}`;
       } catch (error) {
         if (errorEl) {
-          errorEl.textContent = error.message || 'No se pudo enviar el pedido. Intenta de nuevo.';
+          errorEl.textContent = error.message || texts.errorSend || 'No se pudo enviar el pedido. Intenta de nuevo.';
           errorEl.classList.add('is-visible');
         }
         submitBtn.disabled = cart.size === 0;
-        submitBtn.textContent = 'Enviar pedido';
+        submitBtn.textContent = texts.submitLabel || 'Enviar pedido';
       }
     });
   }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<%- include('head', { title: `${title} · Panel`, themeColor: '#f6f8fc', pageCss: ['/css/admin.css?v=5', '/css/watermarks.css?v=2'], robots: 'noindex,nofollow,noarchive' }) %>
+<%- include('head', { title: `${title} · Panel`, themeColor: '#f6f8fc', pageCss: ['/css/admin.css?v=8', '/css/watermarks.css?v=2'], robots: 'noindex,nofollow,noarchive' }) %>
 </head>
 <body class="admin-body" id="top">
 <%- include('watermarks', { watermarkClass: 'watermarks--admin' }) %>
@@ -14,6 +14,10 @@
     {
       key: 'orders', href: '/admin/pedidos', label: 'Pedidos',
       icon: '<path d="M7 3h10a1 1 0 0 1 1 1v17l-3-2-3 2-3-2-3 2V4a1 1 0 0 1 1-1Z"/><path d="M9.5 8h5M9.5 12h5M9.5 16h3"/>',
+    },
+    {
+      key: 'reports', href: '/admin/reportes', label: 'Reportes',
+      icon: '<path d="M4 19V5M4 19h16"/><path d="M8 16v-4M12 16V8M16 16v-6M20 16v-2"/>',
     },
     {
       key: 'products', href: '/admin/productos', label: 'Productos',
@@ -46,14 +50,14 @@
 
   <nav class="admin-nav" aria-label="Navegación del panel">
     <span class="admin-nav-label">Operación</span>
-    <% navItems.slice(0, 5).forEach((item) => { %>
+    <% navItems.slice(0, 6).forEach((item) => { %>
     <a href="<%= item.href %>" class="<%= active === item.key ? 'is-active' : '' %>">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><%- item.icon %></svg>
       <span><%= item.label %></span>
     </a>
     <% }) %>
     <span class="admin-nav-label">Configuración</span>
-    <% navItems.slice(5).forEach((item) => { %>
+    <% navItems.slice(6).forEach((item) => { %>
     <a href="<%= item.href %>" class="<%= active === item.key ? 'is-active' : '' %>">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><%- item.icon %></svg>
       <span><%= item.label %></span>

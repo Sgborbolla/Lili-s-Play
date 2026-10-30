@@ -1,6 +1,6 @@
 <%- include('../partials/admin-top', { title: 'Resumen', active: 'dashboard' }) %>
 <%
-  const summaryCode = settings.currency_mode === 'CUC' ? 'CUC' : 'USD';
+  const summaryCode = dashboardCurrency || (settings.currency_mode === 'CUC' ? 'CUC' : 'USD');
 %>
 
 <section class="stat-grid" aria-label="Indicadores de hoy">
@@ -17,7 +17,7 @@
   <article class="stat-card" style="--accent: #107c10">
     <span class="stat-label">Ingresos de hoy</span>
     <strong class="stat-value is-money"><%- include('../partials/summary-money', { code: summaryCode, value: amount(stats.todayRevenue, summaryCode) }) %></strong>
-    <span class="stat-sub">Sin pedidos cancelados</span>
+    <span class="stat-sub">Pedidos pagados hoy en <b><%= summaryCode %></b></span>
   </article>
   <article class="stat-card" style="--accent: #7928ca">
     <span class="stat-label">Productos activos</span>
@@ -58,7 +58,7 @@
             </td>
             <td class="num">#<%= order.station %></td>
             <td><%= order.customer || '—' %></td>
-            <td class="num"><%- include('../partials/summary-money', { code: summaryCode, value: amount(order.total_cents, summaryCode) }) %></td>
+            <td class="num"><%= orderMoney(order.total_cents, order) %></td>
             <td><span class="badge tone-<%= meta.tone %>"><%= meta.label %></span></td>
           </tr>
           <% }) %>
@@ -79,11 +79,11 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
           Nuevo producto
         </a>
-        <a class="quick-action" href="/admin/ajustes">
+        <a class="quick-action" href="/admin/ajustes?tab=menu">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.1"/><path d="M12 2.6v2.8M12 18.6v2.8M2.6 12h2.8M18.6 12h2.8M5.4 5.4l2 2M16.6 16.6l2 2M18.6 5.4l-2 2M7.4 16.6l-2 2"/></svg>
-          Cambiar ajustes
+          Editar menú
         </a>
-        <a class="quick-action" href="/admin/ajustes#acerca">
+        <a class="quick-action" href="/admin/ajustes?tab=about">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H19a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5.5A1.5 1.5 0 0 1 4 18.5v-13Z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
           Editar Acerca
         </a>

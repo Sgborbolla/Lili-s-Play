@@ -19,7 +19,7 @@
     if (!AudioCtor) return null;
     if (!audioCtx) {
       audioCtx = new AudioCtor();
-      const length = Math.floor(audioCtx.sampleRate * 0.12);
+      const length = Math.floor(audioCtx.sampleRate * 0.3);
       noiseBuffer = audioCtx.createBuffer(1, length, audioCtx.sampleRate);
       const data = noiseBuffer.getChannelData(0);
       for (let i = 0; i < length; i += 1) data[i] = Math.random() * 2 - 1;
@@ -117,7 +117,38 @@
     stickDown: { freq: 780, low: 120, gain: 0.12, noise: 0.06, dur: 0.09, spring: 0.03 },
     stickMove: { freq: 3600, low: 420, gain: 0.02, noise: 0.014, dur: 0.018, tick: 0.012 },
     stickUp: { freq: 1300, low: 190, gain: 0.06, noise: 0.03, dur: 0.05 },
-    stickClick: { freq: 1500, low: 180, gain: 0.12, noise: 0.04, dur: 0.05, tick: 0.05 }
+    stickClick: { freq: 1500, low: 180, gain: 0.12, noise: 0.04, dur: 0.05, tick: 0.05 },
+    gamePower: { freq: 520, low: 82, gain: 0.14, noise: 0.12, dur: 0.22, spring: 0.07 },
+    gameStart: { freq: 1800, low: 240, gain: 0.1, noise: 0.04, dur: 0.08, tick: 0.05 },
+    gameShoot: { freq: 4200, low: 720, gain: 0.045, noise: 0.018, dur: 0.025, tick: 0.02 },
+    gameShot: { freq: 2600, low: 720, gain: 0.075, noise: 0.035, dur: 0.055, tick: 0.035 },
+    gameMissile: { freq: 980, low: 180, gain: 0.13, noise: 0.12, dur: 0.35, spring: 0.08 },
+    gameExplosionLight: { freq: 900, low: 70, gain: 0.14, noise: 0.15, dur: 0.14, spring: 0.04 },
+    gameExplosion: { freq: 620, low: 48, gain: 0.2, noise: 0.24, dur: 0.28, spring: 0.1 },
+    gameBossExplosion: { freq: 360, low: 32, gain: 0.24, noise: 0.28, dur: 0.7, spring: 0.16 },
+    gameBomb: { freq: 420, low: 42, gain: 0.22, noise: 0.26, dur: 0.44, spring: 0.12 },
+    gameAlert: { freq: 760, low: 110, gain: 0.15, noise: 0.06, dur: 0.2, spring: 0.08 },
+    gameHit: { freq: 1500, low: 90, gain: 0.15, noise: 0.07, dur: 0.08, spring: 0.04 },
+    gameBlock: { freq: 2350, low: 150, gain: 0.1, noise: 0.035, dur: 0.05, tick: 0.05 },
+    gameExplode: { freq: 420, low: 55, gain: 0.2, noise: 0.18, dur: 0.18, spring: 0.08 },
+    gameOver: { freq: 500, low: 60, gain: 0.16, noise: 0.12, dur: 0.25, spring: 0.1 },
+    gamePoint: { freq: 2600, low: 320, gain: 0.05, noise: 0.02, dur: 0.03, tick: 0.03 },
+    gameWhoosh: { freq: 2900, low: 330, gain: 0.055, noise: 0.05, dur: 0.05, tick: 0.025 },
+    gameJump: { freq: 1250, low: 160, gain: 0.07, noise: 0.035, dur: 0.06, spring: 0.02 },
+    gameLand: { freq: 760, low: 85, gain: 0.08, noise: 0.055, dur: 0.06 },
+    gameDash: { freq: 2100, low: 125, gain: 0.09, noise: 0.08, dur: 0.09, spring: 0.035 },
+    gamePulse: { freq: 3400, low: 540, gain: 0.07, noise: 0.04, dur: 0.09, tick: 0.04 },
+    gameWave: { freq: 900, low: 78, gain: 0.16, noise: 0.11, dur: 0.17, spring: 0.06 },
+    gameNova: { freq: 620, low: 42, gain: 0.23, noise: 0.24, dur: 0.42, spring: 0.13 },
+    gameKO: { freq: 340, low: 38, gain: 0.22, noise: 0.2, dur: 0.36, spring: 0.11 },
+    gameHitLight: { freq: 1850, low: 120, gain: 0.12, noise: 0.075, dur: 0.055, spring: 0.025 },
+    gameHitHeavy: { freq: 760, low: 46, gain: 0.2, noise: 0.15, dur: 0.12, spring: 0.07 },
+    gameKick: { freq: 1180, low: 64, gain: 0.17, noise: 0.11, dur: 0.085, spring: 0.05 },
+    gameCounter: { freq: 2600, low: 90, gain: 0.16, noise: 0.1, dur: 0.1, tick: 0.05, spring: 0.06 },
+    gameThrow: { freq: 980, low: 70, gain: 0.14, noise: 0.08, dur: 0.08, spring: 0.04 },
+    gameGuardBreak: { freq: 1550, low: 58, gain: 0.2, noise: 0.17, dur: 0.18, spring: 0.1 },
+    gameCharge: { freq: 680, low: 110, gain: 0.08, noise: 0.045, dur: 0.22, spring: 0.05 },
+    gameChargeBig: { freq: 420, low: 48, gain: 0.13, noise: 0.12, dur: 0.5, spring: 0.11 }
   };
 
   const playSfx = (key) => {
@@ -157,6 +188,14 @@
     create: 9, options: 9, mute: 8
   };
 
+  const padState = {
+    buttons: Object.create(null),
+    sticks: {
+      left: { x: 0, y: 0, active: false },
+      right: { x: 0, y: 0, active: false }
+    }
+  };
+
   let flashTimer = 0;
   const flashLight = () => {
     root.classList.add('is-lit');
@@ -173,32 +212,41 @@
 
   root.querySelectorAll('[data-key]').forEach((element) => {
     let pressed = false;
+    let pointerId = null;
 
     const press = (event) => {
       if (event) event.preventDefault();
       if (pressed) return;
       pressed = true;
+      pointerId = event && event.pointerId != null ? event.pointerId : null;
       element.classList.add('is-down');
       const key = element.dataset.key;
+      padState.buttons[key] = true;
       pulse(patterns[key] || 12);
       playSfx(key);
-      if (key === 'ps') rumble();
+      if (key === 'ps') {
+        rumble();
+        flashLight();
+      }
       if (key === 'touchpad') flashLight();
       if (event && element.setPointerCapture && event.pointerId != null) {
         try { element.setPointerCapture(event.pointerId); } catch (error) {}
       }
     };
 
-    const release = () => {
+    const release = (event) => {
       if (!pressed) return;
+      if (event && event.pointerId != null && pointerId != null && event.pointerId !== pointerId) return;
       pressed = false;
+      pointerId = null;
+      padState.buttons[element.dataset.key] = false;
       element.classList.remove('is-down');
     };
 
     element.addEventListener('pointerdown', press);
     element.addEventListener('pointerup', release);
     element.addEventListener('pointercancel', release);
-    element.addEventListener('pointerleave', release);
+    element.addEventListener('lostpointercapture', release);
     element.addEventListener('keydown', (event) => {
       if (event.key === ' ' || event.key === 'Enter') press(event);
     });
@@ -210,6 +258,7 @@
 
   root.querySelectorAll('[data-stick]').forEach((stick) => {
     const cap = stick.querySelector('.ds-stick-cap');
+    const stickState = padState.sticks[stick.dataset.stick];
     let pointerId = null;
     let centerX = 0;
     let centerY = 0;
@@ -228,6 +277,11 @@
       lastTick = 0;
       lastSound = 0;
       stick.classList.remove('is-active');
+      if (stickState) {
+        stickState.x = 0;
+        stickState.y = 0;
+        stickState.active = false;
+      }
       cap.style.removeProperty('--sx');
       cap.style.removeProperty('--sy');
     };
@@ -242,6 +296,11 @@
       lastTick = 0;
       lastSound = 0;
       stick.classList.add('is-active');
+      if (stickState) {
+        stickState.x = 0;
+        stickState.y = 0;
+        stickState.active = true;
+      }
       playSfx('stickDown');
       if (stick.setPointerCapture) {
         try { stick.setPointerCapture(pointerId); } catch (error) {}
@@ -263,6 +322,10 @@
         dy = (dy / distance) * max;
       }
       setPosition(dx, dy);
+      if (stickState) {
+        stickState.x = dx / max;
+        stickState.y = dy / max;
+      }
       const moved = Math.hypot(dx, dy);
       if (moved - lastTick > 5) {
         pulse(4);
@@ -276,8 +339,9 @@
       travelled = Math.max(travelled, moved);
     };
 
-    const end = () => {
+    const end = (event) => {
       if (pointerId === null) return;
+      if (event && event.pointerId != null && event.pointerId !== pointerId) return;
       if (travelled < 4) {
         pulse(16);
         playSfx('stickClick');
@@ -300,6 +364,11 @@
       stick.classList.add('is-active');
       setPosition(key === 'ArrowLeft' ? -step : key === 'ArrowRight' ? step : 0,
         key === 'ArrowUp' ? -step : key === 'ArrowDown' ? step : 0);
+      if (stickState) {
+        stickState.x = key === 'ArrowLeft' ? -step / 20 : key === 'ArrowRight' ? step / 20 : 0;
+        stickState.y = key === 'ArrowUp' ? -step / 20 : key === 'ArrowDown' ? step / 20 : 0;
+        stickState.active = true;
+      }
       pulse(5);
       playSfx('stickMove');
     });
@@ -342,4 +411,12 @@
     stage.style.setProperty('--gx', '50%');
     stage.style.setProperty('--gy', '18%');
   });
+
+  window.LilyPad = {
+    state: padState,
+    pulse,
+    sfx: playSfx,
+    flashLight,
+    rumble
+  };
 })();

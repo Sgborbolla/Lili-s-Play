@@ -7,9 +7,12 @@ const multer = require('multer');
 const QRCode = require('qrcode');
 
 const { db, getSettings, setSetting } = require('./lib/db');
-const { formatMoney, formatAmount, formatPrice, orderUnitPrice, parsePriceToCents, formatDate, nowLocal, statusMeta, STATUS } = require('./lib/format');
+const { formatMoney, formatAmount, formatPrice, orderUnitPrice, normalizeCurrencyMode, formatOrderMoney, parsePriceToCents, formatDate, nowLocal, statusMeta, STATUS } = require('./lib/format');
 const { hashPassword, verifyPassword, createToken, verifyToken, parseCookies, serializeCookie } = require('./lib/auth');
 const { WELCOME_SLOTS, WELCOME_TEXT_META, TEXT_FIELDS, slotKey, getWelcomeMedia, getWelcomeTexts, setWelcomeText } = require('./lib/welcome');
+const { MENU_TEXT_META, MENU_TEXT_GROUPS, getMenuTexts, setMenuText } = require('./lib/menu-texts');
+const { BACKUP_DIR: DB_BACKUP_DIR, backupDatabase, listBackups } = require('./lib/backup');
+const { buildReportData, refreshReports, getReportStatus, EXCEL_PATH, JSON_PATH } = require('./lib/reports');
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
@@ -58,6 +61,7 @@ app.use((req, res, next) => {
   const settings = getSettings();
   res.locals.settings = settings;
   res.locals.money = (cents, code) => formatMoney(cents, settings, code);
+  res.locals.orderMoney = (cents, order) => formatOrderMoney(cents, order, settings);
   res.locals.amount = (cents, code) => formatAmount(cents, settings, code);
   res.locals.price = (product) => formatPrice(product, settings);
   res.locals.fmtDate = formatDate;
@@ -196,6 +200,26 @@ app.get('/', (req, res) => {
     category_accent: categoryById.get(p.category_id)?.accent || '#006fcd',
   }));
 
+  const social = publicSocialLinks(res.locals.settings);
+  const waBase = social.whatsapp || 'https://wa.me/5352740665';
+  const waLink = (message) => `${waBase}${waBase.includes('?') ? '&' : '?'}text=${encodeURIComponent(message)}`;
+  const reserveMessage = String(res.locals.settings.reserve_message || 'Hola, quiero reservar la estación {estacion} en Lily\'s Plays.').trim();
+  const welcomeMedia = getWelcomeMedia(res.locals.settings);
+  const heroMedia = welcomeMedia.find((item) => item.slot === 'hero-banner') || {
+    image: '/img/banner-lilys-plays.jpg',
+    alt: "Letrero neón de Lily's Plays, Salón Gamer y Bistró",
+  };
+  const reserveStations = welcomeMedia
+    .filter((item) => item.group === 'Estaciones')
+    .map((item) => {
+      const number = item.slot.replace('station-', '');
+      return {
+        ...item,
+        number,
+        whatsapp: waLink(reserveMessage.replace(/\{estacion\}/g, number)),
+      };
+    });
+
   res.render('menu', {
     title: "Menú · Lily's Plays",
     categories: grouped,
@@ -203,6 +227,10 @@ app.get('/', (req, res) => {
     station,
     stationFromQuery: Boolean(req.query.station),
     productsForJs,
+    welcomeTexts: getWelcomeTexts(res.locals.settings),
+    menuTexts: getMenuTexts(res.locals.settings),
+    heroMedia,
+    reserveStations,
     page: 'menu',
   });
 });
@@ -283,6 +311,10 @@ app.post('/api/orders', (req, res) => {
     }
 
     const settings = getSettings();
+    const currencyMode = normalizeCurrencyMode(settings.currency_mode);
+    const currencyCode = currencyMode === 'CUC' ? 'CUC' : 'USD';
+    const currencySymbol = currencyCode === 'CUC' ? (settings.currency_symbol_cuc || '$') : (settings.currency_symbol || 'US$');
+    const currencyLocale = currencyCode === 'CUC' ? (settings.currency_locale_cuc || 'es-CU') : (settings.currency_locale || 'en-US');
     const orderItems = [];
     let subtotal = 0;
     for (const [id, qty] of quantities) {
@@ -304,15 +336,20 @@ app.post('/api/orders', (req, res) => {
 
     db.exec('BEGIN');
     started = true;
-    const orderResult = db.prepare('INSERT INTO orders(code, station, customer, note, subtotal_cents, tax_cents, total_cents, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
-      .run(code, station, customer, note, subtotal, tax, total, 'nuevo', createdAt);
+    const orderResult = db.prepare(`INSERT INTO orders(code, station, customer, note, subtotal_cents, tax_cents, total_cents, status, created_at, currency_mode, currency_code, currency_symbol, currency_locale)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+      .run(code, station, customer, note, subtotal, tax, total, 'nuevo', createdAt, currencyMode, currencyCode, currencySymbol, currencyLocale);
     const orderId = Number(orderResult.lastInsertRowid);
     const insertItem = db.prepare('INSERT INTO order_items(order_id, product_id, name, price_cents, qty) VALUES (?, ?, ?, ?, ?)');
     for (const item of orderItems) insertItem.run(orderId, item.product_id, item.name, item.price_cents, item.qty);
     db.exec('COMMIT');
     started = false;
 
-    return res.json({ ok: true, code, total_cents: total });
+    refreshReports().catch((error) => {
+      console.error('No se pudo actualizar el Excel maestro tras el pedido:', error.message);
+    });
+
+    return res.json({ ok: true, code, total_cents: total, currency_code: currencyCode });
   } catch (err) {
     if (started) {
       try { db.exec('ROLLBACK'); } catch { /* ignore */ }
@@ -369,18 +406,22 @@ app.post('/admin/logout', (req, res) => {
 });
 
 app.get('/admin', requireAdmin, (req, res) => {
+  const dashboardCurrency = normalizeCurrencyMode(res.locals.settings.currency_mode) === 'CUC' ? 'CUC' : 'USD';
   const stats = {
     todayOrders: db.prepare("SELECT COUNT(*) AS c FROM orders WHERE date(created_at) = date('now','localtime')").get().c,
     pending: db.prepare("SELECT COUNT(*) AS c FROM orders WHERE status IN ('nuevo','preparando','listo')").get().c,
-    todayRevenue: db.prepare("SELECT COALESCE(SUM(total_cents),0) AS s FROM orders WHERE status != 'cancelado' AND date(created_at) = date('now','localtime')").get().s,
+    todayRevenue: db.prepare("SELECT COALESCE(SUM(total_cents),0) AS s FROM orders WHERE payment_status = 'pagado' AND date(paid_at) = date('now','localtime') AND (currency_code = ? OR currency_code = '')").get(dashboardCurrency).s,
     activeProducts: db.prepare('SELECT COUNT(*) AS c FROM products WHERE active = 1').get().c,
   };
   const recent = db.prepare('SELECT * FROM orders ORDER BY id DESC LIMIT 6').all();
-  res.render('admin/dashboard', { title: 'Resumen', stats, recent });
+  res.render('admin/dashboard', { title: 'Resumen', stats, recent, dashboardCurrency });
 });
 
-function loadOrdersWithItems(limit = 100) {
-  const orders = db.prepare('SELECT * FROM orders ORDER BY id DESC LIMIT ?').all(limit);
+function loadOrdersWithItems({ limit = 50, offset = 0, status = 'all' } = {}) {
+  const filtered = status && status !== 'all';
+  const sql = `SELECT * FROM orders ${filtered ? 'WHERE status = ?' : ''} ORDER BY id DESC LIMIT ? OFFSET ?`;
+  const params = filtered ? [status, limit, offset] : [limit, offset];
+  const orders = db.prepare(sql).all(...params);
   if (!orders.length) return [];
   const placeholders = orders.map(() => '?').join(',');
   const items = db.prepare(`SELECT * FROM order_items WHERE order_id IN (${placeholders}) ORDER BY id`).all(...orders.map((o) => o.id));
@@ -393,26 +434,55 @@ function loadOrdersWithItems(limit = 100) {
 }
 
 app.get('/admin/pedidos', requireAdmin, (req, res) => {
-  const orderList = loadOrdersWithItems(100);
-  res.render('admin/orders', { title: 'Pedidos', orders: orderList });
+  const perPage = 50;
+  const status = STATUS[String(req.query.status || '')] ? String(req.query.status) : 'all';
+  const total = Number((status === 'all'
+    ? db.prepare('SELECT COUNT(*) AS c FROM orders').get()
+    : db.prepare('SELECT COUNT(*) AS c FROM orders WHERE status = ?').get(status)).c) || 0;
+  const pages = Math.max(1, Math.ceil(total / perPage));
+  const page = Math.min(pages, Math.max(1, parseInt(req.query.page, 10) || 1));
+  const offset = (page - 1) * perPage;
+  const orderList = loadOrdersWithItems({ limit: perPage, offset, status });
+  const counts = { all: Number(db.prepare('SELECT COUNT(*) AS c FROM orders').get().c) || 0 };
+  for (const key of Object.keys(STATUS)) {
+    counts[key] = Number(db.prepare('SELECT COUNT(*) AS c FROM orders WHERE status = ?').get(key).c) || 0;
+  }
+  res.render('admin/orders', { title: 'Pedidos', orders: orderList, counts, status, page, pages, total, perPage });
 });
 
 app.post('/admin/pedidos/limpiar', requireAdmin, (req, res) => {
   const total = Number(db.prepare('SELECT COUNT(*) AS c FROM orders').get().c) || 0;
+  if (!total) {
+    return res.redirect(flash('/admin/pedidos', 'ok', 'No había pedidos para limpiar. Los resúmenes ya están en cero.'));
+  }
+  try {
+    backupDatabase('borrar-pedidos');
+  } catch (error) {
+    console.error('No se pudo crear el respaldo antes de limpiar pedidos:', error);
+    return res.redirect(flash('/admin/pedidos', 'err', 'No se pudo crear el respaldo de la base de datos. No se borró ningún pedido.'));
+  }
   try {
     db.exec('BEGIN');
-    db.prepare('DELETE FROM order_items').run();
     db.prepare('DELETE FROM orders').run();
-    db.prepare("DELETE FROM sqlite_sequence WHERE name IN ('orders', 'order_items')").run();
+    db.prepare("DELETE FROM sqlite_sequence WHERE name IN ('orders', 'order_items', 'order_payment_events')").run();
     db.exec('COMMIT');
   } catch (error) {
     try { db.exec('ROLLBACK'); } catch {}
     console.error('No se pudieron limpiar los pedidos:', error);
     return res.redirect(flash('/admin/pedidos', 'err', 'No se pudieron limpiar los pedidos. Inténtalo de nuevo.'));
   }
-  const message = total
-    ? `Se eliminaron ${total} ${total === 1 ? 'pedido' : 'pedidos'} y se reiniciaron los resúmenes.`
-    : 'No había pedidos para limpiar. Los resúmenes ya están en cero.';
+  const orphans = Number(db.prepare(`
+    SELECT COUNT(*) AS c FROM order_items oi
+    LEFT JOIN orders o ON o.id = oi.order_id
+    WHERE o.id IS NULL
+  `).get().c) || 0;
+  if (orphans > 0) {
+    db.prepare('DELETE FROM order_items WHERE order_id NOT IN (SELECT id FROM orders)').run();
+  }
+  refreshReports().catch((error) => {
+    console.error('No se pudo actualizar el Excel maestro tras limpiar pedidos:', error.message);
+  });
+  const message = `Se eliminaron ${total} ${total === 1 ? 'pedido' : 'pedidos'}, se reiniciaron los resúmenes y se guardó un respaldo.${orphans ? ` Se limpiaron ${orphans} detalle(s) huérfano(s).` : ''}`;
   return res.redirect(flash('/admin/pedidos', 'ok', message));
 });
 
@@ -422,6 +492,128 @@ app.post('/admin/pedidos/:id/estado', requireAdmin, (req, res) => {
   if (!STATUS[status]) return res.redirect(flash('/admin/pedidos', 'err', 'Estado no válido.'));
   db.prepare('UPDATE orders SET status = ? WHERE id = ?').run(status, id);
   return res.redirect(flash('/admin/pedidos', 'ok', `Pedido actualizado a ${STATUS[status].label}.`));
+});
+
+app.post('/admin/pedidos/:id/pago', requireAdmin, (req, res) => {
+  const id = Number(req.params.id);
+  const action = String(req.body.action || '');
+  const returnTo = safeNext(req.body.return_to);
+  const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(id);
+  if (!order) return res.redirect(flash(returnTo, 'err', 'Pedido no encontrado.'));
+  if (order.status === 'cancelado' && action === 'pay') {
+    return res.redirect(flash(returnTo, 'err', 'No se puede aprobar el pago de un pedido cancelado.'));
+  }
+  const method = String(req.body.payment_method || order.payment_method || 'efectivo').trim().slice(0, 40) || 'efectivo';
+  const now = nowLocal();
+  let message = '';
+  try {
+    db.exec('BEGIN');
+    if (action === 'pay') {
+      if (order.payment_status === 'pagado') {
+        db.exec('ROLLBACK');
+        return res.redirect(flash(returnTo, 'ok', 'Ese pedido ya estaba pagado.'));
+      }
+      db.prepare("UPDATE orders SET payment_status = 'pagado', payment_method = ?, paid_at = ?, refunded_at = '' WHERE id = ?")
+        .run(method, now, id);
+      db.prepare('INSERT INTO order_payment_events(order_id, type, amount_cents, method, note, admin_user_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
+        .run(id, 'pago', Number(order.total_cents) || 0, method, String(req.body.note || '').trim().slice(0, 200), res.locals.adminUser.id, now);
+      message = `Pago aprobado: ${formatOrderMoney(order.total_cents, order, res.locals.settings)} · ${method}.`;
+    } else if (action === 'refund') {
+      if (order.payment_status !== 'pagado') {
+        db.exec('ROLLBACK');
+        return res.redirect(flash(returnTo, 'err', 'Solo se puede reembolsar un pedido que esté pagado.'));
+      }
+      const paidAt = order.paid_at || now;
+      db.prepare("UPDATE orders SET payment_status = 'reembolsado', payment_method = ?, paid_at = ?, refunded_at = ? WHERE id = ?")
+        .run(method, paidAt, now, id);
+      db.prepare('INSERT INTO order_payment_events(order_id, type, amount_cents, method, note, admin_user_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
+        .run(id, 'reembolso', -(Number(order.total_cents) || 0), method, String(req.body.note || '').trim().slice(0, 200), res.locals.adminUser.id, now);
+      message = `Reembolso registrado: ${formatOrderMoney(order.total_cents, order, res.locals.settings)}.`;
+    } else if (action === 'reset') {
+      if (order.payment_status === 'pendiente') {
+        db.exec('ROLLBACK');
+        return res.redirect(flash(returnTo, 'ok', 'Ese pedido ya estaba pendiente de pago.'));
+      }
+      const reversal = order.payment_status === 'pagado' ? -(Number(order.total_cents) || 0) : 0;
+      db.prepare("UPDATE orders SET payment_status = 'pendiente', paid_at = '', refunded_at = '' WHERE id = ?").run(id);
+      db.prepare('INSERT INTO order_payment_events(order_id, type, amount_cents, method, note, admin_user_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
+        .run(id, 'anulacion', reversal, method, 'Pago anulado desde el panel', res.locals.adminUser.id, now);
+      message = 'El pedido volvió a pendiente de pago.';
+    } else {
+      db.exec('ROLLBACK');
+      return res.redirect(flash(returnTo, 'err', 'Acción de pago no válida.'));
+    }
+    db.exec('COMMIT');
+  } catch (error) {
+    try { db.exec('ROLLBACK'); } catch { /* ignore */ }
+    console.error('No se pudo actualizar el pago:', error);
+    return res.redirect(flash(returnTo, 'err', 'No se pudo actualizar el pago. Inténtalo de nuevo.'));
+  }
+  refreshReports().catch((error) => {
+    console.error('No se pudo actualizar el Excel maestro tras el pago:', error.message);
+  });
+  return res.redirect(flash(returnTo, 'ok', message));
+});
+
+app.get('/admin/reportes', requireAdmin, (req, res) => {
+  let data = null;
+  let reportError = '';
+  try {
+    data = buildReportData();
+  } catch (error) {
+    reportError = error.message || 'No se pudieron calcular los reportes.';
+    console.error('Error calculando reportes:', error);
+  }
+  res.render('admin/reports', {
+    title: 'Reportes',
+    data,
+    reportError,
+    status: getReportStatus(),
+    backups: listBackups(8),
+  });
+});
+
+app.post('/admin/reportes/generar', requireAdmin, async (req, res) => {
+  try {
+    const result = await refreshReports();
+    if (!result.excel_ok) {
+      return res.redirect(flash('/admin/reportes', 'err', `Se generó el JSON, pero el Excel falló: ${result.excel_error}`));
+    }
+    return res.redirect(flash('/admin/reportes', 'ok', 'Excel y JSON generados correctamente.'));
+  } catch (error) {
+    console.error('Error generando reportes:', error);
+    return res.redirect(flash('/admin/reportes', 'err', `No se pudieron generar los reportes: ${error.message}`));
+  }
+});
+
+app.get('/admin/reportes/descargar/excel', requireAdmin, (req, res) => {
+  if (!fs.existsSync(EXCEL_PATH)) return res.redirect(flash('/admin/reportes', 'err', 'Todavía no hay Excel. Genera los reportes primero.'));
+  return res.download(EXCEL_PATH, 'pedidos-maestro.xlsx');
+});
+
+app.get('/admin/reportes/descargar/json', requireAdmin, (req, res) => {
+  if (!fs.existsSync(JSON_PATH)) return res.redirect(flash('/admin/reportes', 'err', 'Todavía no hay JSON. Genera los reportes primero.'));
+  return res.download(JSON_PATH, 'pedidos-maestro.json');
+});
+
+app.post('/admin/reportes/respaldo', requireAdmin, (req, res) => {
+  try {
+    const file = backupDatabase('manual');
+    return res.redirect(flash('/admin/reportes', 'ok', `Respaldo creado: ${path.basename(file)}`));
+  } catch (error) {
+    console.error('Error creando respaldo manual:', error);
+    return res.redirect(flash('/admin/reportes', 'err', `No se pudo crear el respaldo: ${error.message}`));
+  }
+});
+
+app.get('/admin/reportes/respaldo/:name', requireAdmin, (req, res) => {
+  const name = path.basename(String(req.params.name || ''));
+  if (!/^lilys-plays-[a-z0-9-]+\.db$/i.test(name)) {
+    return res.redirect(flash('/admin/reportes', 'err', 'Respaldo no válido.'));
+  }
+  const file = path.join(DB_BACKUP_DIR, name);
+  if (!fs.existsSync(file)) return res.redirect(flash('/admin/reportes', 'err', 'El respaldo ya no existe.'));
+  return res.download(file, name);
 });
 
 app.get('/admin/productos', requireAdmin, (req, res) => {
@@ -505,9 +697,15 @@ app.post('/admin/productos/:id', requireAdmin, upload.single('image'), (req, res
 app.post('/admin/productos/:id/eliminar', requireAdmin, (req, res) => {
   const product = getProduct(req.params.id);
   if (!product) return res.redirect(flash('/admin/productos', 'err', 'Producto no encontrado.'));
+  try {
+    backupDatabase(`borrar-producto-${product.id}`);
+  } catch (error) {
+    console.error('No se pudo crear el respaldo antes de borrar el producto:', error);
+    return res.redirect(flash('/admin/productos', 'err', 'No se pudo crear el respaldo. No se borró el producto.'));
+  }
   db.prepare('DELETE FROM products WHERE id = ?').run(product.id);
   removeUpload(product.image);
-  return res.redirect(flash('/admin/productos', 'ok', 'Producto eliminado.'));
+  return res.redirect(flash('/admin/productos', 'ok', 'Producto eliminado. Se guardó un respaldo.'));
 });
 
 app.post('/admin/productos/:id/alternar', requireAdmin, (req, res) => {
@@ -576,9 +774,15 @@ app.post('/admin/categorias/:id', requireAdmin, (req, res) => {
 app.post('/admin/categorias/:id/eliminar', requireAdmin, (req, res) => {
   const id = Number(req.params.id);
   const images = db.prepare('SELECT image FROM products WHERE category_id = ?').all(id);
+  try {
+    backupDatabase(`borrar-categoria-${id}`);
+  } catch (error) {
+    console.error('No se pudo crear el respaldo antes de borrar la categoría:', error);
+    return res.redirect(flash('/admin/categorias', 'err', 'No se pudo crear el respaldo. No se borró la categoría.'));
+  }
   db.prepare('DELETE FROM categories WHERE id = ?').run(id);
   for (const row of images) removeUpload(row.image);
-  return res.redirect(flash('/admin/categorias', 'ok', 'Categoría y sus productos eliminados.'));
+  return res.redirect(flash('/admin/categorias', 'ok', 'Categoría y sus productos eliminados. Se guardó un respaldo.'));
 });
 
 app.post('/admin/categorias/:id/alternar', requireAdmin, (req, res) => {
@@ -666,13 +870,36 @@ app.post('/admin/usuarios/:id', requireAdmin, (req, res) => {
 app.post('/admin/usuarios/:id/eliminar', requireAdmin, (req, res) => {
   const id = Number(req.params.id);
   if (res.locals.adminUser.id === id) return res.redirect(flash('/admin/usuarios', 'err', 'No puedes eliminar tu propia cuenta.'));
+  try {
+    backupDatabase(`borrar-usuario-${id}`);
+  } catch (error) {
+    console.error('No se pudo crear el respaldo antes de borrar el usuario:', error);
+    return res.redirect(flash('/admin/usuarios', 'err', 'No se pudo crear el respaldo. No se borró el usuario.'));
+  }
   db.prepare('DELETE FROM admin_users WHERE id = ?').run(id);
-  return res.redirect(flash('/admin/usuarios', 'ok', 'Administrador eliminado.'));
+  return res.redirect(flash('/admin/usuarios', 'ok', 'Administrador eliminado. Se guardó un respaldo.'));
 });
 
 app.get('/admin/ajustes', requireAdmin, (req, res) => {
   const products = db.prepare('SELECT id, name FROM products ORDER BY name').all();
-  res.render('admin/settings', { title: 'Ajustes', products, welcome: getWelcomeMedia(), welcomeTexts: getWelcomeTexts(), welcomeTextMeta: WELCOME_TEXT_META });
+  const settingsTab = ['menu', 'welcome', 'about', 'general'].includes(String(req.query.tab || '')) ? String(req.query.tab) : 'menu';
+  const welcome = getWelcomeMedia();
+  res.render('admin/settings', {
+    title: 'Ajustes',
+    products,
+    settingsTab,
+    welcome,
+    heroMedia: welcome.find((item) => item.slot === 'hero-banner') || {
+      image: '/img/banner-lilys-plays.jpg',
+      alt: "Letrero neón de Lily's Plays, Salón Gamer y Bistró",
+      is_custom: false,
+    },
+    welcomeTexts: getWelcomeTexts(),
+    welcomeTextMeta: WELCOME_TEXT_META,
+    menuTexts: getMenuTexts(),
+    menuTextMeta: MENU_TEXT_META,
+    menuTextGroups: MENU_TEXT_GROUPS,
+  });
 });
 
 const welcomeUpload = upload.fields(WELCOME_SLOTS.map((item) => ({ name: `${slotKey(item.slot)}_image`, maxCount: 1 })));
@@ -699,14 +926,73 @@ app.post('/admin/ajustes/fotos', requireAdmin, welcomeUpload, (req, res) => {
       else db.prepare('DELETE FROM settings WHERE key = ?').run(`${base}_${field}`);
     }
   }
-  return res.redirect(flash('/admin/ajustes', 'ok', 'Fotos y textos de la bienvenida guardados.'));
+  return res.redirect(flash('/admin/ajustes?tab=welcome', 'ok', 'Fotos y textos de la bienvenida guardados.'));
 });
 
 app.post('/admin/ajustes/textos', requireAdmin, (req, res) => {
   for (const [key] of WELCOME_TEXT_META) {
     setWelcomeText(key, req.body[`text_${key}`] || '');
   }
-  return res.redirect(flash('/admin/ajustes', 'ok', 'Textos de la bienvenida guardados.'));
+  return res.redirect(flash('/admin/ajustes?tab=welcome', 'ok', 'Textos de la bienvenida guardados.'));
+});
+
+app.post('/admin/ajustes/reservas', requireAdmin, welcomeUpload, (req, res) => {
+  const current = getSettings();
+  const stationSlots = WELCOME_SLOTS.filter((item) => item.group === 'Estaciones');
+  for (const item of stationSlots) {
+    const base = slotKey(item.slot);
+    const file = req.files && req.files[`${base}_image`] ? req.files[`${base}_image`][0] : null;
+    const oldImage = current[`${base}_image`] || '';
+    if (file) {
+      const nextImage = `/uploads/${file.filename}`;
+      setSetting(`${base}_image`, nextImage);
+      if (oldImage && oldImage !== nextImage) removeUpload(oldImage);
+    } else if (req.body[`${base}_remove`] === 'on') {
+      if (oldImage) removeUpload(oldImage);
+      db.prepare('DELETE FROM settings WHERE key = ?').run(`${base}_image`);
+    }
+    for (const field of TEXT_FIELDS) {
+      const raw = req.body[`${base}_${field}`];
+      if (raw === undefined) continue;
+      const value = String(raw).trim();
+      if (value) setSetting(`${base}_${field}`, value.slice(0, field === 'text' ? 600 : 180));
+      else db.prepare('DELETE FROM settings WHERE key = ?').run(`${base}_${field}`);
+    }
+  }
+  for (const key of ['reserve_eyebrow', 'reserve_title', 'reserve_text', 'reserve_cta']) {
+    if (req.body[key] !== undefined) setWelcomeText(key, req.body[key]);
+  }
+  if (req.body.social_whatsapp !== undefined) {
+    setSetting('social_whatsapp', String(req.body.social_whatsapp).trim().slice(0, 400));
+  }
+  if (req.body.reserve_message !== undefined) {
+    const message = String(req.body.reserve_message).trim();
+    if (message) setSetting('reserve_message', message.slice(0, 300));
+    else db.prepare('DELETE FROM settings WHERE key = ?').run('reserve_message');
+  }
+  return res.redirect(`${flash('/admin/ajustes?tab=menu', 'ok', 'Reservas del menú actualizadas.')}#reservas`);
+});
+
+const menuBannerUpload = upload.single('menu_hero_image');
+
+app.post('/admin/ajustes/menu-contenido', requireAdmin, menuBannerUpload, (req, res) => {
+  const current = getSettings();
+  const oldImage = current.welcome_hero_banner_image || '';
+  if (req.file) {
+    const nextImage = `/uploads/${req.file.filename}`;
+    setSetting('welcome_hero_banner_image', nextImage);
+    if (oldImage && oldImage !== nextImage) removeUpload(oldImage);
+  } else if (req.body.welcome_hero_banner_remove === 'on') {
+    if (oldImage) removeUpload(oldImage);
+    db.prepare('DELETE FROM settings WHERE key = ?').run('welcome_hero_banner_image');
+  }
+  if (req.body.welcome_hero_banner_alt !== undefined) {
+    const alt = String(req.body.welcome_hero_banner_alt).trim();
+    if (alt) setSetting('welcome_hero_banner_alt', alt.slice(0, 180));
+    else db.prepare('DELETE FROM settings WHERE key = ?').run('welcome_hero_banner_alt');
+  }
+  for (const [key] of MENU_TEXT_META) setMenuText(key, req.body[`text_${key}`]);
+  return res.redirect(`${flash('/admin/ajustes?tab=menu', 'ok', 'Banner y textos del menú actualizados.')}#contenido-menu`);
 });
 
 app.post('/admin/ajustes', requireAdmin, (req, res) => {
@@ -746,7 +1032,8 @@ app.post('/admin/ajustes', requireAdmin, (req, res) => {
     const exists = id ? db.prepare('SELECT 1 FROM products WHERE id = ?').get(id) : true;
     setSetting('featured_product_id', exists ? String(id) : '');
   }
-  return res.redirect(flash('/admin/ajustes', 'ok', 'Ajustes guardados.'));
+  const tab = ['menu', 'welcome', 'about', 'general'].includes(String(body.tab || '')) ? String(body.tab) : 'menu';
+  return res.redirect(flash(`/admin/ajustes?tab=${tab}`, 'ok', 'Ajustes guardados.'));
 });
 
 app.post('/admin/password', requireAdmin, (req, res) => {
@@ -755,13 +1042,13 @@ app.post('/admin/password', requireAdmin, (req, res) => {
   const confirm = String(req.body.confirm_password || '');
   const user = db.prepare('SELECT * FROM admin_users WHERE id = ?').get(res.locals.adminUser.id);
   if (!user || !verifyPassword(current, user.salt, user.hash)) {
-    return res.redirect(flash('/admin/ajustes', 'err', 'La contraseña actual no es correcta.'));
+    return res.redirect(flash('/admin/ajustes?tab=general', 'err', 'La contraseña actual no es correcta.'));
   }
-  if (next.length < 6) return res.redirect(flash('/admin/ajustes', 'err', 'La nueva contraseña debe tener al menos 6 caracteres.'));
-  if (next !== confirm) return res.redirect(flash('/admin/ajustes', 'err', 'Las contraseñas no coinciden.'));
+  if (next.length < 6) return res.redirect(flash('/admin/ajustes?tab=general', 'err', 'La nueva contraseña debe tener al menos 6 caracteres.'));
+  if (next !== confirm) return res.redirect(flash('/admin/ajustes?tab=general', 'err', 'Las contraseñas no coinciden.'));
   const { salt, hash } = hashPassword(next);
   db.prepare('UPDATE admin_users SET salt = ?, hash = ? WHERE id = ?').run(salt, hash, user.id);
-  return res.redirect(flash('/admin/ajustes', 'ok', 'Contraseña actualizada.'));
+  return res.redirect(flash('/admin/ajustes?tab=general', 'ok', 'Contraseña actualizada.'));
 });
 
 function requestOrigin(req) {
@@ -783,7 +1070,7 @@ function qrBaseUrl(req, settings) {
 function qrTargetUrl(req, settings, station) {
   const base = qrBaseUrl(req, settings);
   const query = station ? `?station=${encodeURIComponent(station)}` : '';
-  return `${base}/bienvenida.html${query}`;
+  return `${base}/${query}`;
 }
 
 app.get('/admin/qr', requireAdmin, (req, res) => {
@@ -858,6 +1145,11 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log('  Usuario inicial: freeman  ·  Contraseña: 12345678');
   console.log('  Cambia la contraseña en Admin > Ajustes.');
   console.log('');
+  setTimeout(() => {
+    refreshReports().catch((error) => {
+      console.error('No se pudo generar el Excel maestro al iniciar:', error.message);
+    });
+  }, 1200);
 });
 
 function shutdown() {

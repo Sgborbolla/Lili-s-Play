@@ -1,58 +1,103 @@
 # Lily's Plays
 
-Sitio web de **Lily's Plays**, salón gamer y bistró: bienvenida, menú, pedidos, productos, categorías y ajustes.
+Sistema de **menú digital y administración** para Lily's Plays, salón gamer y bistró.
+
+El panel lo usa el administrador desde una PC. Los clientes abren el menú desde celular, tablet o PC, sin crear cuenta.
 
 ## Estado actual
 
-- Página de bienvenida terminada en `public/bienvenida.html`.
-- Tema visual inspirado en PlayStation, con dorado PS4 como contenido principal: dos estaciones PS4.
-- Precios preparados para **USD**, **CUC** o **ambos** (`currency_mode`: `USD`, `CUC`, `BOTH`).
-- Cada producto guarda precio en USD (`price_cents`) y precio en CUC (`price_cuc_cents`).
-- Backend Express con SQLite para menú, pedidos, productos, categorías, usuarios administradores y ajustes.
-- Página pública anónima: los clientes no crean cuentas ni inician sesión.
-- Menú con vista expandida del producto: imagen, precio, descripción, etiquetas y cantidad, con animación de ida y vuelta a la tarjeta.
-- Horario visible en la bienvenida y horario de cocina editables desde **Ajustes**.
-- Banner de redes con enlaces configurables desde **Ajustes**, incluido el sitio web.
-- Panel de administración completo con una cuenta principal y opción de crear otras.
+- Menú público responsive con productos, categorías, ficha ampliada, carrito y pedidos.
+- Panel de administración con pedidos, productos, categorías, usuarios, QR y ajustes.
+- Contenido editable desde **Admin → Ajustes → Menú**: banner, textos, carrito y reservas.
+- Pagos aprobados y reembolsos desde **Admin → Pedidos**, con método y fecha.
+- Excel acumulativo de reportes con diario, semanal, mensual, anual, productos, categorías, pagos, estados y gráficos.
+- Los reembolsos se muestran en rojo y con importe negativo en el Excel y en el panel.
+- Respaldos de la base de datos antes de borrar pedidos, productos, categorías o usuarios.
+- Moneda por pedido: cada pedido guarda código, símbolo y locale.
+- Bienvenida, galería retro, Acerca y pie de página quedan como base para la página web pública futura.
 
 ## Requisitos
 
-- Node.js 22.5 o superior.
-- Termux, Linux o cualquier entorno con soporte para `node:sqlite`.
+- **Node.js 22.5 o superior**.
+- **Python 3** con `xlsxwriter` para generar el Excel de reportes.
+- Windows 10/11 es el entorno previsto para el panel. También funciona en Termux/Linux.
 
-## Instalación
+## Instalación en Windows
 
-```bash
+1. Instala Node.js 22.5 o superior.
+2. Instala Python 3 y ejecuta:
+
+```bat
+pip install xlsxwriter
+```
+
+3. Abre la carpeta del proyecto y ejecuta `iniciar.bat`, o desde la terminal:
+
+```bat
 npm install
 npm start
 ```
 
 Abre:
 
-- Bienvenida: `http://127.0.0.1:3000/bienvenida.html`
-- Menú: `http://127.0.0.1:3000/`
-- Administración: `http://127.0.0.1:3000/admin`
+- Menú: `http://localhost:3000/`
+- Administración: `http://localhost:3000/admin`
+- Reportes: `http://localhost:3000/admin/reportes`
 
-La base de datos y los archivos privados se crean en `data/` y no se suben al repositorio.
+Para que los clientes entren desde celular o tablet, usa la IP local de la PC:
 
-## Monedas
+```text
+http://IP-DE-LA-PC:3000/
+```
 
-En ajustes se puede seleccionar:
+El QR se genera desde **Admin → QR**. Revisa `GUIA-RED-LOCAL.txt` para la red y el firewall.
 
-- `USD`: solo dólares.
-- `CUC`: solo pesos convertibles.
-- `BOTH`: muestra ambos precios por producto.
+## Reportes
 
-Los precios en CUC se guardan por separado. Si un producto no tiene precio en CUC, se usa el precio en USD como valor inicial.
+El Excel se guarda en:
+
+```text
+Reportes/pedidos-maestro.xlsx
+```
+
+Se actualiza automáticamente al aprobar un pago, registrar un reembolso, crear un pedido o al iniciar el servidor. También se puede generar desde **Admin → Reportes** o con:
+
+```bat
+npm run reports
+```
+
+o doble clic en `generar-reportes.bat`.
+
+El libro es **acumulativo** e incluye:
+
+- Resumen por moneda.
+- Diario, semanal, mensual y anual.
+- Pedidos y detalle de productos.
+- Productos, categorías y productos por período.
+- Pagos, reembolsos, anulaciones y métodos de pago.
+- Gráficos y filtros.
+- Reembolsos en rojo.
+
+La base de datos y los respaldos están en `data/` y `data/backups/`; no se suben al repositorio.
+
+## Pruebas
+
+```bash
+npm test
+```
+
+Comprueba la estructura de reportes, la vista de admin y los módulos principales.
 
 ## Estructura
 
 ```text
-lib/            Base de datos, formato y autenticación
-public/         Bienvenida, estilos, imágenes y fuentes
-views/          Plantillas EJS
+lib/            Base de datos, formato, respaldos y reportes
+public/         Menú, bienvenida, estilos, imágenes y fuentes
+views/          Plantillas EJS del menú y del panel
+scripts/        Generador de Excel, CLI y prueba de humo
 server.js       Servidor Express
-data/           Base de datos local (no se sube)
+data/           Base de datos y respaldos locales (no se sube)
+Reportes/       Excel y JSON generados (no se sube)
 ```
 
 ## Créditos

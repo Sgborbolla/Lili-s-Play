@@ -29,21 +29,25 @@
 
 ## Datos y pedidos
 
-- [ ] Soportar moneda por pedido; hoy hay un backfill fijo a CUC en `lib/db.js`.
-- [ ] Paginar el listado de pedidos; ahora muestra solo los últimos 100.
-- [ ] Añadir respaldos automáticos de la base de datos antes de borrar registros.
-- [ ] Confirmar que el borrado de pedidos no deja datos huérfanos.
+- [x] Soportar moneda por pedido; cada pedido guarda código, símbolo y locale.
+- [x] Paginar el listado de pedidos de 50 en 50, con filtros por estado.
+- [x] Añadir respaldos automáticos de la base de datos antes de borrar registros.
+- [x] Limpiar detalles huérfanos al borrar pedidos y confirmar integridad.
 
 ## Reportes
 
-- [ ] `lib/reports.js` no se usa actualmente.
-- [ ] Falta `scripts/build_reports.py` para generar los Excel/JSON.
-- [ ] Definir si los reportes se generan desde el panel o por cron.
+- [x] `lib/reports.js` conectado al panel y a la generación automática.
+- [x] `scripts/build_reports.py` genera el Excel acumulativo con gráficos.
+- [x] Reportes desde Admin → Reportes, automáticos al pagar/reembolsar y por CLI.
+- [x] Excel acumulativo con hojas diaria, semanal, mensual y anual.
+- [x] Reembolsos en rojo y con importe negativo en el Excel y en el panel.
 
 ## Pagos
 
-- [ ] No hay rutas ni pantallas de pago.
-- [ ] El dashboard suma pedidos impagos; definir estados y cobros.
+- [x] Aprobar pagos desde Admin → Pedidos con método y fecha.
+- [x] Registrar reembolsos y devolver un pedido a pendiente de pago.
+- [x] El dashboard suma solo pedidos pagados en “Ingresos de hoy”.
+- [x] Historial de pagos, reembolsos y anulaciones en `order_payment_events`.
 
 ## Mantenimiento
 

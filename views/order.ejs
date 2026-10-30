@@ -51,17 +51,17 @@
           <li class="order-item">
             <span class="oi-qty">×<%= item.qty %></span>
             <span class="oi-name"><%= item.name %></span>
-            <span class="oi-price"><%= money(item.price_cents * item.qty) %></span>
+            <span class="oi-price"><%= orderMoney(item.price_cents * item.qty, order) %></span>
           </li>
           <% }) %>
         </ul>
 
         <div class="order-totals">
-          <div class="summary-row"><span>Subtotal</span><span><%= money(order.subtotal_cents) %></span></div>
+          <div class="summary-row"><span>Subtotal</span><span><%= orderMoney(order.subtotal_cents, order) %></span></div>
           <% if (order.tax_cents > 0) { %>
-          <div class="summary-row"><span>Servicio</span><span><%= money(order.tax_cents) %></span></div>
+          <div class="summary-row"><span>Servicio</span><span><%= orderMoney(order.tax_cents, order) %></span></div>
           <% } %>
-          <div class="summary-row total"><span>Total</span><strong><%= money(order.total_cents) %></strong></div>
+          <div class="summary-row total"><span>Total</span><strong><%= orderMoney(order.total_cents, order) %></strong></div>
         </div>
 
         <% if (order.note) { %>

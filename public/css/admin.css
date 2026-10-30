@@ -583,6 +583,36 @@ h1, h2, h3, h4, p { margin: 0; }
 
 /* Settings */
 
+.settings-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+  margin-bottom: 16px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+}
+.settings-tab {
+  padding: 9px 16px;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+.settings-tab:hover { color: var(--ink); background: var(--inset); }
+.settings-tab.is-active {
+  color: #fff;
+  background: linear-gradient(135deg, #00a6c9, #6d4cff);
+  box-shadow: 0 8px 18px -8px rgba(0, 120, 200, .55);
+}
+.settings-tabs::-webkit-scrollbar { display: none; }
+
 .settings-grid { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 16px; align-items: start; }
 .settings-side { display: flex; flex-direction: column; gap: 16px; }
 .side-note { padding: 13px 14px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink-2); background: #fbfcff; font-size: 10.5px; line-height: 1.55; }
@@ -1200,6 +1230,49 @@ button:active {
   font-size: 11px;
 }
 
+#reservas,
+#contenido-menu { scroll-margin-top: 86px; }
+
+.form-subhead {
+  margin: 20px 0 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+.form-subhead:first-of-type { margin-top: 16px; }
+
+.menu-banner-admin {
+  display: grid;
+  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.menu-banner-thumb {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--inset);
+  object-fit: cover;
+}
+.menu-banner-fields { display: flex; flex-direction: column; gap: 10px; }
+
+@media (max-width: 720px) {
+  .menu-banner-admin { grid-template-columns: 1fr; }
+}
+
+.reserve-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .reserve-admin-grid { grid-template-columns: 1fr; }
+}
+
 .welcome-text-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1211,3 +1284,19 @@ button:active {
 @media (max-width: 720px) {
   .welcome-text-grid { grid-template-columns: 1fr; }
 }
+
+
+.detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.detail-grid > div { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: #f8fafc; }
+.detail-grid b { display: block; margin-top: 2px; font-size: 16px; }
+.detail-grid small { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; }
+.pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; margin: 18px 0 4px; color: var(--muted); font-size: 12px; }
+.btn.is-disabled, .btn[aria-disabled="true"] { opacity: .45; pointer-events: none; }
+
+
+.payment-form { display: grid; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); }
+.payment-form select { width: 100%; }
+.payment-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.payment-state { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 10px; }
+.payment-state .muted { text-align: right; }
+.order-admin.is-refunded { background: #fff8f7; border-color: #f3c4be; }

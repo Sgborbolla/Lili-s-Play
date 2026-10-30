@@ -84,6 +84,9 @@ if (station) {
     link.setAttribute('href', menuUrl);
   });
 }
+document.querySelectorAll('[data-reserve-link]').forEach((link) => {
+  link.setAttribute('href', station ? `/?station=${encodeURIComponent(station)}#reservar` : '/#reservar');
+});
 
 document.querySelectorAll('.social-banner__link').forEach((link) => {
   link.addEventListener('click', (event) => {

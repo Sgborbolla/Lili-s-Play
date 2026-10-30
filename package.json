@@ -4,8 +4,9 @@
   "description": "Lily's Plays: salón gamer y bistró",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "test": "node scripts/smoke-test.js",
+    "start": "node server.js",
+    "reports": "node scripts/generate-reports.js"
   },
   "keywords": [],
   "author": "",

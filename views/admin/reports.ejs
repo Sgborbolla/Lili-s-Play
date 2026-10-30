@@ -1,0 +1,178 @@
+<%- include('../partials/admin-top', { title: 'Reportes', active: 'reports' }) %>
+<%
+  const summaryRows = (data && data.summary_by_currency) || [];
+  const primary = (data && data.currency && data.currency.code) || (settings.currency_mode === 'CUC' ? 'CUC' : 'USD');
+  const main = (data && data.summary) || { income_cents: 0, orders: 0, ticket_cents: 0, top_product: '—', units: 0 };
+  const bytes = (n) => {
+    if (!n) return '—';
+    if (n < 1024) return `${n} B`;
+    if (n < 1024 * 1024) return `${(n / 1024).toFixed(0)} KB`;
+    return `${(n / 1024 / 1024).toFixed(1)} MB`;
+  };
+  const fileDate = (value) => value ? fmtDate(new Date(value).toISOString()) : '—';
+  const paidOrders = (data && data.orders) || [];
+  const products = (data && data.products) || [];
+%>
+
+<% if (reportError) { %>
+<div class="alert alert-err" role="alert">No se pudieron calcular los datos: <%= reportError %></div>
+<% } %>
+
+<section class="stat-grid" aria-label="Indicadores de reportes">
+  <article class="stat-card" style="--accent: #107c10">
+    <span class="stat-label">Ingresos netos</span>
+    <strong class="stat-value is-money"><%- include('../partials/summary-money', { code: primary, value: amount(main.income_cents, primary) }) %></strong>
+    <span class="stat-sub"><%= main.orders %> pedido(s) pagado(s) · <%= main.units %> unidad(es)</span>
+  </article>
+  <article class="stat-card" style="--accent: #006fcd">
+    <span class="stat-label">Ticket medio</span>
+    <strong class="stat-value is-money"><%- include('../partials/summary-money', { code: primary, value: amount(main.ticket_cents, primary) }) %></strong>
+    <span class="stat-sub">Promedio por pedido pagado</span>
+  </article>
+  <article class="stat-card" style="--accent: #7928ca">
+    <span class="stat-label">Producto top</span>
+    <strong class="stat-value" style="font-size: 20px;"><%= main.top_product || '—' %></strong>
+    <span class="stat-sub">Por ingresos en <b><%= primary %></b></span>
+  </article>
+  <article class="stat-card" style="--accent: #f2994a">
+    <span class="stat-label">Pedidos totales</span>
+    <strong class="stat-value"><%= (data && data.all_orders && data.all_orders.length) || 0 %></strong>
+    <span class="stat-sub">Incluye pendientes y cancelados</span>
+  </article>
+</section>
+
+<div class="panel-grid">
+  <section class="card">
+    <div class="card-head">
+      <h2>Excel maestro</h2>
+      <span class="badge <%= status.excel.exists ? 'tone-green' : '' %>"><%= status.excel.exists ? 'Generado' : 'Sin generar' %></span>
+    </div>
+    <div class="card-body">
+      <p class="muted" style="margin-top:0;">
+        Un solo archivo acumulativo en <code>Reportes/pedidos-maestro.xlsx</code>, actualizado al aprobar pagos, reembolsos y al registrar pedidos.
+        Incluye resumen, diario, semanal, mensual, anual, pedidos, detalle, productos, categorías, pagos y gráficos. Los reembolsos aparecen en rojo.
+      </p>
+      <div class="detail-grid" style="margin: 14px 0;">
+        <div><span class="muted">Excel</span><b><%= status.excel.exists ? bytes(status.excel.size) : 'Pendiente' %></b><small><%= fileDate(status.excel.modified) %></small></div>
+        <div><span class="muted">JSON</span><b><%= status.json.exists ? bytes(status.json.size) : 'Pendiente' %></b><small><%= fileDate(status.json.modified) %></small></div>
+      </div>
+      <div class="toolbar" style="margin:0; flex-wrap: wrap;">
+        <form class="inline-form" method="post" action="/admin/reportes/generar">
+          <button class="btn btn-primary btn-sm" type="submit">Generar ahora</button>
+        </form>
+        <a class="btn btn-outline btn-sm <%= status.excel.exists ? '' : 'is-disabled' %>" href="<%= status.excel.exists ? '/admin/reportes/descargar/excel' : '#' %>" <%= status.excel.exists ? '' : 'aria-disabled="true"' %>>Descargar Excel</a>
+        <a class="btn btn-outline btn-sm <%= status.json.exists ? '' : 'is-disabled' %>" href="<%= status.json.exists ? '/admin/reportes/descargar/json' : '#' %>" <%= status.json.exists ? '' : 'aria-disabled="true"' %>>Descargar JSON</a>
+      </div>
+      <% if (data && data.mixed_currencies) { %>
+      <div class="side-note" style="margin-top: 13px;">
+        <b>Varias monedas</b>
+        Hay pedidos en <%= (data.currencies || []).join(', ') %>. El Excel separa los totales por moneda y lo indica en el resumen.
+      </div>
+      <% } %>
+    </div>
+  </section>
+
+  <aside class="card">
+    <div class="card-head">
+      <h2>Respaldos de base de datos</h2>
+      <form class="inline-form" method="post" action="/admin/reportes/respaldo">
+        <button class="btn btn-outline btn-sm" type="submit">Crear respaldo</button>
+      </form>
+    </div>
+    <div class="card-body tight">
+      <% if (!backups.length) { %>
+      <div class="empty" style="margin:14px;"><strong>Sin respaldos todavía</strong>Se crean antes de borrar pedidos, productos, categorías o usuarios, y también desde este botón.</div>
+      <% } else { %>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Archivo</th><th>Fecha</th><th class="num">Tamaño</th><th></th></tr></thead>
+          <tbody>
+            <% backups.forEach((backup) => { %>
+            <tr>
+              <td><span class="cell-name"><%= backup.name %></span></td>
+              <td class="num"><%= fileDate(backup.modified) %></td>
+              <td class="num"><%= bytes(backup.size) %></td>
+              <td class="cell-actions"><a class="btn btn-ghost btn-sm" href="/admin/reportes/respaldo/<%= encodeURIComponent(backup.name) %>">Descargar</a></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      <% } %>
+    </div>
+  </aside>
+</div>
+
+<section class="card" style="margin-top: 16px;">
+  <div class="card-head"><h2>Resumen por moneda</h2></div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Moneda</th><th class="num">Ingresos</th><th class="num">Pagos</th><th class="num">Reembolsos</th><th class="num">Pedidos</th><th class="num">Unidades</th><th class="num">Ticket medio</th><th>Producto top</th></tr></thead>
+      <tbody>
+        <% if (!summaryRows.length) { %>
+        <tr><td class="cell-empty" colspan="8">Todavía no hay ventas pagadas. El Excel se genera igual y se irá completando.</td></tr>
+        <% } %>
+        <% summaryRows.forEach((row) => { %>
+        <tr>
+          <td><span class="badge"><%= row.currency %></span></td>
+          <td class="num"><%= money(row.income_cents, row.currency) %></td>
+          <td class="num"><%= money(row.payments_cents, row.currency) %></td>
+          <td class="num"><%= money(row.refund_cents, row.currency) %></td>
+          <td class="num"><%= row.orders %></td>
+          <td class="num"><%= row.units %></td>
+          <td class="num"><%= money(row.ticket_cents, row.currency) %></td>
+          <td><%= row.top_product || '—' %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="panel-grid" style="margin-top: 16px;">
+  <section class="card">
+    <div class="card-head"><h2>Pagos y reembolsos recientes</h2><a class="btn btn-ghost btn-sm card-action" href="/admin/pedidos">Ver todos →</a></div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Código</th><th>Fecha</th><th>Pago</th><th>Moneda</th><th class="num">Total</th></tr></thead>
+        <tbody>
+          <% if (!paidOrders.length) { %>
+          <tr><td class="cell-empty" colspan="5">No hay pagos ni reembolsos para reportar.</td></tr>
+          <% } %>
+          <% paidOrders.slice(-8).reverse().forEach((order) => { const refunded = order.payment_status === 'reembolsado'; %>
+          <tr>
+            <td><span class="cell-name"><%= order.code %></span><span class="cell-sub"><%= order.customer || 'Sin cliente' %></span></td>
+            <td class="num"><%= fmtDate(refunded ? order.refunded_at : (order.paid_at || order.created_at)) %></td>
+            <td><span class="badge tone-<%= refunded ? 'red' : 'green' %>"><%= refunded ? 'Reembolsado' : 'Pagado' %></span></td>
+            <td><span class="badge"><%= order.currency %></span></td>
+            <td class="num"><%= orderMoney(order.total_cents, order) %></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <aside class="card">
+    <div class="card-head"><h2>Productos más vendidos</h2></div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Producto</th><th class="num">Unid.</th><th class="num">Ingresos</th></tr></thead>
+        <tbody>
+          <% if (!products.length) { %>
+          <tr><td class="cell-empty" colspan="3">Sin ventas pagadas todavía.</td></tr>
+          <% } %>
+          <% products.slice(0, 8).forEach((product) => { %>
+          <tr>
+            <td><span class="cell-name"><%= product.name %></span><span class="cell-sub"><%= product.category %> · <%= product.currency %></span></td>
+            <td class="num"><%= product.qty %></td>
+            <td class="num"><%= money(product.revenue_cents, product.currency) %></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </aside>
+</div>
+
+<%- include('../partials/admin-bottom') %>

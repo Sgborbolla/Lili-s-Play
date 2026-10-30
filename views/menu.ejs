@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<%- include('partials/head', { title: "Menú · Lily's Plays", themeColor: '#f6f8fc', pageCss: ['/css/app.css?v=6', '/css/social.css?v=4', '/css/watermarks.css'], manifest: true }) %>
+<%- include('partials/head', { title: "Menú · Lily's Plays", themeColor: '#06080c', pageCss: ['/css/app.css?v=9', '/css/social.css?v=4', '/css/watermarks.css', '/css/reserve.css?v=3'], manifest: true }) %>
 </head>
 <body class="page-menu" id="top">
 <%- include('partials/watermarks', { watermarkClass: 'watermarks--light' }) %>
@@ -20,16 +20,14 @@
   <div class="wrap header-row">
     <div class="brand-stack">
       <%- include('partials/brand', { brandHref: '/' }) %>
-      <a class="back-link" href="/bienvenida.html" aria-label="Volver a la bienvenida" title="Volver a la bienvenida">← Bienvenida</a>
     </div>
-    <span class="station-pill"><i></i> Estación #<%= station %></span>
+    <span class="station-pill"><i></i> <%= menuTexts.station_label %> #<%= station %></span>
     <div class="header-actions">
       <button class="cart-btn" id="cart-open" type="button" aria-controls="carrito" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l1.4 13H4.6L6 7Z"/><path d="M9 7V5.5a3 3 0 0 1 6 0V7"/></svg>
-        <span class="cart-label">Carrito</span>
+        <span class="cart-label"><%= menuTexts.cart_label %></span>
         <span class="cart-count" id="cart-count">0</span>
       </button>
-      <a class="about-btn" href="/acerca">Acerca</a>
     </div>
   </div>
 </header>
@@ -39,7 +37,7 @@
     <div class="wrap">
       <div class="hero-panel">
         <div class="hero-copy">
-          <span class="hero-kicker"><i></i> <%= settings.hero_eyebrow || 'Menú digital' %> · Estación #<%= station %></span>
+          <span class="hero-kicker"><i></i> <%= settings.hero_eyebrow || 'Menú digital' %> · <%= menuTexts.station_label %> #<%= station %></span>
           <h1><%= settings.hero_title || 'Sube de nivel tu sabor' %></h1>
           <p><%= settings.hero_text %></p>
 
@@ -48,23 +46,20 @@
             <span class="hf-name"><%= featured.name %></span>
             <span class="hf-price"><%= productPrice(featured).main %></span>
             <p class="hf-desc"><%= featured.description %></p>
-            <button class="btn btn-primary" type="button" data-add="<%= featured.id %>">Agregar al pedido</button>
+            <button class="btn btn-primary" type="button" data-add="<%= featured.id %>"><%= menuTexts.featured_add %></button>
           </div>
           <% } %>
 
           <% if (firstCategory) { %>
           <div class="hero-actions">
-            <a class="btn btn-outline" href="#cat-<%= firstCategory.id %>">Ver la carta completa</a>
+            <a class="btn btn-outline" href="#cat-<%= firstCategory.id %>"><%= menuTexts.hero_cta %></a>
           </div>
           <% } %>
         </div>
 
         <div class="hero-art">
-          <picture>
-            <source srcset="/img/banner-lilys-plays.webp" type="image/webp">
-            <img src="/img/banner-lilys-plays.jpg" alt="Letrero neón de Lily's Plays" width="1264" height="843" loading="eager" decoding="async">
-          </picture>
-          <span class="hero-art-badge">● En vivo en sala</span>
+          <img src="<%= heroMedia.image %>" alt="<%= heroMedia.alt %>" width="1264" height="843" loading="eager" decoding="async">
+          <span class="hero-art-badge"><%= menuTexts.hero_badge %></span>
           <div class="hero-art-caption">
             <span><b><%= settings.kitchen_hours %></b> · <%= settings.service_note %></span>
             <span class="hero-symbols" aria-hidden="true"><span>△</span><span>○</span><span>✕</span><span>□</span></span>
@@ -78,7 +73,7 @@
     <div class="wrap">
       <div class="tools-row">
         <div class="cat-rail" id="cat-rail" role="tablist" aria-label="Filtrar por categoría">
-          <button class="cat-chip is-active" type="button" data-filter="all" role="tab" aria-selected="true">Todos</button>
+          <button class="cat-chip is-active" type="button" data-filter="all" role="tab" aria-selected="true"><%= menuTexts.all_label %></button>
           <% categories.forEach((cat) => { %>
           <button class="cat-chip" type="button" data-filter="<%= cat.id %>" role="tab" aria-selected="false">
             <span class="chip-icon" aria-hidden="true"><%= cat.icon %></span> <%= cat.name %>
@@ -87,9 +82,33 @@
         </div>
         <div class="search-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.4-3.4"/></svg>
-          <input id="menu-search" type="search" placeholder="Buscar en el menú…" autocomplete="off" aria-label="Buscar en el menú">
+          <input id="menu-search" type="search" placeholder="<%= menuTexts.search_placeholder %>" autocomplete="off" aria-label="<%= menuTexts.search_placeholder %>">
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="reserve-wrap" id="reservar" aria-labelledby="reserva-title">
+    <div class="reserve-head">
+      <p class="eyebrow"><%= welcomeTexts.reserve_eyebrow %></p>
+      <h2 id="reserva-title"><%= welcomeTexts.reserve_title %></h2>
+      <p><%= welcomeTexts.reserve_text %></p>
+    </div>
+
+    <div class="reserve-grid">
+      <% reserveStations.forEach((item) => { %>
+      <article class="reserve-card reserve-card--station" style="--station-img: url('<%= item.image %>')">
+        <div class="reserve-media">
+          <img src="<%= item.image %>" alt="<%= item.alt %>" loading="lazy" decoding="async">
+        </div>
+        <div class="reserve-copy">
+          <span class="reserve-pill"><%= item.pill || 'PS4' %></span>
+          <h3><%= item.title %></h3>
+          <p><%= item.text %></p>
+          <a class="btn btn-primary" href="<%= item.whatsapp %>" target="_blank" rel="noopener" aria-label="<%= welcomeTexts.reserve_cta %> · <%= menuTexts.station_label %> <%= item.number %>"><%= welcomeTexts.reserve_cta %> <span>→</span></a>
+        </div>
+      </article>
+      <% }) %>
     </div>
   </section>
 
@@ -97,8 +116,8 @@
     <div class="wrap">
       <% if (!categories.length) { %>
       <div class="empty-state">
-        <strong>El menú está en preparación</strong>
-        Todavía no hay productos activos. Vuelve en un momento o pregunta al personal.
+        <strong><%= menuTexts.empty_title %></strong>
+        <%= menuTexts.empty_text %>
       </div>
       <% } %>
 
@@ -107,11 +126,11 @@
         <div class="section-head" style="--accent: <%= cat.accent %>">
           <span class="cat-icon" aria-hidden="true"><%= cat.icon %></span>
           <div>
-            <p class="eyebrow">Carta</p>
+            <p class="eyebrow"><%= menuTexts.category_eyebrow %></p>
             <h2 id="cat-title-<%= cat.id %>"><%= cat.name %></h2>
             <p><%= cat.subtitle %></p>
           </div>
-          <span class="cat-count"><%= cat.products.length %> <%= cat.products.length === 1 ? 'opción' : 'opciones' %></span>
+          <span class="cat-count"><%= cat.products.length %> <%= cat.products.length === 1 ? menuTexts.count_singular : menuTexts.count_plural %></span>
         </div>
 
         <div class="product-grid">
@@ -133,8 +152,9 @@
               <p class="product-desc"><%= p.description %></p>
               <div class="product-foot">
                 <span class="price"><%= fp.main %><% if (fp.sub) { %><small><%= fp.sub %></small><% } %></span>
-                <button class="add-btn" type="button" data-add="<%= p.id %>" aria-label="Agregar <%= p.name %> al pedido">
-                  <span aria-hidden="true">+</span><span>Agregar</span>
+                <button class="add-btn ps-select" type="button" data-add="<%= p.id %>" aria-label="<%= menuTexts.add_label %> <%= p.name %>">
+                  <span class="ps-select__glyph" aria-hidden="true">✕</span>
+                  <span class="ps-select__text"><%= menuTexts.add_label %></span>
                 </button>
               </div>
             </div>
@@ -145,8 +165,8 @@
       <% }) %>
 
       <div class="no-results" id="no-results">
-        <strong>Sin resultados</strong>
-        <p>No encontramos productos con ese nombre. Prueba con otra palabra.</p>
+        <strong><%= menuTexts.no_results_title %></strong>
+        <p><%= menuTexts.no_results_text %></p>
       </div>
     </div>
   </div>
@@ -154,11 +174,11 @@
 
 <div class="cart-backdrop" id="cart-backdrop"></div>
 
-<aside class="cart-drawer" id="carrito" aria-label="Tu pedido" aria-hidden="true">
+<aside class="cart-drawer" id="carrito" aria-label="<%= menuTexts.cart_title %>" aria-hidden="true">
   <div class="cart-head">
-    <h2>Tu pedido</h2>
+    <h2><%= menuTexts.cart_title %></h2>
     <span class="badge" id="cart-head-count">0 artículos</span>
-    <button class="icon-btn" id="cart-close" type="button" aria-label="Cerrar carrito">
+    <button class="icon-btn" id="cart-close" type="button" aria-label="<%= menuTexts.cart_close %>">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
     </button>
   </div>
@@ -166,40 +186,40 @@
   <div class="cart-scroll">
     <div class="cart-empty" id="cart-empty">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l1.4 13H4.6L6 7Z"/><path d="M9 7V5.5a3 3 0 0 1 6 0V7"/><path d="M9 14h6"/></svg>
-      <strong>Tu carrito está vacío</strong>
-      <p>Agrega un combo o una poción para empezar la partida.</p>
+      <strong><%= menuTexts.cart_empty_title %></strong>
+      <p><%= menuTexts.cart_empty_text %></p>
     </div>
     <ul class="cart-items" id="cart-items" hidden></ul>
   </div>
 
   <form class="cart-form" id="checkout-form" novalidate>
-    <h3>Datos de entrega</h3>
+    <h3><%= menuTexts.cart_delivery_title %></h3>
     <div class="field-row">
       <div class="field">
-        <label for="cart-station">Estación</label>
+        <label for="cart-station"><%= menuTexts.cart_station_label %></label>
         <input id="cart-station" name="station" type="text" maxlength="40" value="<%= station %>" placeholder="Ej. 14">
       </div>
       <div class="field">
-        <label for="cart-customer">Nombre (opcional)</label>
-        <input id="cart-customer" name="customer" type="text" maxlength="60" placeholder="Tu nombre">
+        <label for="cart-customer"><%= menuTexts.cart_customer_label %></label>
+        <input id="cart-customer" name="customer" type="text" maxlength="60" placeholder="<%= menuTexts.cart_customer_placeholder %>">
       </div>
     </div>
     <div class="field">
-      <label for="cart-note">Nota para la cocina (opcional)</label>
-      <textarea id="cart-note" name="note" maxlength="220" placeholder="Sin cebolla, salsa aparte…"></textarea>
+      <label for="cart-note"><%= menuTexts.cart_note_label %></label>
+      <textarea id="cart-note" name="note" maxlength="220" placeholder="<%= menuTexts.cart_note_placeholder %>"></textarea>
     </div>
 
     <div class="cart-summary">
-      <div class="summary-row"><span>Subtotal</span><span id="cart-subtotal"><%= money(0) %></span></div>
+      <div class="summary-row"><span><%= menuTexts.cart_subtotal_label %></span><span id="cart-subtotal"><%= money(0) %></span></div>
       <% if (Number(settings.tax_percent) > 0) { %>
-      <div class="summary-row"><span>Servicio (<%= Number(settings.tax_percent) %>%))</span><span id="cart-tax"><%= money(0) %></span></div>
+      <div class="summary-row"><span><%= menuTexts.cart_service_label %> (<%= Number(settings.tax_percent) %>%))</span><span id="cart-tax"><%= money(0) %></span></div>
       <% } %>
-      <div class="summary-row total"><span>Total</span><strong id="cart-total"><%= money(0) %></strong></div>
+      <div class="summary-row total"><span><%= menuTexts.cart_total_label %></span><strong id="cart-total"><%= money(0) %></strong></div>
     </div>
 
     <div class="checkout-error" id="checkout-error" role="alert"></div>
-    <button class="btn btn-primary cart-submit" id="checkout-submit" type="submit" disabled>Enviar pedido</button>
-    <p class="cart-hint">El pedido llega directo a la cocina y a tu estación.</p>
+    <button class="btn btn-primary cart-submit" id="checkout-submit" type="submit" disabled><%= menuTexts.cart_submit_label %></button>
+    <p class="cart-hint"><%= menuTexts.cart_hint %></p>
   </form>
 </aside>
 
@@ -212,7 +232,7 @@
   <div class="pm-dialog" role="dialog" aria-modal="true" aria-labelledby="pm-title">
     <button class="pm-back" id="pm-back" type="button" data-pm-close aria-label="Volver al menú">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11.5 5.5 5 12l6.5 6.5"/></svg>
-      <span>Volver al menú</span>
+      <span><%= menuTexts.modal_back %></span>
     </button>
     <div class="pm-media" id="pm-media"></div>
     <div class="pm-body" id="pm-body">
@@ -228,7 +248,7 @@
           <span id="pm-qty">1</span>
           <button type="button" data-pm-delta="1" aria-label="Agregar una unidad">+</button>
         </div>
-        <button class="btn btn-primary" id="pm-add" type="button">Agregar al pedido</button>
+        <button class="btn btn-primary" id="pm-add" type="button"><%= menuTexts.modal_add %></button>
       </div>
     </div>
   </div>
@@ -247,10 +267,22 @@ window.LP = <%- JSON.stringify({
     locale: settings.currency_locale || 'en-US',
     localeCuc: settings.currency_locale_cuc || 'es-CU'
   },
-  taxPercent: Number(settings.tax_percent) || 0
+  taxPercent: Number(settings.tax_percent) || 0,
+  texts: {
+    itemSingular: menuTexts.item_singular,
+    itemPlural: menuTexts.item_plural,
+    submitLabel: menuTexts.cart_submit_label,
+    sendingLabel: menuTexts.cart_sending_label,
+    errorSend: menuTexts.error_send,
+    specCategory: menuTexts.spec_category,
+    specStation: menuTexts.spec_station,
+    specBadge: menuTexts.spec_badge,
+    specNote: menuTexts.spec_note,
+    specTax: menuTexts.spec_tax
+  }
 }).replace(/</g, '\\u003c') %>;
 </script>
 <script src="/js/site.js"></script>
-<script src="/js/menu.js"></script>
+<script src="/js/menu.js?v=2"></script>
 </body>
 </html>

@@ -1,0 +1,190 @@
+.page-menu .reserve-wrap {
+  width: min(1180px, 100%);
+  margin: 10px auto 6px;
+  padding: 0 24px;
+  scroll-margin-top: 92px;
+}
+
+.page-menu .reserve-head {
+  max-width: 760px;
+  margin: 0 0 18px;
+}
+
+.page-menu .reserve-head .eyebrow {
+  color: var(--blue);
+}
+
+.page-menu .reserve-head h2 {
+  margin: 6px 0 8px;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: .98;
+  letter-spacing: -.04em;
+}
+
+.page-menu .reserve-head p {
+  max-width: 620px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.page-menu .reserve-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.page-menu .reserve-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(34, 230, 255, .22);
+  border-radius: 22px;
+  background: #0a111d;
+  box-shadow: 0 22px 50px -26px rgba(3, 10, 22, .55);
+  isolation: isolate;
+}
+
+.page-menu .reserve-card--station {
+  display: flex;
+  flex-direction: column;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+
+.page-menu .reserve-card--station:hover {
+  border-color: rgba(34, 230, 255, .42);
+  box-shadow: 0 30px 60px -26px rgba(3, 10, 22, .68);
+  transform: translateY(-3px);
+}
+
+.page-menu .reserve-card--station::before {
+  content: "";
+  position: absolute;
+  inset: -20px;
+  background-image: var(--station-img);
+  background-size: cover;
+  background-position: center;
+  filter: blur(24px) brightness(.38) saturate(1.15);
+  opacity: .9;
+  transform: scale(1.08);
+}
+
+.page-menu .reserve-card--station::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(140% 100% at 50% 0%, rgba(34, 230, 255, .10), transparent 62%),
+    linear-gradient(180deg, rgba(3, 5, 10, .18) 0%, rgba(3, 5, 10, .62) 58%, rgba(3, 5, 10, .96) 100%);
+}
+
+.page-menu .reserve-media {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  height: 150px;
+  padding: 14px 18px 0;
+}
+
+.page-menu .reserve-media img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 12px;
+  box-shadow: 0 16px 28px rgba(0, 0, 0, .5);
+}
+
+.page-menu .reserve-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 12px 20px 20px;
+  color: #eaf2fb;
+}
+
+.page-menu .reserve-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 999px;
+  color: #eaffff;
+  background: rgba(3, 5, 10, .56);
+  backdrop-filter: blur(8px);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.page-menu .reserve-copy h3 {
+  margin: 2px 0 0;
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.4vw, 25px);
+  line-height: 1.02;
+  letter-spacing: -.035em;
+}
+
+.page-menu .reserve-copy p {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0;
+  color: #b9c8da;
+  font-size: 11.5px;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.page-menu .reserve-copy .btn {
+  min-height: 38px;
+  margin-top: 6px;
+  padding: 9px 14px;
+  font-size: 11px;
+}
+
+@media (max-width: 720px) {
+  .page-menu .reserve-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-menu .reserve-media {
+    height: 180px;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-menu .reserve-wrap {
+    margin: 6px auto 2px;
+    padding-left: calc(14px + env(safe-area-inset-left, 0px));
+    padding-right: calc(14px + env(safe-area-inset-right, 0px));
+  }
+
+  .page-menu .reserve-head h2 {
+    font-size: clamp(28px, 8vw, 38px);
+  }
+
+  .page-menu .reserve-card {
+    border-radius: 20px;
+  }
+
+  .page-menu .reserve-media {
+    height: 170px;
+    padding: 14px 14px 0;
+  }
+
+  .page-menu .reserve-copy {
+    padding: 12px 16px 18px;
+  }
+}

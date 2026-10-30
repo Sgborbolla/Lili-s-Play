@@ -1,7 +1,26 @@
 <%- include('../partials/admin-top', { title: 'Ajustes', active: 'settings' }) %>
 
+<%
+  const settingsTabs = [
+    { key: 'menu', label: 'Menú' },
+    { key: 'welcome', label: 'Bienvenida' },
+    { key: 'about', label: 'Acerca' },
+    { key: 'general', label: 'General' },
+  ];
+  const activeTab = settingsTabs.some((tab) => tab.key === settingsTab) ? settingsTab : 'menu';
+  const reservationStations = welcome.filter((item) => item.group === 'Estaciones');
+%>
+
+<nav class="settings-tabs" aria-label="Secciones de ajustes">
+  <% settingsTabs.forEach((tab) => { %>
+  <a class="settings-tab <%= activeTab === tab.key ? 'is-active' : '' %>" href="/admin/ajustes?tab=<%= tab.key %>"><%= tab.label %></a>
+  <% }) %>
+</nav>
+
 <form class="settings-grid" method="post" action="/admin/ajustes">
+  <input type="hidden" name="tab" value="<%= activeTab %>">
   <div style="display: flex; flex-direction: column; gap: 16px;">
+    <% if (activeTab === 'general') { %>
     <section class="form-card">
       <div class="form-card-head">
         <h2>Identidad del salón</h2>
@@ -34,7 +53,9 @@
         </div>
       </div>
     </section>
+    <% } %>
 
+    <% if (activeTab === 'menu') { %>
     <section class="form-card">
       <div class="form-card-head">
         <h2>Moneda e impuestos</h2>
@@ -110,9 +131,13 @@
             <% }) %>
           </select>
         </div>
+        <a class="btn btn-outline btn-sm" href="#contenido-menu" style="align-self: flex-start; margin-top: 4px;">Editar banner y textos →</a>
+        <a class="btn btn-outline btn-sm" href="#reservas" style="align-self: flex-start; margin-top: 4px;">Editar reservas de estaciones →</a>
       </div>
     </section>
+    <% } %>
 
+    <% if (activeTab === 'about') { %>
     <section class="form-card" id="acerca">
       <div class="form-card-head">
         <h2>Página Acerca de Lily's Plays</h2>
@@ -220,7 +245,9 @@
         <a class="btn btn-outline" href="/acerca" target="_blank" rel="noopener">Ver página Acerca</a>
       </div>
     </section>
+    <% } %>
 
+    <% if (activeTab === 'welcome') { %>
     <section class="form-card">
       <div class="form-card-head">
         <h2>Operación</h2>
@@ -251,7 +278,9 @@
         </div>
       </div>
     </section>
+    <% } %>
 
+    <% if (activeTab === 'general') { %>
     <section class="form-card">
       <div class="form-card-head">
         <h2>Redes y contacto</h2>
@@ -303,13 +332,14 @@
         </div>
       </div>
     </section>
+    <% } %>
   </div>
 
   <aside class="settings-side">
     <section class="form-card">
       <div class="form-card-head">
-        <h2>Guardar</h2>
-        <p>Los cambios se ven al instante en el menú.</p>
+        <h2><%= activeTab === 'welcome' ? 'Guardar operación' : activeTab === 'menu' ? 'Guardar portada' : 'Guardar' %></h2>
+        <p><%= activeTab === 'welcome' ? 'Horarios y mensajes de servicio de la bienvenida.' : activeTab === 'menu' ? 'Moneda, portada y producto destacado. El banner, los textos y las reservas se guardan en sus propias tarjetas.' : 'Los cambios se ven al instante en el menú.' %></p>
       </div>
       <div class="form-body">
         <button class="btn btn-primary" type="submit" style="width: 100%;">Guardar ajustes</button>
@@ -329,6 +359,141 @@
   </aside>
 </form>
 
+<% if (activeTab === 'menu') { %>
+<section class="form-card" style="margin-top: 16px;" id="contenido-menu">
+  <div class="form-card-head">
+    <h2>Banner y textos del menú</h2>
+    <p>Foto del banner, insignia, botones, buscador y todos los textos del carrito. El banner también se usa en la portada de la bienvenida.</p>
+  </div>
+  <div class="form-body">
+    <form method="post" action="/admin/ajustes/menu-contenido" enctype="multipart/form-data">
+      <div class="menu-banner-admin">
+        <img class="menu-banner-thumb" src="<%= heroMedia.image %>" alt="">
+        <div class="menu-banner-fields">
+          <div class="field">
+            <label for="menu_hero_image">Foto del banner</label>
+            <input id="menu_hero_image" name="menu_hero_image" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+            <span class="hint">Se usa en el menú y en la bienvenida.</span>
+          </div>
+          <% if (heroMedia.is_custom) { %>
+          <label class="welcome-media-check">
+            <input type="checkbox" name="welcome_hero_banner_remove">
+            Quitar y volver a la foto original
+          </label>
+          <% } %>
+          <div class="field">
+            <label for="welcome_hero_banner_alt">Texto alternativo de la foto</label>
+            <input id="welcome_hero_banner_alt" name="welcome_hero_banner_alt" type="text" maxlength="180" value="<%= heroMedia.alt %>">
+          </div>
+        </div>
+      </div>
+
+      <% menuTextGroups.forEach((group) => { %>
+      <h3 class="form-subhead"><%= group.title %></h3>
+      <div class="welcome-text-grid">
+        <% group.keys.forEach((textKey) => { const meta = menuTextMeta.find(([key]) => key === textKey) || []; const label = meta[1] || textKey; const type = meta[2] || 'text'; %>
+        <div class="field <%= type === 'textarea' ? 'is-wide' : '' %>">
+          <label for="text_<%= textKey %>"><%= label %></label>
+          <% if (type === 'textarea') { %>
+          <textarea id="text_<%= textKey %>" name="text_<%= textKey %>" rows="2" maxlength="600"><%= menuTexts[textKey] %></textarea>
+          <% } else { %>
+          <input id="text_<%= textKey %>" name="text_<%= textKey %>" type="text" maxlength="180" value="<%= menuTexts[textKey] %>">
+          <% } %>
+        </div>
+        <% }) %>
+      </div>
+      <% }) %>
+
+      <button class="btn btn-primary" type="submit" style="margin-top: 16px;">Guardar banner y textos</button>
+      <a class="btn btn-outline" href="/" target="_blank" rel="noopener" style="margin-top: 16px;">Ver menú</a>
+    </form>
+  </div>
+</section>
+<% } %>
+
+    <% if (activeTab === 'menu') { %>
+<section class="form-card" style="margin-top: 16px;" id="reservas">
+  <div class="form-card-head">
+    <h2>Reserva de estaciones</h2>
+    <p>Edita el bloque de reserva que aparece encima del menú: textos, botón, WhatsApp y las dos tarjetas PS4. Estos cambios también se reflejan en la bienvenida.</p>
+  </div>
+  <div class="form-body">
+    <form method="post" action="/admin/ajustes/reservas" enctype="multipart/form-data">
+      <div class="welcome-text-grid">
+        <div class="field">
+          <label for="reserve_eyebrow">Texto pequeño superior</label>
+          <input id="reserve_eyebrow" name="reserve_eyebrow" type="text" maxlength="180" value="<%= welcomeTexts.reserve_eyebrow %>">
+        </div>
+        <div class="field">
+          <label for="reserve_title">Título del bloque</label>
+          <input id="reserve_title" name="reserve_title" type="text" maxlength="180" value="<%= welcomeTexts.reserve_title %>">
+        </div>
+        <div class="field is-wide">
+          <label for="reserve_text">Texto descriptivo</label>
+          <textarea id="reserve_text" name="reserve_text" rows="3" maxlength="600"><%= welcomeTexts.reserve_text %></textarea>
+        </div>
+        <div class="field is-wide">
+          <label for="reserve_message">Mensaje de WhatsApp</label>
+          <textarea id="reserve_message" name="reserve_message" rows="2" maxlength="300"><%= settings.reserve_message || "Hola, quiero reservar la estación {estacion} en Lily's Plays." %></textarea>
+          <span class="hint">Usa <code>{estacion}</code> para insertar el número de la estación.</span>
+        </div>
+        <div class="field">
+          <label for="reserve_cta">Texto del botón de reserva</label>
+          <input id="reserve_cta" name="reserve_cta" type="text" maxlength="180" value="<%= welcomeTexts.reserve_cta %>">
+        </div>
+        <div class="field">
+          <label for="social_whatsapp_reserve">WhatsApp de reservas</label>
+          <input id="social_whatsapp_reserve" name="social_whatsapp" type="url" maxlength="400" value="<%= settings.social_whatsapp %>" placeholder="https://wa.me/5355555555">
+          <span class="hint">Los botones de cada estación abren este WhatsApp. También se usa en el banner de redes.</span>
+        </div>
+      </div>
+
+      <div class="reserve-admin-grid" style="margin-top: 16px;">
+        <% reservationStations.forEach((item) => { const base = `welcome_${item.slot.replace(/-/g, '_')}`; %>
+        <article class="welcome-media-item">
+          <img class="welcome-media-thumb" src="<%= item.image %>" alt="">
+          <div class="welcome-media-name">
+            <b><%= item.label %></b>
+            <span>Estación #<%= item.slot.replace('station-', '') %></span>
+          </div>
+          <div class="field">
+            <label for="<%= base %>_image">Foto de la estación</label>
+            <input id="<%= base %>_image" name="<%= base %>_image" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+          </div>
+          <% if (item.is_custom) { %>
+          <label class="welcome-media-check">
+            <input type="checkbox" name="<%= base %>_remove">
+            Quitar y volver a la foto original
+          </label>
+          <% } %>
+          <div class="field">
+            <label for="<%= base %>_pill">Etiqueta</label>
+            <input id="<%= base %>_pill" name="<%= base %>_pill" type="text" maxlength="60" value="<%= item.pill %>">
+          </div>
+          <div class="field">
+            <label for="<%= base %>_title">Título</label>
+            <input id="<%= base %>_title" name="<%= base %>_title" type="text" maxlength="160" value="<%= item.title %>">
+          </div>
+          <div class="field">
+            <label for="<%= base %>_text">Texto</label>
+            <textarea id="<%= base %>_text" name="<%= base %>_text" rows="3" maxlength="600"><%= item.text %></textarea>
+          </div>
+          <div class="field">
+            <label for="<%= base %>_alt">Texto alternativo de la foto</label>
+            <input id="<%= base %>_alt" name="<%= base %>_alt" type="text" maxlength="180" value="<%= item.alt %>">
+          </div>
+        </article>
+        <% }) %>
+      </div>
+
+      <button class="btn btn-primary" type="submit" style="margin-top: 14px;">Guardar reservas</button>
+      <a class="btn btn-outline" href="/#reservar" target="_blank" rel="noopener" style="margin-top: 14px;">Ver reservas en el menú</a>
+    </form>
+  </div>
+</section>
+<% } %>
+
+<% if (activeTab === 'welcome') { %>
 <section class="form-card" style="margin-top: 16px;">
   <div class="form-card-head">
     <h2>Textos de la bienvenida</h2>
@@ -407,7 +572,9 @@
     </form>
   </div>
 </section>
+<% } %>
 
+<% if (activeTab === 'general') { %>
 <section class="form-card" style="margin-top: 16px; max-width: 680px;">
   <div class="form-card-head">
     <h2>Cambiar mi contraseña</h2>
@@ -433,5 +600,6 @@
     </form>
   </div>
 </section>
+<% } %>
 
 <%- include('../partials/admin-bottom') %>

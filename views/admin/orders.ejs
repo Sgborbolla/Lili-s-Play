@@ -2,39 +2,49 @@
 
 <%
   const statusKeys = Object.keys(STATUS);
-  const counts = { all: orders.length };
-  statusKeys.forEach((key) => { counts[key] = orders.filter((order) => order.status === key).length; });
+  const statusQuery = status && status !== 'all' ? `status=${encodeURIComponent(status)}&` : '';
+  const pageLink = (target) => `/admin/pedidos?${statusQuery}page=${target}`;
+  const filterLink = (key) => `/admin/pedidos${key === 'all' ? '' : `?status=${encodeURIComponent(key)}`}`;
+  const returnUrl = `/admin/pedidos${status === 'all' ? '' : `?status=${encodeURIComponent(status)}`}${page > 1 ? `${status === 'all' ? '?' : '&'}page=${page}` : ''}`;
+  const PAY = {
+    pendiente: { label: 'Pendiente', tone: 'amber' },
+    pagado: { label: 'Pagado', tone: 'green' },
+    reembolsado: { label: 'Reembolsado', tone: 'red' },
+  };
+  const pay = (order) => PAY[order.payment_status] || PAY.pendiente;
 %>
 
 <div class="toolbar">
   <div class="filter-tabs" style="margin: 0;">
-    <button type="button" class="filter-tab is-active" data-order-filter="all">Todos <span class="count"><%= counts.all %></span></button>
+    <a class="filter-tab <%= status === 'all' ? 'is-active' : '' %>" href="<%= filterLink('all') %>">Todos <span class="count"><%= counts.all %></span></a>
     <% statusKeys.forEach((key) => { const meta = STATUS[key]; %>
-    <button type="button" class="filter-tab" data-order-filter="<%= key %>"><%= meta.label %> <span class="count"><%= counts[key] %></span></button>
+    <a class="filter-tab <%= status === key ? 'is-active' : '' %>" href="<%= filterLink(key) %>"><%= meta.label %> <span class="count"><%= counts[key] %></span></a>
     <% }) %>
   </div>
   <span class="spacer"></span>
   <a class="btn btn-outline btn-sm" href="/admin/pedidos">Actualizar</a>
-  <form class="inline-form" method="post" action="/admin/pedidos/limpiar" data-confirm="¿Borrar todos los pedidos y reiniciar los resúmenes? Se eliminarán los pedidos y sus detalles. Esta acción no se puede deshacer.">
-    <button class="btn btn-danger-soft btn-sm" type="submit" <%= orders.length ? '' : 'disabled' %>>Limpiar pedidos</button>
+  <form class="inline-form" method="post" action="/admin/pedidos/limpiar" data-confirm="¿Borrar todos los pedidos y reiniciar los resúmenes? Se eliminarán los pedidos y sus detalles. Se creará un respaldo de la base de datos antes de borrar. Esta acción no se puede deshacer.">
+    <button class="btn btn-danger-soft btn-sm" type="submit" <%= counts.all ? '' : 'disabled' %>>Limpiar pedidos</button>
   </form>
 </div>
 
 <% if (!orders.length) { %>
 <div class="empty">
-  <strong>Todavía no hay pedidos</strong>
-  Cuando un cliente envíe su pedido desde el menú, aparecerá aquí para que lo gestiones.
+  <strong><%= status === 'all' ? 'Todavía no hay pedidos' : `No hay pedidos en estado ${STATUS[status].label.toLowerCase()}` %></strong>
+  <%= status === 'all' ? 'Cuando un cliente envíe su pedido desde el menú, aparecerá aquí para que lo gestiones.' : 'Prueba con otro filtro o vuelve al listado completo.' %>
 </div>
 <% } %>
 
 <div class="order-list">
   <% orders.forEach((order) => { const meta = statusMeta(order.status); %>
-  <article class="order-admin" data-order-status="<%= order.status %>">
+  <article class="order-admin <%= order.payment_status === 'reembolsado' ? 'is-refunded' : '' %>" data-order-status="<%= order.status %>">
     <header class="order-admin-head">
       <h2><%= order.code %></h2>
       <span class="meta"><%= fmtDate(order.created_at) %> · Estación #<%= order.station %></span>
       <% if (order.customer) { %><span class="badge"><%= order.customer %></span><% } %>
+      <span class="badge"><%= order.currency_code || '—' %></span>
       <span class="badge tone-<%= meta.tone %>"><%= meta.label %></span>
+      <span class="badge tone-<%= pay(order).tone %>"><%= pay(order).label %></span>
     </header>
     <div class="order-admin-body">
       <div>
@@ -43,7 +53,7 @@
           <li>
             <span class="qty"><%= item.qty %>×</span>
             <span class="name"><%= item.name %></span>
-            <span class="line"><%= money(item.price_cents * item.qty) %></span>
+            <span class="line"><%= orderMoney(item.price_cents * item.qty, order) %></span>
           </li>
           <% }) %>
         </ul>
@@ -53,10 +63,10 @@
       </div>
       <div class="order-admin-side">
         <% if (Number(order.tax_cents) > 0) { %>
-        <div class="total"><span>Subtotal</span><span><%= money(order.subtotal_cents) %></span></div>
-        <div class="total"><span>Impuesto</span><span><%= money(order.tax_cents) %></span></div>
+        <div class="total"><span>Subtotal</span><span><%= orderMoney(order.subtotal_cents, order) %></span></div>
+        <div class="total"><span>Impuesto</span><span><%= orderMoney(order.tax_cents, order) %></span></div>
         <% } %>
-        <div class="total"><span>Total</span><strong><%= money(order.total_cents) %></strong></div>
+        <div class="total"><span>Total</span><strong><%= orderMoney(order.total_cents, order) %></strong></div>
         <form class="status-form" method="post" action="/admin/pedidos/<%= order.id %>/estado">
           <select name="status" aria-label="Cambiar estado del pedido <%= order.code %>">
             <% Object.entries(STATUS).forEach(([key, value]) => { %>
@@ -65,10 +75,46 @@
           </select>
           <button class="btn btn-primary btn-sm" type="submit">Guardar</button>
         </form>
+        <form class="payment-form" method="post" action="/admin/pedidos/<%= order.id %>/pago">
+          <input type="hidden" name="return_to" value="<%= returnUrl %>">
+          <% if (order.payment_status === 'pendiente') { %>
+          <label class="payment-label" for="method-<%= order.id %>">Método de pago</label>
+          <select id="method-<%= order.id %>" name="payment_method" aria-label="Método de pago del pedido <%= order.code %>">
+            <option value="efectivo">Efectivo</option>
+            <option value="transferencia">Transferencia</option>
+            <option value="tarjeta">Tarjeta</option>
+            <option value="otro">Otro</option>
+          </select>
+          <button class="btn btn-primary btn-sm" type="submit" name="action" value="pay">Aprobar pago</button>
+          <% } else if (order.payment_status === 'pagado') { %>
+          <div class="payment-state"><span class="badge tone-green">Pagado</span><span class="muted"><%= fmtDate(order.paid_at) %><%= order.payment_method ? ' · ' + order.payment_method : '' %></span></div>
+          <input type="hidden" name="payment_method" value="<%= order.payment_method || 'efectivo' %>">
+          <button class="btn btn-danger-soft btn-sm" type="submit" name="action" value="refund" data-confirm="¿Registrar el reembolso de <%= order.code %> por <%= orderMoney(order.total_cents, order) %>? El pedido quedará marcado como reembolsado en el Excel.">Reembolsar</button>
+          <% } else { %>
+          <div class="payment-state"><span class="badge tone-red">Reembolsado</span><span class="muted"><%= fmtDate(order.refunded_at) %></span></div>
+          <button class="btn btn-outline btn-sm" type="submit" name="action" value="reset">Volver a pendiente</button>
+          <% } %>
+        </form>
       </div>
     </div>
   </article>
   <% }) %>
 </div>
+
+<% if (pages > 1) { %>
+<nav class="pagination" aria-label="Páginas de pedidos">
+  <% if (page > 1) { %>
+  <a class="btn btn-outline btn-sm" href="<%= pageLink(page - 1) %>">← Anterior</a>
+  <% } else { %>
+  <span class="btn btn-outline btn-sm is-disabled" aria-disabled="true">← Anterior</span>
+  <% } %>
+  <span>Página <b><%= page %></b> de <b><%= pages %></b> · <%= total %> <%= total === 1 ? 'pedido' : 'pedidos' %></span>
+  <% if (page < pages) { %>
+  <a class="btn btn-outline btn-sm" href="<%= pageLink(page + 1) %>">Siguiente →</a>
+  <% } else { %>
+  <span class="btn btn-outline btn-sm is-disabled" aria-disabled="true">Siguiente →</span>
+  <% } %>
+</nav>
+<% } %>
 
 <%- include('../partials/admin-bottom') %>
