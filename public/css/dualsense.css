@@ -1,0 +1,206 @@
+.hero-pad {
+  width: 100%;
+  max-width: 560px;
+  margin: 28px auto 0;
+}
+
+.dualsense {
+  position: relative;
+  width: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ds-stage {
+  --rx: 0deg;
+  --ry: 0deg;
+  --gx: 50%;
+  --gy: 18%;
+  position: relative;
+  perspective: 1400px;
+  touch-action: pan-y;
+  isolation: isolate;
+}
+
+.ds-stage::after {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: 2%;
+  height: 16%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(47, 125, 255, .22), rgba(255, 43, 214, .08) 45%, transparent 72%);
+  filter: blur(18px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.ds-tilt {
+  position: relative;
+  z-index: 1;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform .3s cubic-bezier(.2, .7, .2, 1);
+  will-change: transform;
+}
+
+.ds-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 28px 38px rgba(0, 0, 0, .65));
+}
+
+.ds-glare {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border-radius: 40%;
+  background: radial-gradient(circle at var(--gx) var(--gy), rgba(255, 255, 255, .16), rgba(255, 255, 255, .03) 26%, transparent 52%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transition: background .12s linear;
+}
+
+.ds-hit {
+  cursor: pointer;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ds-key,
+.ds-trigger {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform .1s ease, filter .1s ease;
+}
+
+.ds-key.is-down {
+  transform: translateY(2px) scale(.93);
+  filter: brightness(.76);
+}
+
+.ds-trigger {
+  transform-origin: top center;
+}
+
+.ds-trigger.is-down {
+  transform: translateY(3px) scaleY(.95);
+  filter: brightness(.78);
+}
+
+.ds-touchpad.is-down {
+  filter: brightness(.82);
+}
+
+.ds-touchpad.is-down .ds-lightbar,
+.dualsense.is-lit .ds-lightbar {
+  opacity: 1;
+  filter: url(#dsBlueGlow) brightness(1.6);
+}
+
+.ds-stick-cap {
+  transform: translate(var(--sx, 0px), var(--sy, 0px));
+  transition: transform .18s cubic-bezier(.2, .7, .2, 1);
+  will-change: transform;
+}
+
+.ds-stick.is-active .ds-stick-cap {
+  transition: none;
+}
+
+.ds-stick-hit {
+  cursor: grab;
+  touch-action: none;
+}
+
+.ds-stick.is-active .ds-stick-hit {
+  cursor: grabbing;
+}
+
+.dualsense.is-rumble .ds-svg {
+  animation: dsRumble .42s cubic-bezier(.36, .07, .19, .97);
+}
+
+@keyframes dsRumble {
+  0%, 100% { transform: translate(0, 0); }
+  12% { transform: translate(-3px, 2px); }
+  26% { transform: translate(4px, -2px); }
+  40% { transform: translate(-4px, -1px); }
+  55% { transform: translate(3px, 3px); }
+  70% { transform: translate(-2px, -3px); }
+  85% { transform: translate(2px, 1px); }
+}
+
+.ds-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 4px;
+  padding: 0 4px;
+  color: #76899f;
+  font-size: 9px;
+  letter-spacing: .04em;
+}
+
+.ds-caption b {
+  color: #b9ccdf;
+  font-weight: 600;
+}
+
+.ds-haptic {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  color: #6fe1b0;
+}
+
+.ds-haptic::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.ds-caption-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ds-sound {
+  border: 1px solid rgba(141, 181, 220, .25);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .04);
+  color: #9fb3c8;
+  padding: 3px 8px;
+  font: 600 8px/1 "Space Grotesk", sans-serif;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: color .15s ease, border-color .15s ease, opacity .15s ease;
+}
+
+.ds-sound[aria-pressed="false"] {
+  color: #6f7f90;
+  opacity: .65;
+}
+
+.ds-sound:active {
+  transform: scale(.96);
+}
+
+@media (max-width: 700px) {
+  .hero-pad { margin-top: 20px; }
+  .ds-caption { font-size: 8px; }
+}
+
+@media (max-width: 420px) {
+  .ds-caption { flex-direction: column; align-items: flex-start; gap: 3px; }
+  .ds-caption-actions { width: 100%; justify-content: space-between; }
+}

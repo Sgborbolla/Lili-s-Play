@@ -11,7 +11,8 @@
 <link rel="preload" href="/fonts/SpaceGrotesk.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="stylesheet" href="/css/social.css?v=4">
 <link rel="stylesheet" href="/css/watermarks.css">
-<link rel="stylesheet" href="/css/welcome.css?v=15">
+<link rel="stylesheet" href="/css/welcome.css?v=16">
+<link rel="stylesheet" href="/css/dualsense.css?v=1">
 <link rel="stylesheet" href="/css/ps4-theme.css?v=10">
 <link rel="stylesheet" href="/css/fit.css?v=2">
 <script>document.documentElement.classList.add('js');</script>
@@ -133,11 +134,245 @@
           <span class="sep"></span>
           <span>+30 juegos</span>
         </div>
-        <div class="ps-buttons" aria-hidden="true">
-          <span style="--c:#5efc8d">△</span>
-          <span style="--c:#ff4d6d">○</span>
-          <span style="--c:#5bbcff">✕</span>
-          <span style="--c:#ff6bd6">□</span>
+        <div class="hero-pad">
+          <div class="dualsense" id="dualsense">
+            <div class="ds-stage">
+              <div class="ds-tilt">
+                <svg class="ds-svg" viewBox="0 0 800 560" role="group" aria-label="Mando DualSense interactivo">
+  <defs>
+    <linearGradient id="dsShell" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b424b"/>
+      <stop offset=".16" stop-color="#2a3037"/>
+      <stop offset=".48" stop-color="#171b20"/>
+      <stop offset=".82" stop-color="#0b0e12"/>
+      <stop offset="1" stop-color="#030405"/>
+    </linearGradient>
+    <radialGradient id="dsShellSheen" cx=".5" cy=".05" r=".85">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".2"/>
+      <stop offset=".26" stop-color="#ffffff" stop-opacity=".05"/>
+      <stop offset=".62" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="dsInsert" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#14171c"/>
+      <stop offset=".55" stop-color="#0b0e12"/>
+      <stop offset="1" stop-color="#040506"/>
+    </linearGradient>
+    <radialGradient id="dsInsertSheen" cx=".5" cy=".08" r=".9">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".08"/>
+      <stop offset=".5" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="dsPad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#424952"/>
+      <stop offset=".28" stop-color="#2d333a"/>
+      <stop offset="1" stop-color="#161a1f"/>
+    </linearGradient>
+    <linearGradient id="dsMetal" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6c7682"/>
+      <stop offset=".45" stop-color="#e8eff7"/>
+      <stop offset="1" stop-color="#6c7682"/>
+    </linearGradient>
+    <linearGradient id="dsKey" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#454c55"/>
+      <stop offset=".28" stop-color="#272c33"/>
+      <stop offset="1" stop-color="#0c0f13"/>
+    </linearGradient>
+    <radialGradient id="dsKeyGloss" cx=".32" cy=".18" r=".85">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".4"/>
+      <stop offset=".42" stop-color="#ffffff" stop-opacity=".05"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="dsStick" cx=".34" cy=".24" r=".9">
+      <stop offset="0" stop-color="#636b76"/>
+      <stop offset=".32" stop-color="#3d434b"/>
+      <stop offset=".74" stop-color="#1c2025"/>
+      <stop offset="1" stop-color="#0b0e12"/>
+    </radialGradient>
+    <radialGradient id="dsWell" cx=".5" cy=".35" r=".78">
+      <stop offset="0" stop-color="#030405"/>
+      <stop offset=".62" stop-color="#0b0e12"/>
+      <stop offset=".9" stop-color="#14181d"/>
+      <stop offset="1" stop-color="#242a31"/>
+    </radialGradient>
+    <linearGradient id="dsBlue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a6e2ff"/>
+      <stop offset=".45" stop-color="#3a8dff"/>
+      <stop offset="1" stop-color="#1443b8"/>
+    </linearGradient>
+    <pattern id="dsGrip" width="5" height="5" patternUnits="userSpaceOnUse">
+      <circle cx="1.3" cy="1.3" r=".7" fill="#ffffff" opacity=".06"/>
+      <circle cx="3.8" cy="3.8" r=".7" fill="#000000" opacity=".2"/>
+    </pattern>
+    <filter id="dsDrop" color-interpolation-filters="sRGB" x="-20%" y="-20%" width="140%" height="165%">
+      <feDropShadow dx="0" dy="26" stdDeviation="22" flood-color="#000" flood-opacity=".72"/>
+    </filter>
+    <filter id="dsSoft" color-interpolation-filters="sRGB" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+    <filter id="dsBlueGlow" color-interpolation-filters="sRGB" x="-250%" y="-40%" width="600%" height="180%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="dsShellClip"><use href="#dsShellPath"/></clipPath>
+  </defs>
+
+  <ellipse cx="400" cy="538" rx="272" ry="20" fill="#000" opacity=".52" filter="url(#dsSoft)"/>
+
+  <g class="ds-trigger ds-l2" data-key="l2" tabindex="0" role="button" aria-label="Gatillo L2">
+    <path d="M170 84 C160 40 184 10 226 4 L286 10 C312 18 322 46 308 80 Z" fill="#0a0c0f" stroke="#343b44" stroke-width="1.2"/>
+    <path d="M194 58 C208 42 238 36 270 40" fill="none" stroke="#7c8795" stroke-opacity=".28" stroke-width="1.6"/>
+  </g>
+  <g class="ds-trigger ds-r2" data-key="r2" tabindex="0" role="button" aria-label="Gatillo R2">
+    <path d="M630 84 C640 40 616 10 574 4 L514 10 C488 18 478 46 492 80 Z" fill="#0a0c0f" stroke="#343b44" stroke-width="1.2"/>
+    <path d="M606 58 C592 42 562 36 530 40" fill="none" stroke="#7c8795" stroke-opacity=".28" stroke-width="1.6"/>
+  </g>
+  <g class="ds-trigger ds-l1" data-key="l1" tabindex="0" role="button" aria-label="Botón L1">
+    <rect x="192" y="58" width="96" height="30" rx="15" transform="rotate(-8 240 73)" fill="#15181d" stroke="#454d57" stroke-width="1.1"/>
+    <rect x="198" y="62" width="84" height="10" rx="5" transform="rotate(-8 240 73)" fill="url(#dsKeyGloss)" opacity=".55"/>
+  </g>
+  <g class="ds-trigger ds-r1" data-key="r1" tabindex="0" role="button" aria-label="Botón R1">
+    <rect x="512" y="58" width="96" height="30" rx="15" transform="rotate(8 560 73)" fill="#15181d" stroke="#454d57" stroke-width="1.1"/>
+    <rect x="518" y="62" width="84" height="10" rx="5" transform="rotate(8 560 73)" fill="url(#dsKeyGloss)" opacity=".55"/>
+  </g>
+
+  <path id="dsShellPath" d="M250 40 C320 22 480 22 550 40 C615 58 655 95 668 155 C682 230 682 360 655 450 C638 505 600 540 558 542 C516 544 492 510 480 470 C468 430 452 395 430 372 C418 360 409 355 400 355 C391 355 382 360 370 372 C348 395 332 430 320 470 C308 510 284 544 242 542 C200 540 162 505 145 450 C118 360 118 230 132 155 C145 95 185 58 250 40 Z" fill="url(#dsShell)" stroke="#3e454f" stroke-opacity=".6" stroke-width="1.5"/>
+  <path d="M250 40 C320 22 480 22 550 40 C615 58 655 95 668 155 C682 230 682 360 655 450 C638 505 600 540 558 542 C516 544 492 510 480 470 C468 430 452 395 430 372 C418 360 409 355 400 355 C391 355 382 360 370 372 C348 395 332 430 320 470 C308 510 284 544 242 542 C200 540 162 505 145 450 C118 360 118 230 132 155 C145 95 185 58 250 40 Z" fill="url(#dsShellSheen)" clip-path="url(#dsShellClip)"/>
+  <path d="M250 40 C320 22 480 22 550 40 C615 58 655 95 668 155" fill="none" stroke="#aebbc9" stroke-opacity=".3" stroke-width="1.6"/>
+  <path d="M132 155 C118 230 118 360 145 450 C162 505 200 540 242 542" fill="none" stroke="#8e9baa" stroke-opacity=".14" stroke-width="1.4"/>
+  <path d="M668 155 C682 230 682 360 655 450 C638 505 600 540 558 542" fill="none" stroke="#8e9baa" stroke-opacity=".14" stroke-width="1.4"/>
+
+  <path d="M235 80 C300 58 500 58 565 80 C612 100 628 150 622 205 C616 265 594 315 566 342 C548 360 520 366 500 360 C470 350 430 345 400 345 C370 345 330 350 300 360 C280 366 252 360 234 342 C206 315 184 265 178 205 C172 150 188 100 235 80 Z" fill="url(#dsInsert)" stroke="#2b3139" stroke-opacity=".7" stroke-width="1.2"/>
+  <path d="M235 80 C300 58 500 58 565 80 C612 100 628 150 622 205 C616 265 594 315 566 342 C548 360 520 366 500 360 C470 350 430 345 400 345 C370 345 330 350 300 360 C280 366 252 360 234 342 C206 315 184 265 178 205 C172 150 188 100 235 80 Z" fill="url(#dsInsertSheen)"/>
+  <path d="M240 86 C304 66 496 66 560 86" fill="none" stroke="#6d7783" stroke-opacity=".22" stroke-width="1.2"/>
+  <path d="M320 470 C340 430 360 400 382 380" fill="none" stroke="#000" stroke-opacity=".55" stroke-width="2"/>
+  <path d="M480 470 C460 430 440 400 418 380" fill="none" stroke="#000" stroke-opacity=".55" stroke-width="2"/>
+
+  <g class="ds-hit ds-touchpad" data-key="touchpad" tabindex="0" role="button" aria-label="Touchpad">
+    <rect x="306" y="66" width="188" height="98" rx="12" fill="url(#dsPad)" stroke="#5a626d" stroke-opacity=".55" stroke-width="1.2"/>
+    <rect x="306" y="66" width="188" height="98" rx="12" fill="none" stroke="#000" stroke-opacity=".5"/>
+    <rect x="306" y="66" width="188" height="98" rx="12" fill="url(#dsKeyGloss)" opacity=".5"/>
+    <path d="M318 72 H482" stroke="url(#dsMetal)" stroke-width="2.2" opacity=".55"/>
+    <path d="M318 157 H482" stroke="#000" stroke-opacity=".45" stroke-width="1.5"/>
+    <rect class="ds-lightbar" x="298" y="84" width="4" height="70" rx="2" fill="url(#dsBlue)" filter="url(#dsBlueGlow)" opacity=".78"/>
+    <rect class="ds-lightbar" x="498" y="84" width="4" height="70" rx="2" fill="url(#dsBlue)" filter="url(#dsBlueGlow)" opacity=".78"/>
+    <path d="M302 78 H306" stroke="#7fc4ff" stroke-width="2" opacity=".55"/>
+    <path d="M494 78 H498" stroke="#7fc4ff" stroke-width="2" opacity=".55"/>
+  </g>
+
+  <g fill="#000" opacity=".9">
+    <circle cx="368" cy="181" r="2.2"/><circle cx="379" cy="177" r="2.2"/><circle cx="390" cy="174" r="2.2"/>
+    <circle cx="400" cy="173" r="2.2"/><circle cx="410" cy="174" r="2.2"/><circle cx="421" cy="177" r="2.2"/>
+    <circle cx="432" cy="181" r="2.2"/>
+  </g>
+
+  <g class="ds-dpad">
+    <circle cx="200" cy="130" r="64" fill="url(#dsWell)" stroke="#252b32" stroke-width="1.4"/>
+    <circle cx="200" cy="130" r="52" fill="none" stroke="#000" stroke-opacity=".65" stroke-width="2"/>
+    <g class="ds-hit ds-key ds-dpad-up" data-key="up" tabindex="0" role="button" aria-label="Cruceta arriba">
+      <rect x="180" y="82" width="40" height="44" rx="10" fill="url(#dsKey)" stroke="#505862" stroke-opacity=".65" stroke-width="1.1"/>
+      <rect x="182" y="84" width="36" height="16" rx="7" fill="url(#dsKeyGloss)" opacity=".65"/>
+      <path d="M200 96 L209 112 L191 112 Z" fill="#d5dee8" opacity=".92"/>
+    </g>
+    <g class="ds-hit ds-key ds-dpad-down" data-key="down" tabindex="0" role="button" aria-label="Cruceta abajo">
+      <rect x="180" y="134" width="40" height="44" rx="10" fill="url(#dsKey)" stroke="#505862" stroke-opacity=".65" stroke-width="1.1"/>
+      <rect x="182" y="136" width="36" height="16" rx="7" fill="url(#dsKeyGloss)" opacity=".65"/>
+      <path d="M200 164 L209 148 L191 148 Z" fill="#d5dee8" opacity=".92"/>
+    </g>
+    <g class="ds-hit ds-key ds-dpad-left" data-key="left" tabindex="0" role="button" aria-label="Cruceta izquierda">
+      <rect x="152" y="110" width="44" height="40" rx="10" fill="url(#dsKey)" stroke="#505862" stroke-opacity=".65" stroke-width="1.1"/>
+      <rect x="154" y="112" width="16" height="36" rx="7" fill="url(#dsKeyGloss)" opacity=".65"/>
+      <path d="M166 130 L182 121 L182 139 Z" fill="#d5dee8" opacity=".92"/>
+    </g>
+    <g class="ds-hit ds-key ds-dpad-right" data-key="right" tabindex="0" role="button" aria-label="Cruceta derecha">
+      <rect x="204" y="110" width="44" height="40" rx="10" fill="url(#dsKey)" stroke="#505862" stroke-opacity=".65" stroke-width="1.1"/>
+      <rect x="206" y="112" width="16" height="36" rx="7" fill="url(#dsKeyGloss)" opacity=".65"/>
+      <path d="M234 130 L218 121 L218 139 Z" fill="#d5dee8" opacity=".92"/>
+    </g>
+    <circle cx="200" cy="130" r="9" fill="#0b0e12" stroke="#000" stroke-opacity=".6"/>
+  </g>
+
+  <g class="ds-face">
+    <circle cx="600" cy="130" r="64" fill="url(#dsWell)" stroke="#252b32" stroke-width="1.4"/>
+    <circle cx="600" cy="130" r="52" fill="none" stroke="#000" stroke-opacity=".65" stroke-width="2"/>
+    <g class="ds-hit ds-key ds-face-triangle" data-key="triangle" tabindex="0" role="button" aria-label="Triángulo">
+      <circle cx="600" cy="88" r="24" fill="url(#dsKey)" stroke="#505862" stroke-opacity=".65" stroke-width="1.1"/>
+      <circle cx="600" cy="88" r="24" fill="url(#dsKeyGloss)" opacity=".62"/>
+      <path d="M600 77 L610 96 L590 96 Z" fill="#e7edf4"/>
+    </g>
+    <g class="ds-hit ds-key ds-face-circle" data-key="circle" tabindex="0" role="button" aria-label="Círculo">
+      <circle cx="642" cy="130" r="24" fill="url(#dsKey)" stroke="#505862" stroke-opacity=".65" stroke-width="1.1"/>
+      <circle cx="642" cy="130" r="24" fill="url(#dsKeyGloss)" opacity=".62"/>
+      <circle cx="642" cy="130" r="9.5" fill="none" stroke="#e7edf4" stroke-width="2.6"/>
+    </g>
+    <g class="ds-hit ds-key ds-face-cross" data-key="cross" tabindex="0" role="button" aria-label="Cruz">
+      <circle cx="600" cy="172" r="24" fill="url(#dsKey)" stroke="#505862" stroke-opacity=".65" stroke-width="1.1"/>
+      <circle cx="600" cy="172" r="24" fill="url(#dsKeyGloss)" opacity=".62"/>
+      <path d="M592 164 L608 180 M608 164 L592 180" stroke="#e7edf4" stroke-width="2.8" stroke-linecap="round"/>
+    </g>
+    <g class="ds-hit ds-key ds-face-square" data-key="square" tabindex="0" role="button" aria-label="Cuadrado">
+      <circle cx="558" cy="130" r="24" fill="url(#dsKey)" stroke="#505862" stroke-opacity=".65" stroke-width="1.1"/>
+      <circle cx="558" cy="130" r="24" fill="url(#dsKeyGloss)" opacity=".62"/>
+      <rect x="549" y="121" width="18" height="18" rx="2.5" fill="none" stroke="#e7edf4" stroke-width="2.4"/>
+    </g>
+  </g>
+
+  <g class="ds-stick ds-stick-left" data-stick="left" tabindex="0" role="button" aria-label="Palanca izquierda. Arrastra o usa las flechas">
+    <circle cx="300" cy="235" r="58" fill="url(#dsWell)" stroke="#262c33" stroke-width="1.4"/>
+    <circle cx="300" cy="235" r="48" fill="none" stroke="#000" stroke-opacity=".7" stroke-width="2"/>
+    <g class="ds-stick-cap">
+      <circle cx="300" cy="235" r="35" fill="url(#dsStick)" stroke="#666f7b" stroke-opacity=".5" stroke-width="1.2"/>
+      <circle cx="300" cy="235" r="35" fill="url(#dsGrip)" opacity=".75"/>
+      <circle cx="300" cy="235" r="26" fill="none" stroke="#080a0d" stroke-opacity=".8" stroke-width="2"/>
+      <ellipse cx="288" cy="221" rx="12" ry="6" fill="#ffffff" opacity=".13" transform="rotate(-24 288 221)"/>
+    </g>
+    <circle class="ds-stick-hit" cx="300" cy="235" r="58" fill="transparent"/>
+  </g>
+  <g class="ds-stick ds-stick-right" data-stick="right" tabindex="0" role="button" aria-label="Palanca derecha. Arrastra o usa las flechas">
+    <circle cx="500" cy="235" r="58" fill="url(#dsWell)" stroke="#262c33" stroke-width="1.4"/>
+    <circle cx="500" cy="235" r="48" fill="none" stroke="#000" stroke-opacity=".7" stroke-width="2"/>
+    <g class="ds-stick-cap">
+      <circle cx="500" cy="235" r="35" fill="url(#dsStick)" stroke="#666f7b" stroke-opacity=".5" stroke-width="1.2"/>
+      <circle cx="500" cy="235" r="35" fill="url(#dsGrip)" opacity=".75"/>
+      <circle cx="500" cy="235" r="26" fill="none" stroke="#080a0d" stroke-opacity=".8" stroke-width="2"/>
+      <ellipse cx="488" cy="221" rx="12" ry="6" fill="#ffffff" opacity=".13" transform="rotate(-24 488 221)"/>
+    </g>
+    <circle class="ds-stick-hit" cx="500" cy="235" r="58" fill="transparent"/>
+  </g>
+
+  <g class="ds-hit ds-key ds-create" data-key="create" tabindex="0" role="button" aria-label="Botón Crear">
+    <rect x="336" y="186" width="26" height="11" rx="5.5" fill="url(#dsKey)" stroke="#464e58" stroke-opacity=".7"/>
+    <path d="M343 190 H355 M343 193 H352" stroke="#d8e1ea" stroke-opacity=".75" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+  <g class="ds-hit ds-key ds-options" data-key="options" tabindex="0" role="button" aria-label="Botón Opciones">
+    <rect x="438" y="186" width="26" height="11" rx="5.5" fill="url(#dsKey)" stroke="#464e58" stroke-opacity=".7"/>
+    <path d="M445 190 H457 M448 193 H457" stroke="#d8e1ea" stroke-opacity=".75" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+  <g class="ds-hit ds-key ds-ps" data-key="ps" tabindex="0" role="button" aria-label="Botón PS">
+    <circle cx="400" cy="205" r="15" fill="#0a0c10" stroke="#3c444e" stroke-width="1.3"/>
+    <circle cx="400" cy="205" r="15" fill="url(#dsKeyGloss)" opacity=".5"/>
+    <text x="400" y="209.5" text-anchor="middle" font-family="Syne, sans-serif" font-size="11" font-weight="800" fill="#e8eef6" letter-spacing="-.4">PS</text>
+  </g>
+  <g class="ds-hit ds-key ds-mute" data-key="mute" tabindex="0" role="button" aria-label="Silenciar micrófono">
+    <rect x="391" y="238" width="18" height="7" rx="3.5" fill="#15191e" stroke="#434b55" stroke-opacity=".7"/>
+    <path d="M398 241 H402 M398 243 H402" stroke="#c9d4e0" stroke-opacity=".75" stroke-width="1" stroke-linecap="round"/>
+  </g>
+  <rect x="396" y="254" width="8" height="2" rx="1" fill="#5bbcff" opacity=".8" filter="url(#dsBlueGlow)"/>
+
+  <path d="M330 330 C356 348 444 348 470 330" fill="none" stroke="#000" stroke-opacity=".5" stroke-width="2"/>
+  <path d="M300 500 C322 486 344 470 356 446" fill="none" stroke="#000" stroke-opacity=".45" stroke-width="1.6"/>
+  <path d="M500 500 C478 486 456 470 444 446" fill="none" stroke="#000" stroke-opacity=".45" stroke-width="1.6"/>
+  <rect x="388" y="44" width="24" height="5" rx="2.5" fill="#050607" stroke="#3a424b" stroke-opacity=".55"/>
+</svg>
+                <span class="ds-glare" aria-hidden="true"></span>
+              </div>
+            </div>
+            <div class="ds-caption">
+              <span><b>Toca y mueve</b> · botones, cruceta y palancas</span>
+              <span class="ds-caption-actions">
+                <span class="ds-haptic" id="ds-haptic">Vibración lista</span>
+                <button class="ds-sound" id="ds-sound" type="button" aria-pressed="true">Sonido on</button>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -576,6 +811,7 @@
   </div>
 </footer>
 
+<script src="/js/dualsense.js?v=1"></script>
 <script src="/js/welcome.js?v=3"></script>
 </body>
 </html>
