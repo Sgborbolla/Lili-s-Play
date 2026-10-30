@@ -11,8 +11,8 @@
 <link rel="preload" href="/fonts/SpaceGrotesk.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="stylesheet" href="/css/social.css?v=4">
 <link rel="stylesheet" href="/css/watermarks.css">
-<link rel="stylesheet" href="/css/welcome.css?v=7">
-<link rel="stylesheet" href="/css/ps4-theme.css?v=8">
+<link rel="stylesheet" href="/css/welcome.css?v=11">
+<link rel="stylesheet" href="/css/ps4-theme.css?v=10">
 <link rel="stylesheet" href="/css/fit.css?v=2">
 <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -108,20 +108,20 @@
   <section class="hero" aria-labelledby="hero-title">
     <div class="hero-grid">
       <div class="hero-art">
-        <span class="hero-badge"><i></i> Nuevo · Zona gamer</span>
+        <span class="hero-badge"><i></i> <span data-welcome-text="hero_badge">Nuevo · Zona gamer</span></span>
         <picture>
           <source srcset="/img/banner-lilys-plays.webp" type="image/webp">
-          <img src="/img/banner-lilys-plays.jpg" alt="Letrero neón de Lily's Plays, Salón Gamer y Bistró" width="1264" height="843" loading="eager" decoding="async">
+          <img data-welcome-media="hero-banner" src="/img/banner-lilys-plays.jpg" alt="Letrero neón de Lily's Plays, Salón Gamer y Bistró" width="1264" height="843" loading="eager" decoding="async">
         </picture>
       </div>
 
       <div class="hero-copy">
-        <p class="eyebrow">Salón gamer y bistró · Bienvenido</p>
-        <h1 id="hero-title">JUEGA, COME<br><span>Y REPITE.</span></h1>
-        <p class="lead">Estaciones PlayStation 4, clásicos de siempre y una cocina que juega de local. Todo en un solo lugar, con la noche a tu favor.</p>
+        <p class="eyebrow" data-welcome-text="hero_eyebrow">Salón gamer y bistró · Bienvenido</p>
+        <h1 id="hero-title"><span data-welcome-text="hero_title_1">JUEGA, COME</span><br><span data-welcome-text="hero_title_2">Y REPITE.</span></h1>
+        <p class="lead" data-welcome-text="hero_lead">Estaciones PlayStation 4, clásicos de siempre y una cocina que juega de local. Todo en un solo lugar, con la noche a tu favor.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="/" data-menu-link>Ver el menú <span>→</span></a>
-          <a class="btn btn-ghost" href="#reservar">Reservar mesa</a>
+          <a class="btn btn-primary" href="/" data-menu-link><span data-welcome-text="hero_cta_1">Ver el menú</span> <span>→</span></a>
+          <a class="btn btn-ghost" href="#reservar"><span data-welcome-text="hero_cta_2">Reservar mesa</span></a>
         </div>
         <div class="hero-meta">
           <span class="dot"></span>
@@ -157,25 +157,25 @@
   </div>
 
   <section class="stats" aria-label="Números de Lily's Plays">
-    <div class="stat"><strong>2 consolas</strong><span>PlayStation 4 · Full HD</span></div>
-    <div class="stat"><strong>+30 juegos</strong><span>De clásicos a torneos</span></div>
-    <div class="stat"><strong>Cocina propia</strong><span>Comida y bebida</span></div>
-    <div class="stat"><strong>Reservas</strong><span>Tu estación, tu mesa</span></div>
+    <div class="stat"><strong data-welcome-text="stat_1_value">2 consolas</strong><span data-welcome-text="stat_1_label">PlayStation 4 · Full HD</span></div>
+    <div class="stat"><strong data-welcome-text="stat_2_value">+30 juegos</strong><span data-welcome-text="stat_2_label">De clásicos a torneos</span></div>
+    <div class="stat"><strong data-welcome-text="stat_3_value">Cocina propia</strong><span data-welcome-text="stat_3_label">Comida y bebida</span></div>
+    <div class="stat"><strong data-welcome-text="stat_4_value">Reservas</strong><span data-welcome-text="stat_4_label">Tu estación, tu mesa</span></div>
   </section>
 
   <section class="section" id="consolas" aria-labelledby="consolas-title">
     <div class="section-head reveal">
       <div>
-        <p class="eyebrow">Elige tu estación</p>
-        <h2 id="consolas-title">Dos estaciones PS4.</h2>
-        <p>Dos formas de jugar, una sola noche. Mandos listos, pantallas grandes y sillones para quedarse.</p>
+        <p class="eyebrow" data-welcome-text="stations_eyebrow">Elige tu estación</p>
+        <h2 id="consolas-title" data-welcome-text="stations_title">Dos estaciones PS4.</h2>
+        <p data-welcome-text="stations_text">Dos formas de jugar, una sola noche. Mandos listos, pantallas grandes y sillones para quedarse.</p>
       </div>
-      <a class="link-more" href="#reservar">Reservar una estación →</a>
+      <a class="link-more" href="#reservar" data-welcome-text="stations_link">Reservar una estación →</a>
     </div>
 
     <div class="console-grid">
-      <article class="console-card reveal">
-        <img src="/img/stock/ps4-game-console.jpg" alt="Consola PlayStation 4 lista para jugar" loading="lazy" decoding="async">
+      <article class="console-card reveal" data-welcome-card="station-1">
+        <img src="/img/consolas/estacion-a.webp" alt="Consola PlayStation 4 de pie junto a su mando" width="520" height="260" loading="lazy" decoding="async">
         <div class="console-body">
           <span class="pill">PS4 · Full HD</span>
           <h3>PS4 · Estación 1</h3>
@@ -184,8 +184,8 @@
         </div>
       </article>
 
-      <article class="console-card reveal">
-        <img src="/img/stock/ps4.jpg" alt="Consola PlayStation 4 con su mando" loading="lazy" decoding="async">
+      <article class="console-card reveal" data-welcome-card="station-2">
+        <img src="/img/consolas/estacion-b.webp" alt="Dos consolas PlayStation 4 con el mando sobre ellas" width="478" height="418" loading="lazy" decoding="async">
         <div class="console-body">
           <span class="pill">PS4 · Zona torneo</span>
           <h3>PS4 · Estación 2</h3>
@@ -199,16 +199,16 @@
   <section class="section" id="juegos" aria-labelledby="juegos-title">
     <div class="section-head reveal">
       <div>
-        <p class="eyebrow">Juegos que enganchan</p>
-        <h2 id="juegos-title">De clásicos a torneos.</h2>
-        <p>Elige tu favorito, arma la partida y únete a la próxima noche de torneo. Siempre hay un mando libre.</p>
+        <p class="eyebrow" data-welcome-text="games_eyebrow">Juegos que enganchan</p>
+        <h2 id="juegos-title" data-welcome-text="games_title">De clásicos a torneos.</h2>
+        <p data-welcome-text="games_text">Elige tu favorito, arma la partida y únete a la próxima noche de torneo. Siempre hay un mando libre.</p>
       </div>
-      <a class="link-more" href="/" data-menu-link>Ver el menú →</a>
+      <a class="link-more" href="/" data-menu-link data-welcome-text="games_link">Ver el menú →</a>
     </div>
 
     <div class="games-grid">
       <article class="game-feature reveal">
-        <img src="/img/user/juegos.jpg" alt="Collage de juegos de acción, carreras, aventura y deportes" loading="lazy" decoding="async">
+        <img data-welcome-media="game-feature" src="/img/user/juegos.jpg" alt="Collage de juegos de acción, carreras, aventura y deportes" loading="lazy" decoding="async">
         <div class="game-copy">
           <span class="pill">+30 títulos</span>
           <h3>Arma tu noche de juego.</h3>
@@ -219,11 +219,11 @@
 
       <div class="game-side">
         <article class="game-mini reveal">
-          <img src="/img/user/juegos-1.jpg" alt="Selección de juegos retro y arcade" loading="lazy" decoding="async">
+          <img data-welcome-media="game-mini-1" src="/img/user/juegos-1.jpg" alt="Selección de juegos retro y arcade" loading="lazy" decoding="async">
           <span class="mini-label">Retro & arcade</span>
         </article>
         <article class="game-mini reveal">
-          <img src="/img/user/juegos-2.jpg" alt="Selección de juegos de disparos, carreras y aventura" loading="lazy" decoding="async">
+          <img data-welcome-media="game-mini-2" src="/img/user/juegos-2.jpg" alt="Selección de juegos de disparos, carreras y aventura" loading="lazy" decoding="async">
           <span class="mini-label">Shooters & carreras</span>
         </article>
       </div>
@@ -244,15 +244,15 @@
   <section class="section" id="promos" aria-labelledby="promos-title">
     <div class="section-head reveal">
       <div>
-        <p class="eyebrow">Anuncios y promos</p>
-        <h2 id="promos-title">La noche se arma aquí.</h2>
+        <p class="eyebrow" data-welcome-text="promos_eyebrow">Anuncios y promos</p>
+        <h2 id="promos-title" data-welcome-text="promos_title">La noche se arma aquí.</h2>
       </div>
-      <a class="link-more" href="/" data-menu-link>Ver combos →</a>
+      <a class="link-more" href="/" data-menu-link data-welcome-text="promos_link">Ver combos →</a>
     </div>
 
     <div class="promo-grid">
       <article class="promo reveal">
-        <img src="/img/stock/food.jpg" alt="Platos de comida para compartir" loading="lazy" decoding="async">
+        <img data-welcome-media="promo-1" src="/img/stock/food.jpg" alt="Platos de comida para compartir" loading="lazy" decoding="async">
         <div class="promo-copy">
           <span class="pill">Combo gamer</span>
           <h3>1 hora de PS4 + hamburguesa + bebida.</h3>
@@ -262,7 +262,7 @@
       </article>
 
       <article class="promo reveal">
-        <img src="/img/stock/esports.jpg" alt="Jugador de esports en una competencia" loading="lazy" decoding="async">
+        <img data-welcome-media="promo-2" src="/img/stock/esports.jpg" alt="Jugador de esports en una competencia" loading="lazy" decoding="async">
         <div class="promo-copy">
           <span class="pill">Viernes · 20:00</span>
           <h3>Noche de torneo.</h3>
@@ -276,16 +276,16 @@
   <section class="section" id="menu" aria-labelledby="menu-title">
     <div class="section-head reveal">
       <div>
-        <p class="eyebrow">Del menú</p>
-        <h2 id="menu-title">Para jugar con hambre.</h2>
-        <p>Clásicos de bistró con nombres de videojuego. Todo se prepara en casa.</p>
+        <p class="eyebrow" data-welcome-text="menu_eyebrow">Del menú</p>
+        <h2 id="menu-title" data-welcome-text="menu_title">Para jugar con hambre.</h2>
+        <p data-welcome-text="menu_text">Clásicos de bistró con nombres de videojuego. Todo se prepara en casa.</p>
       </div>
-      <a class="link-more" href="/" data-menu-link>Ver menú completo →</a>
+      <a class="link-more" href="/" data-menu-link data-welcome-text="menu_link">Ver menú completo →</a>
     </div>
 
     <div class="food-grid">
       <article class="food-card reveal">
-        <img src="/img/stock/burger.jpg" alt="Hamburguesa God of War Ragnarök Smash" loading="lazy" decoding="async">
+        <img data-welcome-media="food-1" src="/img/stock/burger.jpg" alt="Hamburguesa God of War Ragnarök Smash" loading="lazy" decoding="async">
         <div class="food-body">
           <div class="food-kicker"><span>Burger</span><b>Res Angus</b></div>
           <h3>God of War: Ragnarök Smash</h3>
@@ -295,7 +295,7 @@
       </article>
 
       <article class="food-card reveal">
-        <img src="/img/stock/pizza.jpg" alt="Pizzas Smash Dúo Party" loading="lazy" decoding="async">
+        <img data-welcome-media="food-2" src="/img/stock/pizza.jpg" alt="Pizzas Smash Dúo Party" loading="lazy" decoding="async">
         <div class="food-body">
           <div class="food-kicker"><span>Pizza</span><b>Compartir</b></div>
           <h3>Pizzas Smash Dúo Party</h3>
@@ -305,7 +305,7 @@
       </article>
 
       <article class="food-card reveal">
-        <img src="/img/stock/wings.jpg" alt="Snack DualShock Haptic Astro" loading="lazy" decoding="async">
+        <img data-welcome-media="food-3" src="/img/stock/wings.jpg" alt="Snack DualShock Haptic Astro" loading="lazy" decoding="async">
         <div class="food-body">
           <div class="food-kicker"><span>Entrada</span><b>3 salsas</b></div>
           <h3>Snack DualShock Haptic Astro</h3>
@@ -315,7 +315,7 @@
       </article>
 
       <article class="food-card reveal">
-        <img src="/img/stock/shake.jpg" alt="Sundae Kirby Dream Land" loading="lazy" decoding="async">
+        <img data-welcome-media="food-4" src="/img/stock/shake.jpg" alt="Sundae Kirby Dream Land" loading="lazy" decoding="async">
         <div class="food-body">
           <div class="food-kicker"><span>Postre</span><b>Rosa</b></div>
           <h3>Sundae Kirby Dream Land</h3>
@@ -324,52 +324,227 @@
         </div>
       </article>
     </div>
-    <p class="food-note">Precios en USD y CUC. Consulta combos, promociones y opciones sin alcohol.</p>
+    <p class="food-note" data-welcome-text="menu_note">Precios en USD y CUC. Consulta combos, promociones y opciones sin alcohol.</p>
     <div style="text-align: center; margin-top: 22px;">
-      <a class="btn btn-primary" href="/" data-menu-link>Hacer mi pedido <span>→</span></a>
+      <a class="btn btn-primary" href="/" data-menu-link><span data-welcome-text="menu_cta">Hacer mi pedido</span> <span>→</span></a>
     </div>
   </section>
 
   <section class="section" aria-labelledby="retro-title">
     <div class="section-head reveal">
       <div>
-        <p class="eyebrow">Zona retro</p>
-        <h2 id="retro-title">Todas las épocas, una mesa.</h2>
-        <p>Del Family a la PS4. Si tuvo un mando, en Lily's Plays tiene un lugar.</p>
+        <p class="eyebrow" data-welcome-text="retro_eyebrow">Zona retro</p>
+        <h2 id="retro-title" data-welcome-text="retro_title">Del Atari a la PS5 y Xbox Series.</h2>
+        <p data-welcome-text="retro_text">Un recorrido por mandos y consolas que marcaron época: Atari, Nintendo, Sega, PlayStation y Xbox.</p>
       </div>
     </div>
 
     <div class="retro-grid">
-      <article class="retro-card reveal">
-        <img src="/img/user/controles-retro.jpg" alt="Mandos de Nintendo Entertainment System y GameCube" loading="lazy" decoding="async">
+      <article class="retro-card reveal" data-welcome-card="retro-01" data-console="ATARI 2600" style="--accent:#e0a458;--accent-rgb:224,164,88;--accent2:#ff7a3c;--accent2-rgb:255,122,60;--art:url('/img/retro/atari-2600-joystick.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>●</i></span>
+        <div class="retro-media"><img src="/img/retro/atari-2600-joystick.webp" alt="Joystick de Atari 2600" loading="lazy" decoding="async" width="1092" height="1100"></div>
         <div class="retro-copy">
-          <span class="pill">Mandos</span>
-          <h3>De NES a GameCube.</h3>
-          <p>Dos clásicos que nunca pasan de moda.</p>
+          <span class="pill">1977 · Pionero</span>
+          <h3>Atari 2600</h3>
+          <p>El joystick que empezó todo.</p>
         </div>
       </article>
 
-      <article class="retro-card reveal">
-        <img src="/img/stock/ps4-duo.png" alt="Dos consolas PlayStation 4 con su mando" loading="lazy" decoding="async">
+      <article class="retro-card reveal" data-welcome-card="retro-02" data-console="NES" style="--accent:#ff4d4d;--accent-rgb:255,77,77;--accent2:#d9dde3;--accent2-rgb:217,221,227;--art:url('/img/retro/nes-controller.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>A</i><i>B</i><i>S</i><i>T</i></span>
+        <div class="retro-media"><img src="/img/retro/nes-controller.webp" alt="Mando de Nintendo Entertainment System" loading="lazy" decoding="async" width="1578" height="1100"></div>
         <div class="retro-copy">
-          <span class="pill">PlayStation 4</span>
-          <h3>De Atari a PS4.</h3>
-          <p>La historia del juego, en una pared.</p>
+          <span class="pill">1983 · 8 bits</span>
+          <h3>NES</h3>
+          <p>El mando que cambió las reglas.</p>
+        </div>
+      </article>
+
+      <article class="retro-card reveal" data-welcome-card="retro-03" data-console="MASTER SYSTEM" style="--accent:#ff3b3b;--accent-rgb:255,59,59;--accent2:#e8e8e8;--accent2-rgb:232,232,232;--art:url('/img/retro/sega-master-system.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>1</i><i>2</i></span>
+        <div class="retro-media"><img src="/img/retro/sega-master-system.webp" alt="Mandos de Sega Master System" loading="lazy" decoding="async" width="2186" height="1100"></div>
+        <div class="retro-copy">
+          <span class="pill">1985 · 8 bits</span>
+          <h3>Master System</h3>
+          <p>La otra cara de los 8 bits.</p>
+        </div>
+      </article>
+
+      <article class="retro-card reveal" data-welcome-card="retro-04" data-console="GENESIS" style="--accent:#2f7df6;--accent-rgb:47,125,246;--accent2:#e8f0ff;--accent2-rgb:232,240,255;--art:url('/img/retro/sega-genesis.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>A</i><i>B</i><i>C</i></span>
+        <div class="retro-media"><img src="/img/retro/sega-genesis.webp" alt="Mando de Sega Genesis" loading="lazy" decoding="async" width="1516" height="1100"></div>
+        <div class="retro-copy">
+          <span class="pill">1989 · 16 bits</span>
+          <h3>Sega Genesis</h3>
+          <p>Velocidad y actitud Sega.</p>
+        </div>
+      </article>
+
+      <article class="retro-card reveal" data-welcome-card="retro-05" data-console="SUPER NES" style="--accent:#a78bfa;--accent-rgb:167,139,250;--accent2:#e6e6f0;--accent2-rgb:230,230,240;--art:url('/img/retro/snes-controller.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>A</i><i>B</i><i>X</i><i>Y</i></span>
+        <div class="retro-media"><img src="/img/retro/snes-controller.webp" alt="Mando de Super Nintendo" loading="lazy" decoding="async" width="1812" height="1100"></div>
+        <div class="retro-copy">
+          <span class="pill">1990 · 16 bits</span>
+          <h3>SNES</h3>
+          <p>Más botones, más horas de juego.</p>
+        </div>
+      </article>
+
+      <article class="retro-card reveal" data-welcome-card="retro-06" data-console="SATURN" style="--accent:#4f7cff;--accent-rgb:79,124,255;--accent2:#cfd8e3;--accent2-rgb:207,216,227;--art:url('/img/retro/sega-saturn.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>A</i><i>B</i><i>C</i></span>
+        <div class="retro-media"><img src="/img/retro/sega-saturn.webp" alt="Mando de Sega Saturn" loading="lazy" decoding="async" width="1558" height="1100"></div>
+        <div class="retro-copy">
+          <span class="pill">1994 · 32 bits</span>
+          <h3>Sega Saturn</h3>
+          <p>Los arcades llegaron a casa.</p>
+        </div>
+      </article>
+
+      <article class="retro-card reveal" data-welcome-card="retro-07" data-console="NINTENDO 64" style="--accent:#ffd23f;--accent-rgb:255,210,63;--accent2:#3cb44b;--accent2-rgb:60,180,75;--art:url('/img/retro/n64-controller.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>A</i><i>B</i><i>C</i><i>Z</i></span>
+        <div class="retro-media"><img src="/img/retro/n64-controller.webp" alt="Mando de Nintendo 64" loading="lazy" decoding="async" width="1071" height="1100"></div>
+        <div class="retro-copy">
+          <span class="pill">1996 · 64 bits</span>
+          <h3>Nintendo 64</h3>
+          <p>Tres agarres y una revolución.</p>
+        </div>
+      </article>
+
+      <article class="retro-card reveal" data-welcome-card="retro-08" data-console="PLAYSTATION" style="--accent:#ff5a5f;--accent-rgb:255,90,95;--accent2:#cfd8e3;--accent2-rgb:207,216,227;--art:url('/img/retro/ps1-dualshock.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>△</i><i>○</i><i>✕</i><i>□</i></span>
+        <div class="retro-media"><img src="/img/retro/ps1-dualshock.webp" alt="Mando DualShock de PlayStation" loading="lazy" decoding="async" width="1365" height="1100"></div>
+        <div class="retro-copy">
+          <span class="pill">1997 · DualShock</span>
+          <h3>PlayStation</h3>
+          <p>La vibración llegó para quedarse.</p>
+        </div>
+      </article>
+
+      <article class="retro-card reveal" data-welcome-card="retro-09" data-console="DREAMCAST" style="--accent:#ff7a18;--accent-rgb:255,122,24;--accent2:#e8eef7;--accent2-rgb:232,238,247;--art:url('/img/retro/sega-dreamcast.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>A</i><i>B</i><i>X</i><i>Y</i></span>
+        <div class="retro-media"><img src="/img/retro/sega-dreamcast.webp" alt="Mando de Sega Dreamcast" loading="lazy" decoding="async" width="1054" height="1100"></div>
+        <div class="retro-copy">
+          <span class="pill">1998 · 128 bits</span>
+          <h3>Dreamcast</h3>
+          <p>La última gran apuesta de Sega.</p>
+        </div>
+      </article>
+
+      <article class="retro-card reveal" data-welcome-card="retro-10" data-console="PLAYSTATION 2" style="--accent:#2f6bff;--accent-rgb:47,107,255;--accent2:#8fb3ff;--accent2-rgb:143,179,255;--art:url('/img/retro/ps2-dualshock.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>△</i><i>○</i><i>✕</i><i>□</i></span>
+        <div class="retro-media"><img src="/img/retro/ps2-dualshock.webp" alt="Mando DualShock 2 de PlayStation 2" loading="lazy" decoding="async" width="1335" height="1100"></div>
+        <div class="retro-copy">
+          <span class="pill">2000 · DualShock 2</span>
+          <h3>PlayStation 2</h3>
+          <p>El mando de la generación Full HD.</p>
+        </div>
+      </article>
+
+      <article class="retro-card reveal" data-welcome-card="retro-11" data-console="GAMECUBE" style="--accent:#8b5cf6;--accent-rgb:139,92,246;--accent2:#c4b5fd;--accent2-rgb:196,181,253;--art:url('/img/retro/gamecube-controller.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>A</i><i>B</i><i>X</i><i>Y</i></span>
+        <div class="retro-media"><img src="/img/retro/gamecube-controller.webp" alt="Mando de Nintendo GameCube" loading="lazy" decoding="async" width="1227" height="1100"></div>
+        <div class="retro-copy">
+          <span class="pill">2001 · 128 bits</span>
+          <h3>GameCube</h3>
+          <p>Compacta, potente y muy querida.</p>
+        </div>
+      </article>
+
+      <article class="retro-card reveal" data-welcome-card="retro-12" data-console="XBOX" style="--accent:#52b043;--accent-rgb:82,176,67;--accent2:#b6ff9e;--accent2-rgb:182,255,158;--art:url('/img/retro/xbox-original.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>A</i><i>B</i><i>X</i><i>Y</i></span>
+        <div class="retro-media"><img src="/img/retro/xbox-original.webp" alt="Mando Duke de la Xbox original" loading="lazy" decoding="async" width="1213" height="1100"></div>
+        <div class="retro-copy">
+          <span class="pill">2001 · La entrada</span>
+          <h3>Xbox</h3>
+          <p>La primera Xbox, con su Duke.</p>
+        </div>
+      </article>
+
+      <article class="retro-card reveal" data-welcome-card="retro-13" data-console="XBOX 360" style="--accent:#9ae600;--accent-rgb:154,230,0;--accent2:#d7ff5e;--accent2-rgb:215,255,94;--art:url('/img/retro/xbox-360.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>A</i><i>B</i><i>X</i><i>Y</i></span>
+        <div class="retro-media"><img src="/img/retro/xbox-360.webp" alt="Mando de Xbox 360" loading="lazy" decoding="async" width="1439" height="1100"></div>
+        <div class="retro-copy">
+          <span class="pill">2005 · HD</span>
+          <h3>Xbox 360</h3>
+          <p>La era del logro y el online.</p>
+        </div>
+      </article>
+
+      <article class="retro-card reveal" data-welcome-card="retro-14" data-console="PLAYSTATION 3" style="--accent:#3b82f6;--accent-rgb:59,130,246;--accent2:#93c5fd;--accent2-rgb:147,197,253;--art:url('/img/retro/ps3-dualshock.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>△</i><i>○</i><i>✕</i><i>□</i></span>
+        <div class="retro-media"><img src="/img/retro/ps3-dualshock.webp" alt="Mando DualShock 3 de PlayStation 3" loading="lazy" decoding="async" width="1353" height="1100"></div>
+        <div class="retro-copy">
+          <span class="pill">2006 · DualShock 3</span>
+          <h3>PlayStation 3</h3>
+          <p>La era del juego en línea.</p>
+        </div>
+      </article>
+
+      <article class="retro-card reveal" data-welcome-card="retro-15" data-console="PLAYSTATION 4" style="--accent:#2e6bff;--accent-rgb:46,107,255;--accent2:#7fb0ff;--accent2-rgb:127,176,255;--art:url('/img/retro/ps4-dualshock4.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>△</i><i>○</i><i>✕</i><i>□</i></span>
+        <div class="retro-media"><img src="/img/retro/ps4-dualshock4.webp" alt="Mando DualShock 4 de PlayStation 4" loading="lazy" decoding="async" width="1261" height="1100"></div>
+        <div class="retro-copy">
+          <span class="pill">2013 · Full HD</span>
+          <h3>PlayStation 4</h3>
+          <p>El mando de la generación Full HD.</p>
+        </div>
+      </article>
+
+      <article class="retro-card reveal" data-welcome-card="retro-16" data-console="XBOX ONE" style="--accent:#52b043;--accent-rgb:82,176,67;--accent2:#9ae600;--accent2-rgb:154,230,0;--art:url('/img/retro/xbox-one.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>A</i><i>B</i><i>X</i><i>Y</i></span>
+        <div class="retro-media"><img src="/img/retro/xbox-one.webp" alt="Mando de Xbox One" loading="lazy" decoding="async" width="1198" height="1100"></div>
+        <div class="retro-copy">
+          <span class="pill">2013 · Nueva gen</span>
+          <h3>Xbox One</h3>
+          <p>El mando que evolucionó al 360.</p>
+        </div>
+      </article>
+
+      <article class="retro-card reveal" data-welcome-card="retro-17" data-console="PLAYSTATION 5" style="--accent:#4f8cff;--accent-rgb:79,140,255;--accent2:#e8ecf2;--accent2-rgb:232,236,242;--art:url('/img/retro/ps5-dualsense.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>△</i><i>○</i><i>✕</i><i>□</i></span>
+        <div class="retro-media"><img src="/img/retro/ps5-dualsense.webp" alt="Mando DualSense de PlayStation 5" loading="lazy" decoding="async" width="1181" height="1100"></div>
+        <div class="retro-copy">
+          <span class="pill">2020 · Nueva gen</span>
+          <h3>PlayStation 5</h3>
+          <p>Hasta hoy: la nueva generación.</p>
+        </div>
+      </article>
+
+      <article class="retro-card reveal" data-welcome-card="retro-18" data-console="XBOX SERIES" style="--accent:#52b043;--accent-rgb:82,176,67;--accent2:#d4af37;--accent2-rgb:212,175,55;--art:url('/img/retro/xbox-series.webp')">
+        <span class="retro-buttons" aria-hidden="true"><i>A</i><i>B</i><i>X</i><i>Y</i></span>
+        <div class="retro-media"><img src="/img/retro/xbox-series.webp" alt="Mando de Xbox Series" loading="lazy" decoding="async" width="1584" height="1100"></div>
+        <div class="retro-copy">
+          <span class="pill">2020 · Nueva gen</span>
+          <h3>Xbox Series</h3>
+          <p>La generación más reciente de Xbox.</p>
         </div>
       </article>
     </div>
+    <p class="food-note">Fotografías de producto: Evan-Amos y Wikimedia Commons (dominio público / CC0); GameCube: Monathephantom y Xbox Series: Serhio Magpie (CC BY-SA / CC BY 4.0).</p>
+  </section>
+
+  <section class="section" aria-labelledby="amigos-title">
+    <article class="social-feature reveal" data-welcome-card="group">
+      <div class="social-copy">
+        <span class="pill">Amigos y familia</span>
+        <h2 id="amigos-title">La partida empieza cuando llegan todos.</h2>
+        <p>Reúne a los tuyos, elijan estación y dejen que la noche ruede. Cumpleaños, plan de familia o revancha entre amigos: aquí hay un mando para cada uno.</p>
+        <a class="btn btn-primary" href="#reservar"><span data-welcome-text="group_cta">Reservar para el grupo</span> <span>→</span></a>
+      </div>
+      <img src="/img/user/grupo-jugando.jpg" alt="Amigos y familia jugando juntos en una sala con una consola" loading="lazy" decoding="async" width="1376" height="768">
+    </article>
   </section>
 
   <section class="reserve-wrap" id="reservar" aria-labelledby="reserva-title">
     <div class="reserve-card">
-      <img src="/img/stock/restaurant.jpg" alt="Interior del salón de Lily's Plays" loading="lazy" decoding="async">
+      <img data-welcome-media="reserve-photo" src="/img/stock/restaurant.jpg" alt="Interior del salón de Lily's Plays" loading="lazy" decoding="async">
       <div class="reserve-copy">
-        <p class="eyebrow">Reserva tu mesa</p>
-        <h2 id="reserva-title">La noche empieza aquí.</h2>
-        <p>Elige consola, pide tu combo y quédate hasta que se termine la partida. Dinos cuántos vienen y te guardamos el mejor lugar.</p>
+        <p class="eyebrow" data-welcome-text="reserve_eyebrow">Reserva tu mesa</p>
+        <h2 id="reserva-title" data-welcome-text="reserve_title">La noche empieza aquí.</h2>
+        <p data-welcome-text="reserve_text">Elige consola, pide tu combo y quédate hasta que se termine la partida. Dinos cuántos vienen y te guardamos el mejor lugar.</p>
         <div class="reserve-actions">
-          <a class="btn btn-primary" href="https://wa.me/5352740665?text=Hola%2C%20quiero%20reservar%20en%20Lily%27s%20Plays." target="_blank" rel="noopener" data-social="whatsapp" data-wa-text="Hola, quiero reservar en Lily's Plays.">Reservar por WhatsApp <span>→</span></a>
-          <a class="btn btn-ghost" href="/acerca">Acerca de Lily's Plays</a>
+          <a class="btn btn-primary" href="https://wa.me/5352740665?text=Hola%2C%20quiero%20reservar%20en%20Lily%27s%20Plays." target="_blank" rel="noopener" data-social="whatsapp" data-wa-text="Hola, quiero reservar en Lily's Plays."><span data-welcome-text="reserve_cta">Reservar por WhatsApp</span> <span>→</span></a>
+          <a class="btn btn-ghost" href="/acerca"><span data-welcome-text="reserve_cta_2">Acerca de Lily's Plays</span></a>
         </div>
       </div>
     </div>
@@ -383,7 +558,7 @@
       <div class="social-banner__inner">
         <picture>
           <source srcset="/img/redes-sociales-gamer.webp" type="image/webp">
-          <img class="social-banner__img" src="/img/redes-sociales-gamer.jpg" alt="Síguenos en nuestras redes: WhatsApp, Facebook, Instagram, Gmail, YouTube y Sitio web" width="1264" height="843" loading="lazy" decoding="async">
+          <img class="social-banner__img" data-welcome-media="footer-social" src="/img/redes-sociales-gamer.jpg" alt="Síguenos en nuestras redes: WhatsApp, Facebook, Instagram, Gmail, YouTube y Sitio web" width="1264" height="843" loading="lazy" decoding="async">
         </picture>
         <a class="social-banner__link social-banner__link--whatsapp" href="#" aria-label="WhatsApp" title="WhatsApp" data-social="whatsapp"></a>
         <a class="social-banner__link social-banner__link--facebook" href="#" aria-label="Facebook" title="Facebook" data-social="facebook"></a>
@@ -401,6 +576,6 @@
   </div>
 </footer>
 
-<script src="/js/welcome.js?v=2"></script>
+<script src="/js/welcome.js?v=3"></script>
 </body>
 </html>

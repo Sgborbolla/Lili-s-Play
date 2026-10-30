@@ -229,22 +229,25 @@ body {
 .promo,
 .retro-card {
   border-color: rgba(181, 212, 255, .16);
-  background: #0b1017;
   box-shadow: 0 18px 46px rgba(0, 0, 0, .28);
+}
+
+.game-feature,
+.game-mini,
+.promo {
+  background: #0b1017;
 }
 
 .console-card:hover,
 .game-feature:hover,
 .game-mini:hover,
-.promo:hover,
-.retro-card:hover {
+.promo:hover {
   border-color: rgba(140, 196, 255, .34);
 }
 
 .console-card::after,
 .game-feature::after,
-.game-mini::after,
-.retro-card::after {
+.game-mini::after {
   background:
     linear-gradient(180deg, rgba(4, 7, 12, .03) 16%, rgba(4, 7, 12, .94) 100%),
     linear-gradient(0deg, rgba(47, 107, 255, .1), transparent 52%);
@@ -387,8 +390,7 @@ body {
 .console-card,
 .game-feature,
 .game-mini,
-.promo,
-.retro-card {
+.promo {
   border: 1px solid rgba(233, 243, 255, .4);
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, .18),
@@ -401,8 +403,7 @@ body {
 .console-card:hover,
 .game-feature:hover,
 .game-mini:hover,
-.promo:hover,
-.retro-card:hover {
+.promo:hover {
   border-color: rgba(255, 255, 255, .68);
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, .3),

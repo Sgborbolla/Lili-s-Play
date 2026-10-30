@@ -9,6 +9,7 @@ const QRCode = require('qrcode');
 const { db, getSettings, setSetting } = require('./lib/db');
 const { formatMoney, formatAmount, formatPrice, orderUnitPrice, parsePriceToCents, formatDate, nowLocal, statusMeta, STATUS } = require('./lib/format');
 const { hashPassword, verifyPassword, createToken, verifyToken, parseCookies, serializeCookie } = require('./lib/auth');
+const { WELCOME_SLOTS, WELCOME_TEXT_META, TEXT_FIELDS, slotKey, getWelcomeMedia, getWelcomeTexts, setWelcomeText } = require('./lib/welcome');
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
@@ -237,6 +238,11 @@ app.get('/api/public-info', (req, res) => {
     opening_hours: res.locals.settings.opening_hours || '',
     social: publicSocialLinks(res.locals.settings),
   });
+});
+
+app.get('/api/welcome', (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ items: getWelcomeMedia(), texts: getWelcomeTexts() });
 });
 
 app.get('/acerca', (req, res) => {
@@ -666,7 +672,41 @@ app.post('/admin/usuarios/:id/eliminar', requireAdmin, (req, res) => {
 
 app.get('/admin/ajustes', requireAdmin, (req, res) => {
   const products = db.prepare('SELECT id, name FROM products ORDER BY name').all();
-  res.render('admin/settings', { title: 'Ajustes', products });
+  res.render('admin/settings', { title: 'Ajustes', products, welcome: getWelcomeMedia(), welcomeTexts: getWelcomeTexts(), welcomeTextMeta: WELCOME_TEXT_META });
+});
+
+const welcomeUpload = upload.fields(WELCOME_SLOTS.map((item) => ({ name: `${slotKey(item.slot)}_image`, maxCount: 1 })));
+
+app.post('/admin/ajustes/fotos', requireAdmin, welcomeUpload, (req, res) => {
+  const current = getSettings();
+  for (const item of WELCOME_SLOTS) {
+    const base = slotKey(item.slot);
+    const file = req.files && req.files[`${base}_image`] ? req.files[`${base}_image`][0] : null;
+    const oldImage = current[`${base}_image`] || '';
+    if (file) {
+      const nextImage = `/uploads/${file.filename}`;
+      setSetting(`${base}_image`, nextImage);
+      if (oldImage && oldImage !== nextImage) removeUpload(oldImage);
+    } else if (req.body[`${base}_remove`] === 'on') {
+      if (oldImage) removeUpload(oldImage);
+      db.prepare('DELETE FROM settings WHERE key = ?').run(`${base}_image`);
+    }
+    for (const field of TEXT_FIELDS) {
+      const raw = req.body[`${base}_${field}`];
+      if (raw === undefined) continue;
+      const value = String(raw).trim();
+      if (value) setSetting(`${base}_${field}`, value.slice(0, field === 'text' ? 600 : 180));
+      else db.prepare('DELETE FROM settings WHERE key = ?').run(`${base}_${field}`);
+    }
+  }
+  return res.redirect(flash('/admin/ajustes', 'ok', 'Fotos y textos de la bienvenida guardados.'));
+});
+
+app.post('/admin/ajustes/textos', requireAdmin, (req, res) => {
+  for (const [key] of WELCOME_TEXT_META) {
+    setWelcomeText(key, req.body[`text_${key}`] || '');
+  }
+  return res.redirect(flash('/admin/ajustes', 'ok', 'Textos de la bienvenida guardados.'));
 });
 
 app.post('/admin/ajustes', requireAdmin, (req, res) => {
@@ -724,29 +764,39 @@ app.post('/admin/password', requireAdmin, (req, res) => {
   return res.redirect(flash('/admin/ajustes', 'ok', 'Contraseña actualizada.'));
 });
 
-function qrBaseUrl(settings) {
-  const custom = String(settings.qr_public_url || '').trim().replace(/\/+$/, '');
-  if (custom) return custom;
-  return `http://${getLanIp()}:${PORT}`;
+function requestOrigin(req) {
+  const proto = String(req.get('x-forwarded-proto') || '').split(',')[0].trim() || req.protocol || 'http';
+  const host = String(req.get('x-forwarded-host') || '').split(',')[0].trim() || req.get('host') || '';
+  return `${proto}://${host}`.replace(/\/+$/, '');
 }
 
-function qrTargetUrl(settings, station) {
-  const base = qrBaseUrl(settings);
+function qrBaseUrl(req, settings) {
+  const custom = String(settings.qr_public_url || '').trim().replace(/\/+$/, '');
+  if (custom) return custom;
+  const host = String(req.get('x-forwarded-host') || '').split(',')[0].trim() || String(req.get('host') || '');
+  if (!host || /^(localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/i.test(host)) {
+    return `http://${getLanIp()}:${PORT}`;
+  }
+  return requestOrigin(req);
+}
+
+function qrTargetUrl(req, settings, station) {
+  const base = qrBaseUrl(req, settings);
   const query = station ? `?station=${encodeURIComponent(station)}` : '';
   return `${base}/bienvenida.html${query}`;
 }
 
 app.get('/admin/qr', requireAdmin, (req, res) => {
   const station = String(req.query.station || '').trim().slice(0, 40);
-  const base = qrBaseUrl(res.locals.settings);
-  const url = qrTargetUrl(res.locals.settings, station);
+  const base = qrBaseUrl(req, res.locals.settings);
+  const url = qrTargetUrl(req, res.locals.settings, station);
   res.render('admin/qr', { title: 'Código QR', station, base, url });
 });
 
 app.get('/admin/qr.png', requireAdmin, async (req, res) => {
   try {
     const station = String(req.query.station || '').trim().slice(0, 40);
-    const url = qrTargetUrl(res.locals.settings, station);
+    const url = qrTargetUrl(req, res.locals.settings, station);
     const buffer = await QRCode.toBuffer(url, {
       type: 'png',
       width: 2400,
@@ -768,7 +818,7 @@ app.get('/admin/qr.png', requireAdmin, async (req, res) => {
 app.get('/admin/qr.svg', requireAdmin, async (req, res) => {
   try {
     const station = String(req.query.station || '').trim().slice(0, 40);
-    const url = qrTargetUrl(res.locals.settings, station);
+    const url = qrTargetUrl(req, res.locals.settings, station);
     const svg = await QRCode.toString(url, {
       type: 'svg',
       margin: 4,

@@ -94,3 +94,48 @@ document.querySelectorAll('.social-banner__link').forEach((link) => {
     window.setTimeout(() => link.classList.remove('is-flash'), 280);
   });
 });
+
+const welcomeTargets = document.querySelectorAll('[data-welcome-card], [data-welcome-media], [data-welcome-text]');
+if (welcomeTargets.length) {
+  fetch('/api/welcome', { headers: { Accept: 'application/json' } })
+    .then((response) => (response.ok ? response.json() : null))
+    .then((data) => {
+      if (!data) return;
+      const items = Array.isArray(data.items) ? data.items : [];
+      const bySlot = new Map(items.map((item) => [item.slot, item]));
+      document.querySelectorAll('[data-welcome-card]').forEach((card) => {
+        const item = bySlot.get(card.dataset.welcomeCard);
+        if (!item) return;
+        const img = card.querySelector('img');
+        if (img && item.image) {
+          img.src = item.image;
+          if (item.alt) img.alt = item.alt;
+        }
+        const title = card.querySelector('h2, h3');
+        if (title && item.title !== undefined) title.textContent = item.title;
+        const pill = card.querySelector('.pill');
+        if (pill && item.pill !== undefined) pill.textContent = item.pill;
+        const text = card.querySelector('p');
+        if (text && item.text !== undefined) text.textContent = item.text;
+      });
+      items.forEach((item) => {
+        const media = document.querySelector(`[data-welcome-media="${item.slot}"]`);
+        if (!media || !item.image) return;
+        media.src = item.image;
+        if (item.alt) media.alt = item.alt;
+        const picture = media.closest('picture');
+        const source = picture ? picture.querySelector('source') : null;
+        if (source) {
+          source.srcset = item.image;
+          source.removeAttribute('type');
+        }
+      });
+      const texts = data.texts || {};
+      Object.entries(texts).forEach(([key, value]) => {
+        document.querySelectorAll(`[data-welcome-text="${key}"]`).forEach((el) => {
+          el.textContent = value;
+        });
+      });
+    })
+    .catch(() => { /* se mantienen los textos e imágenes de respaldo */ });
+}

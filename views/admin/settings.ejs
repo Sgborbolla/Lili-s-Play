@@ -299,7 +299,7 @@
         <div class="field">
           <label for="qr_public_url">URL pública</label>
           <input id="qr_public_url" name="qr_public_url" type="url" maxlength="400" value="<%= settings.qr_public_url %>" placeholder="http://192.168.1.50:3000">
-          <span class="hint">Vacío = se usa <code>http://<%= lanIp %>:<%= port %></code>. Si usas un dominio o IP fija, escríbelo aquí.</span>
+          <span class="hint">Vacío = usa automáticamente la IP o el dominio desde donde se abre el panel. Rellénalo solo si quieres forzar una dirección fija.</span>
         </div>
       </div>
     </section>
@@ -328,6 +328,85 @@
     </div>
   </aside>
 </form>
+
+<section class="form-card" style="margin-top: 16px;">
+  <div class="form-card-head">
+    <h2>Textos de la bienvenida</h2>
+    <p>Edita los títulos, textos y botones de la portada y de cada sección. Los campos vacíos vuelven al texto original.</p>
+  </div>
+  <div class="form-body">
+    <form method="post" action="/admin/ajustes/textos">
+      <div class="welcome-text-grid">
+        <% (welcomeTextMeta || []).forEach(([key, label, type]) => { %>
+        <div class="field<%= type === 'textarea' ? ' is-wide' : '' %>">
+          <label for="text_<%= key %>"><%= label %></label>
+          <% if (type === 'textarea') { %>
+          <textarea id="text_<%= key %>" name="text_<%= key %>" rows="3" maxlength="600"><%= welcomeTexts[key] %></textarea>
+          <% } else { %>
+          <input id="text_<%= key %>" name="text_<%= key %>" type="text" maxlength="180" value="<%= welcomeTexts[key] %>">
+          <% } %>
+        </div>
+        <% }) %>
+      </div>
+      <button class="btn btn-primary" type="submit" style="margin-top: 14px;">Guardar textos</button>
+      <a class="btn btn-outline" href="/bienvenida.html" target="_blank" rel="noopener" style="margin-top: 14px;">Ver bienvenida</a>
+    </form>
+  </div>
+</section>
+
+<section class="form-card" style="margin-top: 16px;">
+  <div class="form-card-head">
+    <h2>Fotos de la bienvenida</h2>
+    <p>Cambia las fotos de las estaciones, la zona retro, el bloque de amigos y las imágenes de portada. Si no subes una foto, se conserva la actual.</p>
+  </div>
+  <div class="form-body">
+    <form method="post" action="/admin/ajustes/fotos" enctype="multipart/form-data">
+      <div class="welcome-media-grid">
+        <% welcome.forEach((item) => { const base = `welcome_${item.slot.replace(/-/g, '_')}`; %>
+        <article class="welcome-media-item">
+          <img class="welcome-media-thumb" src="<%= item.image %>" alt="">
+          <div class="welcome-media-name">
+            <b><%= item.label %></b>
+            <span><%= item.group %></span>
+          </div>
+          <div class="field">
+            <label for="<%= base %>_image">Reemplazar foto</label>
+            <input id="<%= base %>_image" name="<%= base %>_image" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+          </div>
+          <% if (item.is_custom) { %>
+          <label class="welcome-media-check">
+            <input type="checkbox" name="<%= base %>_remove">
+            Quitar y volver a la foto original
+          </label>
+          <% } %>
+          <% if (item.kind === 'card') { %>
+          <div class="field">
+            <label for="<%= base %>_title">Título</label>
+            <input id="<%= base %>_title" name="<%= base %>_title" type="text" maxlength="160" value="<%= item.title %>">
+          </div>
+          <% if (item.slot.startsWith('retro-')) { %>
+          <div class="field">
+            <label for="<%= base %>_pill">Etiqueta / año</label>
+            <input id="<%= base %>_pill" name="<%= base %>_pill" type="text" maxlength="60" value="<%= item.pill %>">
+          </div>
+          <% } %>
+          <div class="field">
+            <label for="<%= base %>_text">Texto</label>
+            <textarea id="<%= base %>_text" name="<%= base %>_text" rows="3" maxlength="600"><%= item.text %></textarea>
+          </div>
+          <% } %>
+          <div class="field">
+            <label for="<%= base %>_alt">Texto alternativo de la foto</label>
+            <input id="<%= base %>_alt" name="<%= base %>_alt" type="text" maxlength="180" value="<%= item.alt %>">
+          </div>
+        </article>
+        <% }) %>
+      </div>
+      <button class="btn btn-primary" type="submit" style="margin-top: 14px;">Guardar fotos y textos</button>
+      <a class="btn btn-outline" href="/bienvenida.html" target="_blank" rel="noopener" style="margin-top: 14px;">Ver bienvenida</a>
+    </form>
+  </div>
+</section>
 
 <section class="form-card" style="margin-top: 16px; max-width: 680px;">
   <div class="form-card-head">
