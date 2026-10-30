@@ -889,23 +889,18 @@ main, .site-footer { position: relative; z-index: 1; }
 }
 
 .retro-card::after {
-  content: attr(data-console);
+  content: "";
   position: absolute;
-  left: 50%;
-  top: 31%;
-  transform: translate(-50%, -50%) rotate(-6deg);
-  color: var(--accent);
-  font-family: "Syne", sans-serif;
-  font-size: clamp(14px, 1.4vw, 21px);
-  font-weight: 800;
-  letter-spacing: .13em;
-  line-height: 1;
-  text-transform: uppercase;
-  white-space: nowrap;
-  opacity: .30;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, .55), 0 0 18px rgba(var(--accent-rgb), .35);
+  top: 10px;
+  left: 10px;
+  width: calc(100% - 72px);
+  height: 38px;
+  background: var(--game-art) left center / contain no-repeat;
+  opacity: .94;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, .65));
+  transform: rotate(3deg);
   pointer-events: none;
-  z-index: 0;
+  z-index: 3;
 }
 
 .retro-card:hover {
@@ -1004,8 +999,8 @@ main, .site-footer { position: relative; z-index: 1; }
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 170px;
-  padding: 14px 14px 0;
+  height: 200px;
+  padding: 46px 14px 0;
 }
 
 .retro-media img {
@@ -1038,7 +1033,7 @@ main, .site-footer { position: relative; z-index: 1; }
 
 @media (max-width: 1180px) {
   .retro-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .retro-media { height: 180px; }
+  .retro-media { height: 200px; }
 }
 
 @media (max-width: 900px) {
@@ -1048,8 +1043,8 @@ main, .site-footer { position: relative; z-index: 1; }
 @media (max-width: 620px) {
   .retro-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
   .retro-card { min-height: 230px; }
-  .retro-media { height: 120px; padding: 10px 10px 0; }
-  .retro-card::after { font-size: 12px; letter-spacing: .1em; }
+  .retro-media { height: 150px; padding: 38px 10px 0; }
+  .retro-card::after { top: 7px; left: 8px; width: calc(100% - 62px); height: 30px; opacity: .96; }
   .retro-buttons { --cell: 11px; --gap: 1.5px; top: 7px; right: 7px; }
   .retro-buttons.is-one { top: 9px; right: 9px; }
   .retro-copy { padding: 8px 10px 12px; }
@@ -1060,7 +1055,7 @@ main, .site-footer { position: relative; z-index: 1; }
 @media (max-width: 380px) {
   .retro-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .retro-card { min-height: 210px; }
-  .retro-media { height: 100px; }
+  .retro-media { height: 130px; padding: 34px 8px 0; }
   .retro-copy h3 { font-size: 13px; }
   .retro-copy p { display: none; }
 }
