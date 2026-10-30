@@ -195,11 +195,10 @@
   transform: scale(.96);
 }
 
-@media (max-width: 700px) {
+@media (max-width: 900px) {
   .hero-pad {
     width: calc(100% + 48px);
     max-width: none;
-    margin-top: 20px;
     margin-left: -24px;
     margin-right: -24px;
   }
@@ -209,8 +208,12 @@
   }
   .ds-caption {
     padding-inline: 16px;
-    font-size: 8px;
   }
+}
+
+@media (max-width: 700px) {
+  .hero-pad { margin-top: 20px; }
+  .ds-caption { font-size: 8px; }
 }
 
 @media (max-width: 620px) {
