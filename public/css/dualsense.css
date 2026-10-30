@@ -18,7 +18,7 @@
   --gy: 18%;
   position: relative;
   perspective: 1400px;
-  touch-action: pan-y;
+  touch-action: none;
   isolation: isolate;
 }
 
@@ -111,6 +111,7 @@
   transition: none;
 }
 
+.ds-stick,
 .ds-stick-hit {
   cursor: grab;
   touch-action: none;
