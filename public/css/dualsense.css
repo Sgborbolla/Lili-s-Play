@@ -196,8 +196,29 @@
 }
 
 @media (max-width: 700px) {
-  .hero-pad { margin-top: 20px; }
-  .ds-caption { font-size: 8px; }
+  .hero-pad {
+    width: calc(100% + 48px);
+    max-width: none;
+    margin-top: 20px;
+    margin-left: -24px;
+    margin-right: -24px;
+  }
+  .ds-svg {
+    aspect-ratio: 584 / 560;
+    height: auto;
+  }
+  .ds-caption {
+    padding-inline: 16px;
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 620px) {
+  .hero-pad {
+    width: calc(100% + 32px);
+    margin-left: -16px;
+    margin-right: -16px;
+  }
 }
 
 @media (max-width: 420px) {
