@@ -891,14 +891,17 @@ main, .site-footer { position: relative; z-index: 1; }
 .retro-card::after {
   content: "";
   position: absolute;
-  top: 10px;
-  left: 10px;
-  width: calc(100% - 72px);
-  height: 38px;
-  background: var(--game-art) left center / contain no-repeat;
-  opacity: .94;
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, .65));
-  transform: rotate(3deg);
+  top: 12px;
+  left: 12px;
+  width: clamp(56px, 34%, 74px);
+  aspect-ratio: 2 / 3;
+  background: var(--cover-art) center / cover no-repeat;
+  border: 1px solid rgba(255, 255, 255, .32);
+  border-radius: 6px;
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, .7),
+    0 0 0 3px rgba(var(--accent-rgb), .18);
+  transform: rotate(-3deg);
   pointer-events: none;
   z-index: 3;
 }
@@ -1044,7 +1047,7 @@ main, .site-footer { position: relative; z-index: 1; }
   .retro-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
   .retro-card { min-height: 230px; }
   .retro-media { height: 150px; padding: 38px 10px 0; }
-  .retro-card::after { top: 7px; left: 8px; width: calc(100% - 62px); height: 30px; opacity: .96; }
+  .retro-card::after { top: 8px; left: 8px; width: 58px; border-radius: 5px; }
   .retro-buttons { --cell: 11px; --gap: 1.5px; top: 7px; right: 7px; }
   .retro-buttons.is-one { top: 9px; right: 9px; }
   .retro-copy { padding: 8px 10px 12px; }
