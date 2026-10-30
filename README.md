@@ -14,7 +14,7 @@ El panel lo usa el administrador desde una PC. Los clientes abren el menú desde
 - Los reembolsos se muestran en rojo y con importe negativo en el Excel y en el panel.
 - Respaldos de la base de datos antes de borrar pedidos, productos, categorías o usuarios.
 - Moneda por pedido: cada pedido guarda código, símbolo y locale.
-- Bienvenida, galería retro, Acerca y pie de página quedan como base para la página web pública futura.
+- El proyecto público se limita al menú, pedidos y panel de administración. Las páginas antiguas de bienvenida y Acerca quedaron guardadas en `futuro-web/` para usarlas después.
 
 ## Requisitos
 
@@ -92,8 +92,9 @@ Comprueba la estructura de reportes, la vista de admin y los módulos principale
 
 ```text
 lib/            Base de datos, formato, respaldos y reportes
-public/         Menú, bienvenida, estilos, imágenes y fuentes
+public/         Menú, pedidos, estilos, imágenes y fuentes
 views/          Plantillas EJS del menú y del panel
+futuro-web/     Páginas antiguas archivadas para la web futura
 scripts/        Generador de Excel, CLI y prueba de humo
 server.js       Servidor Express
 data/           Base de datos y respaldos locales (no se sube)

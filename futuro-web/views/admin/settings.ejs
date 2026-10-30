@@ -1,0 +1,605 @@
+<%- include('../partials/admin-top', { title: 'Ajustes', active: 'settings' }) %>
+
+<%
+  const settingsTabs = [
+    { key: 'menu', label: 'Menú' },
+    { key: 'welcome', label: 'Bienvenida' },
+    { key: 'about', label: 'Acerca' },
+    { key: 'general', label: 'General' },
+  ];
+  const activeTab = settingsTabs.some((tab) => tab.key === settingsTab) ? settingsTab : 'menu';
+  const reservationStations = welcome.filter((item) => item.group === 'Estaciones');
+%>
+
+<nav class="settings-tabs" aria-label="Secciones de ajustes">
+  <% settingsTabs.forEach((tab) => { %>
+  <a class="settings-tab <%= activeTab === tab.key ? 'is-active' : '' %>" href="/admin/ajustes?tab=<%= tab.key %>"><%= tab.label %></a>
+  <% }) %>
+</nav>
+
+<form class="settings-grid" method="post" action="/admin/ajustes">
+  <input type="hidden" name="tab" value="<%= activeTab %>">
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    <% if (activeTab === 'general') { %>
+    <section class="form-card">
+      <div class="form-card-head">
+        <h2>Identidad del salón</h2>
+        <p>Marca, estación por defecto y tema del menú público.</p>
+      </div>
+      <div class="form-body">
+        <div class="field-row">
+          <div class="field">
+            <label for="brand_name">Nombre de la marca</label>
+            <input id="brand_name" name="brand_name" type="text" maxlength="60" value="<%= settings.brand_name %>">
+          </div>
+          <div class="field">
+            <label for="brand_sub">Subtítulo</label>
+            <input id="brand_sub" name="brand_sub" type="text" maxlength="80" value="<%= settings.brand_sub %>">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="default_station">Estación por defecto</label>
+            <input id="default_station" name="default_station" type="text" maxlength="40" value="<%= settings.default_station %>">
+            <span class="hint">Se usa cuando el cliente no indica estación.</span>
+          </div>
+          <div class="field">
+            <label for="default_theme">Tema del menú</label>
+            <select id="default_theme" name="default_theme">
+              <option value="light" <%= settings.default_theme !== 'dark' ? 'selected' : '' %>>Claro</option>
+              <option value="dark" <%= settings.default_theme === 'dark' ? 'selected' : '' %>>Oscuro</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+    <% } %>
+
+    <% if (activeTab === 'menu') { %>
+    <section class="form-card">
+      <div class="form-card-head">
+        <h2>Moneda e impuestos</h2>
+        <p>Cómo se muestran y cobran los precios del menú.</p>
+      </div>
+      <div class="form-body">
+        <div class="field-row-3">
+          <div class="field">
+            <label for="currency_mode">Modo</label>
+            <select id="currency_mode" name="currency_mode">
+              <option value="USD" <%= settings.currency_mode === 'USD' ? 'selected' : '' %>>Solo USD</option>
+              <option value="CUC" <%= settings.currency_mode === 'CUC' ? 'selected' : '' %>>Solo CUC</option>
+              <option value="BOTH" <%= settings.currency_mode === 'BOTH' ? 'selected' : '' %>>USD y CUC</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="currency_symbol">Símbolo USD</label>
+            <input id="currency_symbol" name="currency_symbol" type="text" maxlength="8" value="<%= settings.currency_symbol %>">
+          </div>
+          <div class="field">
+            <label for="currency_symbol_cuc">Símbolo CUC</label>
+            <input id="currency_symbol_cuc" name="currency_symbol_cuc" type="text" maxlength="8" value="<%= settings.currency_symbol_cuc %>">
+          </div>
+        </div>
+        <div class="field-row-3">
+          <div class="field">
+            <label for="currency_code">Código USD</label>
+            <input id="currency_code" name="currency_code" type="text" maxlength="8" value="<%= settings.currency_code %>">
+          </div>
+          <div class="field">
+            <label for="currency_locale">Formato USD</label>
+            <input id="currency_locale" name="currency_locale" type="text" maxlength="12" value="<%= settings.currency_locale %>">
+            <span class="hint">Ejemplo: en-US.</span>
+          </div>
+          <div class="field">
+            <label for="currency_locale_cuc">Formato CUC</label>
+            <input id="currency_locale_cuc" name="currency_locale_cuc" type="text" maxlength="12" value="<%= settings.currency_locale_cuc %>">
+            <span class="hint">Ejemplo: es-CU.</span>
+          </div>
+        </div>
+        <div class="field" style="max-width: 190px;">
+          <label for="tax_percent">Impuesto (%)</label>
+          <input id="tax_percent" name="tax_percent" type="number" min="0" max="100" step="0.01" value="<%= settings.tax_percent %>">
+          <span class="hint">0 si no cobras impuesto.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card">
+      <div class="form-card-head">
+        <h2>Portada del menú</h2>
+        <p>El bloque principal que ve el cliente al entrar.</p>
+      </div>
+      <div class="form-body">
+        <div class="field">
+          <label for="hero_eyebrow">Texto pequeño superior</label>
+          <input id="hero_eyebrow" name="hero_eyebrow" type="text" maxlength="80" value="<%= settings.hero_eyebrow %>">
+        </div>
+        <div class="field">
+          <label for="hero_title">Título principal</label>
+          <input id="hero_title" name="hero_title" type="text" maxlength="120" value="<%= settings.hero_title %>">
+        </div>
+        <div class="field">
+          <label for="hero_text">Texto descriptivo</label>
+          <textarea id="hero_text" name="hero_text" maxlength="400"><%= settings.hero_text %></textarea>
+        </div>
+        <div class="field">
+          <label for="featured_product_id">Producto destacado</label>
+          <select id="featured_product_id" name="featured_product_id">
+            <option value="">Automático (el primero del menú)</option>
+            <% products.forEach((product) => { %>
+            <option value="<%= product.id %>" <%= String(settings.featured_product_id) === String(product.id) ? 'selected' : '' %>><%= product.name %></option>
+            <% }) %>
+          </select>
+        </div>
+        <a class="btn btn-outline btn-sm" href="#contenido-menu" style="align-self: flex-start; margin-top: 4px;">Editar banner y textos →</a>
+        <a class="btn btn-outline btn-sm" href="#reservas" style="align-self: flex-start; margin-top: 4px;">Editar reservas de estaciones →</a>
+      </div>
+    </section>
+    <% } %>
+
+    <% if (activeTab === 'about') { %>
+    <section class="form-card" id="acerca">
+      <div class="form-card-head">
+        <h2>Página Acerca de Lily's Plays</h2>
+        <p>Textos e información de la página pública <code>/acerca</code>.</p>
+      </div>
+      <div class="form-body">
+        <div class="field-row">
+          <div class="field">
+            <label for="about_eyebrow">Texto pequeño superior</label>
+            <input id="about_eyebrow" name="about_eyebrow" type="text" maxlength="80" value="<%= settings.about_eyebrow %>">
+          </div>
+          <div class="field">
+            <label for="about_subtitle">Subtítulo</label>
+            <input id="about_subtitle" name="about_subtitle" type="text" maxlength="80" value="<%= settings.about_subtitle %>">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="about_title_primary">Título · primera línea</label>
+            <input id="about_title_primary" name="about_title_primary" type="text" maxlength="60" value="<%= settings.about_title_primary %>">
+          </div>
+          <div class="field">
+            <label for="about_title_accent">Título · segunda línea</label>
+            <input id="about_title_accent" name="about_title_accent" type="text" maxlength="60" value="<%= settings.about_title_accent %>">
+          </div>
+        </div>
+        <div class="field">
+          <label for="about_intro">Introducción de la portada</label>
+          <textarea id="about_intro" name="about_intro" maxlength="800" rows="3"><%= settings.about_intro %></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="about_story_eyebrow">Texto pequeño de la historia</label>
+            <input id="about_story_eyebrow" name="about_story_eyebrow" type="text" maxlength="80" value="<%= settings.about_story_eyebrow %>">
+          </div>
+          <div class="field">
+            <label for="about_story_title">Título de la historia</label>
+            <input id="about_story_title" name="about_story_title" type="text" maxlength="120" value="<%= settings.about_story_title %>">
+          </div>
+        </div>
+        <div class="field">
+          <label for="about_story_intro">Resumen de la historia</label>
+          <textarea id="about_story_intro" name="about_story_intro" maxlength="800" rows="2"><%= settings.about_story_intro %></textarea>
+        </div>
+        <div class="field">
+          <label for="about_story_text">Párrafos de la historia</label>
+          <textarea id="about_story_text" name="about_story_text" maxlength="6000" rows="10"><%= settings.about_story_text %></textarea>
+          <span class="hint">Separa cada párrafo con una línea en blanco.</span>
+        </div>
+        <div class="field">
+          <label for="about_quote">Frase destacada</label>
+          <textarea id="about_quote" name="about_quote" maxlength="800" rows="2"><%= settings.about_quote %></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="about_future_eyebrow">Texto pequeño de “Muy pronto”</label>
+            <input id="about_future_eyebrow" name="about_future_eyebrow" type="text" maxlength="80" value="<%= settings.about_future_eyebrow %>">
+          </div>
+          <div class="field">
+            <label for="about_future_platforms">Plataformas</label>
+            <input id="about_future_platforms" name="about_future_platforms" type="text" maxlength="120" value="<%= settings.about_future_platforms %>" placeholder="PS5, XBOX, PC">
+            <span class="hint">Sepáralas con comas.</span>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="about_future_title">Título de “Muy pronto” · primera línea</label>
+            <input id="about_future_title" name="about_future_title" type="text" maxlength="60" value="<%= settings.about_future_title %>">
+          </div>
+          <div class="field">
+            <label for="about_future_title_accent">Título de “Muy pronto” · segunda línea</label>
+            <input id="about_future_title_accent" name="about_future_accent" type="text" maxlength="80" value="<%= settings.about_future_accent %>">
+          </div>
+        </div>
+        <div class="field">
+          <label for="about_future_text">Texto de “Muy pronto”</label>
+          <textarea id="about_future_text" name="about_future_text" maxlength="800" rows="3"><%= settings.about_future_text %></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="about_map_eyebrow">Texto pequeño de ubicación</label>
+            <input id="about_map_eyebrow" name="about_map_eyebrow" type="text" maxlength="80" value="<%= settings.about_map_eyebrow %>">
+          </div>
+          <div class="field">
+            <label for="about_map_title">Título de ubicación</label>
+            <input id="about_map_title" name="about_map_title" type="text" maxlength="120" value="<%= settings.about_map_title %>">
+          </div>
+        </div>
+        <div class="field">
+          <label for="about_map_text">Texto de ubicación</label>
+          <textarea id="about_map_text" name="about_map_text" maxlength="800" rows="3"><%= settings.about_map_text %></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="about_address">Dirección visible</label>
+            <textarea id="about_address" name="about_address" maxlength="800" rows="3"><%= settings.about_address %></textarea>
+          </div>
+          <div class="field">
+            <label for="about_map_caption">Texto bajo el mapa</label>
+            <input id="about_map_caption" name="about_map_caption" type="text" maxlength="160" value="<%= settings.about_map_caption %>">
+            <label for="about_map_url" style="margin-top: 12px;">Enlace de Google Maps</label>
+            <input id="about_map_url" name="about_map_url" type="text" maxlength="800" value="<%= settings.about_map_url %>">
+          </div>
+        </div>
+        <a class="btn btn-outline" href="/acerca" target="_blank" rel="noopener">Ver página Acerca</a>
+      </div>
+    </section>
+    <% } %>
+
+    <% if (activeTab === 'welcome') { %>
+    <section class="form-card">
+      <div class="form-card-head">
+        <h2>Operación</h2>
+        <p>Mensajes de servicio y crédito del pie de página.</p>
+      </div>
+      <div class="form-body">
+        <div class="field-row">
+          <div class="field">
+            <label for="opening_status">Estado visible en la bienvenida</label>
+            <input id="opening_status" name="opening_status" type="text" maxlength="80" value="<%= settings.opening_status %>" placeholder="Abierto hoy">
+          </div>
+          <div class="field">
+            <label for="opening_hours">Horario de apertura</label>
+            <input id="opening_hours" name="opening_hours" type="text" maxlength="80" value="<%= settings.opening_hours %>" placeholder="8 am a 8 pm">
+          </div>
+        </div>
+        <div class="field">
+          <label for="kitchen_hours">Horario de cocina</label>
+          <input id="kitchen_hours" name="kitchen_hours" type="text" maxlength="120" value="<%= settings.kitchen_hours %>">
+        </div>
+        <div class="field">
+          <label for="service_note">Nota de servicio</label>
+          <input id="service_note" name="service_note" type="text" maxlength="160" value="<%= settings.service_note %>">
+        </div>
+        <div class="field">
+          <label for="footer_credit">Crédito del pie de página</label>
+          <textarea id="footer_credit" name="footer_credit" maxlength="400"><%= settings.footer_credit %></textarea>
+        </div>
+      </div>
+    </section>
+    <% } %>
+
+    <% if (activeTab === 'general') { %>
+    <section class="form-card">
+      <div class="form-card-head">
+        <h2>Redes y contacto</h2>
+        <p>Los enlaces aparecen en el banner de redes sociales del pie. El sitio web usa el ícono SITIO WEB.</p>
+      </div>
+      <div class="form-body">
+        <div class="field-row">
+          <div class="field">
+            <label for="social_whatsapp">WhatsApp</label>
+            <input id="social_whatsapp" name="social_whatsapp" type="url" maxlength="400" value="<%= settings.social_whatsapp %>" placeholder="https://wa.me/5355555555">
+          </div>
+          <div class="field">
+            <label for="social_instagram">Instagram</label>
+            <input id="social_instagram" name="social_instagram" type="url" maxlength="400" value="<%= settings.social_instagram %>" placeholder="https://instagram.com/…">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="social_facebook">Facebook</label>
+            <input id="social_facebook" name="social_facebook" type="url" maxlength="400" value="<%= settings.social_facebook %>" placeholder="https://facebook.com/…">
+          </div>
+          <div class="field">
+            <label for="social_youtube">YouTube</label>
+            <input id="social_youtube" name="social_youtube" type="url" maxlength="400" value="<%= settings.social_youtube %>" placeholder="https://youtube.com/…">
+          </div>
+        </div>
+        <div class="field">
+          <label for="social_email">Correo electrónico</label>
+          <input id="social_email" name="social_email" type="email" maxlength="400" value="<%= settings.social_email %>" placeholder="hola@lilysplays.com">
+        </div>
+        <div class="field">
+          <label for="social_website">Sitio web (ícono SITIO WEB)</label>
+          <input id="social_website" name="social_website" type="text" inputmode="url" maxlength="400" value="<%= settings.social_website %>" placeholder="https://lilysplays.com">
+          <span class="hint">Vacío = el ícono no abre ninguna página.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card">
+      <div class="form-card-head">
+        <h2>Enlace público del QR</h2>
+        <p>Normalmente se deja vacío para usar la IP de la PC automáticamente.</p>
+      </div>
+      <div class="form-body">
+        <div class="field">
+          <label for="qr_public_url">URL pública</label>
+          <input id="qr_public_url" name="qr_public_url" type="url" maxlength="400" value="<%= settings.qr_public_url %>" placeholder="http://192.168.1.50:3000">
+          <span class="hint">Vacío = usa automáticamente la IP o el dominio desde donde se abre el panel. Rellénalo solo si quieres forzar una dirección fija.</span>
+        </div>
+      </div>
+    </section>
+    <% } %>
+  </div>
+
+  <aside class="settings-side">
+    <section class="form-card">
+      <div class="form-card-head">
+        <h2><%= activeTab === 'welcome' ? 'Guardar operación' : activeTab === 'menu' ? 'Guardar portada' : 'Guardar' %></h2>
+        <p><%= activeTab === 'welcome' ? 'Horarios y mensajes de servicio de la bienvenida.' : activeTab === 'menu' ? 'Moneda, portada y producto destacado. El banner, los textos y las reservas se guardan en sus propias tarjetas.' : 'Los cambios se ven al instante en el menú.' %></p>
+      </div>
+      <div class="form-body">
+        <button class="btn btn-primary" type="submit" style="width: 100%;">Guardar ajustes</button>
+        <a class="btn btn-outline" href="/" target="_blank" rel="noopener" style="width: 100%; margin-top: 8px;">Ver menú</a>
+        <div class="side-note" style="margin-top: 12px;">
+          <b>Red local</b>
+          Menú: <code>http://<%= lanIp %>:<%= port %></code><br>
+          Panel: <code>/admin</code>
+        </div>
+      </div>
+    </section>
+
+    <div class="side-note">
+      <b>El panel es privado</b>
+      No se enlaza desde el menú ni desde el QR. Los clientes solo ven las páginas públicas.
+    </div>
+  </aside>
+</form>
+
+<% if (activeTab === 'menu') { %>
+<section class="form-card" style="margin-top: 16px;" id="contenido-menu">
+  <div class="form-card-head">
+    <h2>Banner y textos del menú</h2>
+    <p>Foto del banner, insignia, botones, buscador y todos los textos del carrito. El banner también se usa en la portada de la bienvenida.</p>
+  </div>
+  <div class="form-body">
+    <form method="post" action="/admin/ajustes/menu-contenido" enctype="multipart/form-data">
+      <div class="menu-banner-admin">
+        <img class="menu-banner-thumb" src="<%= heroMedia.image %>" alt="">
+        <div class="menu-banner-fields">
+          <div class="field">
+            <label for="menu_hero_image">Foto del banner</label>
+            <input id="menu_hero_image" name="menu_hero_image" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+            <span class="hint">Se usa en el menú y en la bienvenida.</span>
+          </div>
+          <% if (heroMedia.is_custom) { %>
+          <label class="welcome-media-check">
+            <input type="checkbox" name="welcome_hero_banner_remove">
+            Quitar y volver a la foto original
+          </label>
+          <% } %>
+          <div class="field">
+            <label for="welcome_hero_banner_alt">Texto alternativo de la foto</label>
+            <input id="welcome_hero_banner_alt" name="welcome_hero_banner_alt" type="text" maxlength="180" value="<%= heroMedia.alt %>">
+          </div>
+        </div>
+      </div>
+
+      <% menuTextGroups.forEach((group) => { %>
+      <h3 class="form-subhead"><%= group.title %></h3>
+      <div class="welcome-text-grid">
+        <% group.keys.forEach((textKey) => { const meta = menuTextMeta.find(([key]) => key === textKey) || []; const label = meta[1] || textKey; const type = meta[2] || 'text'; %>
+        <div class="field <%= type === 'textarea' ? 'is-wide' : '' %>">
+          <label for="text_<%= textKey %>"><%= label %></label>
+          <% if (type === 'textarea') { %>
+          <textarea id="text_<%= textKey %>" name="text_<%= textKey %>" rows="2" maxlength="600"><%= menuTexts[textKey] %></textarea>
+          <% } else { %>
+          <input id="text_<%= textKey %>" name="text_<%= textKey %>" type="text" maxlength="180" value="<%= menuTexts[textKey] %>">
+          <% } %>
+        </div>
+        <% }) %>
+      </div>
+      <% }) %>
+
+      <button class="btn btn-primary" type="submit" style="margin-top: 16px;">Guardar banner y textos</button>
+      <a class="btn btn-outline" href="/" target="_blank" rel="noopener" style="margin-top: 16px;">Ver menú</a>
+    </form>
+  </div>
+</section>
+<% } %>
+
+    <% if (activeTab === 'menu') { %>
+<section class="form-card" style="margin-top: 16px;" id="reservas">
+  <div class="form-card-head">
+    <h2>Reserva de estaciones</h2>
+    <p>Edita el bloque de reserva que aparece encima del menú: textos, botón, WhatsApp y las dos tarjetas PS4. Estos cambios también se reflejan en la bienvenida.</p>
+  </div>
+  <div class="form-body">
+    <form method="post" action="/admin/ajustes/reservas" enctype="multipart/form-data">
+      <div class="welcome-text-grid">
+        <div class="field">
+          <label for="reserve_eyebrow">Texto pequeño superior</label>
+          <input id="reserve_eyebrow" name="reserve_eyebrow" type="text" maxlength="180" value="<%= welcomeTexts.reserve_eyebrow %>">
+        </div>
+        <div class="field">
+          <label for="reserve_title">Título del bloque</label>
+          <input id="reserve_title" name="reserve_title" type="text" maxlength="180" value="<%= welcomeTexts.reserve_title %>">
+        </div>
+        <div class="field is-wide">
+          <label for="reserve_text">Texto descriptivo</label>
+          <textarea id="reserve_text" name="reserve_text" rows="3" maxlength="600"><%= welcomeTexts.reserve_text %></textarea>
+        </div>
+        <div class="field is-wide">
+          <label for="reserve_message">Mensaje de WhatsApp</label>
+          <textarea id="reserve_message" name="reserve_message" rows="2" maxlength="300"><%= settings.reserve_message || "Hola, quiero reservar la estación {estacion} en Lily's Plays." %></textarea>
+          <span class="hint">Usa <code>{estacion}</code> para insertar el número de la estación.</span>
+        </div>
+        <div class="field">
+          <label for="reserve_cta">Texto del botón de reserva</label>
+          <input id="reserve_cta" name="reserve_cta" type="text" maxlength="180" value="<%= welcomeTexts.reserve_cta %>">
+        </div>
+        <div class="field">
+          <label for="social_whatsapp_reserve">WhatsApp de reservas</label>
+          <input id="social_whatsapp_reserve" name="social_whatsapp" type="url" maxlength="400" value="<%= settings.social_whatsapp %>" placeholder="https://wa.me/5355555555">
+          <span class="hint">Los botones de cada estación abren este WhatsApp. También se usa en el banner de redes.</span>
+        </div>
+      </div>
+
+      <div class="reserve-admin-grid" style="margin-top: 16px;">
+        <% reservationStations.forEach((item) => { const base = `welcome_${item.slot.replace(/-/g, '_')}`; %>
+        <article class="welcome-media-item">
+          <img class="welcome-media-thumb" src="<%= item.image %>" alt="">
+          <div class="welcome-media-name">
+            <b><%= item.label %></b>
+            <span>Estación #<%= item.slot.replace('station-', '') %></span>
+          </div>
+          <div class="field">
+            <label for="<%= base %>_image">Foto de la estación</label>
+            <input id="<%= base %>_image" name="<%= base %>_image" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+          </div>
+          <% if (item.is_custom) { %>
+          <label class="welcome-media-check">
+            <input type="checkbox" name="<%= base %>_remove">
+            Quitar y volver a la foto original
+          </label>
+          <% } %>
+          <div class="field">
+            <label for="<%= base %>_pill">Etiqueta</label>
+            <input id="<%= base %>_pill" name="<%= base %>_pill" type="text" maxlength="60" value="<%= item.pill %>">
+          </div>
+          <div class="field">
+            <label for="<%= base %>_title">Título</label>
+            <input id="<%= base %>_title" name="<%= base %>_title" type="text" maxlength="160" value="<%= item.title %>">
+          </div>
+          <div class="field">
+            <label for="<%= base %>_text">Texto</label>
+            <textarea id="<%= base %>_text" name="<%= base %>_text" rows="3" maxlength="600"><%= item.text %></textarea>
+          </div>
+          <div class="field">
+            <label for="<%= base %>_alt">Texto alternativo de la foto</label>
+            <input id="<%= base %>_alt" name="<%= base %>_alt" type="text" maxlength="180" value="<%= item.alt %>">
+          </div>
+        </article>
+        <% }) %>
+      </div>
+
+      <button class="btn btn-primary" type="submit" style="margin-top: 14px;">Guardar reservas</button>
+      <a class="btn btn-outline" href="/#reservar" target="_blank" rel="noopener" style="margin-top: 14px;">Ver reservas en el menú</a>
+    </form>
+  </div>
+</section>
+<% } %>
+
+<% if (activeTab === 'welcome') { %>
+<section class="form-card" style="margin-top: 16px;">
+  <div class="form-card-head">
+    <h2>Textos de la bienvenida</h2>
+    <p>Edita los títulos, textos y botones de la portada y de cada sección. Los campos vacíos vuelven al texto original.</p>
+  </div>
+  <div class="form-body">
+    <form method="post" action="/admin/ajustes/textos">
+      <div class="welcome-text-grid">
+        <% (welcomeTextMeta || []).forEach(([key, label, type]) => { %>
+        <div class="field<%= type === 'textarea' ? ' is-wide' : '' %>">
+          <label for="text_<%= key %>"><%= label %></label>
+          <% if (type === 'textarea') { %>
+          <textarea id="text_<%= key %>" name="text_<%= key %>" rows="3" maxlength="600"><%= welcomeTexts[key] %></textarea>
+          <% } else { %>
+          <input id="text_<%= key %>" name="text_<%= key %>" type="text" maxlength="180" value="<%= welcomeTexts[key] %>">
+          <% } %>
+        </div>
+        <% }) %>
+      </div>
+      <button class="btn btn-primary" type="submit" style="margin-top: 14px;">Guardar textos</button>
+      <a class="btn btn-outline" href="/bienvenida.html" target="_blank" rel="noopener" style="margin-top: 14px;">Ver bienvenida</a>
+    </form>
+  </div>
+</section>
+
+<section class="form-card" style="margin-top: 16px;">
+  <div class="form-card-head">
+    <h2>Fotos de la bienvenida</h2>
+    <p>Cambia las fotos de las estaciones, la zona retro, el bloque de amigos y las imágenes de portada. Si no subes una foto, se conserva la actual.</p>
+  </div>
+  <div class="form-body">
+    <form method="post" action="/admin/ajustes/fotos" enctype="multipart/form-data">
+      <div class="welcome-media-grid">
+        <% welcome.forEach((item) => { const base = `welcome_${item.slot.replace(/-/g, '_')}`; %>
+        <article class="welcome-media-item">
+          <img class="welcome-media-thumb" src="<%= item.image %>" alt="">
+          <div class="welcome-media-name">
+            <b><%= item.label %></b>
+            <span><%= item.group %></span>
+          </div>
+          <div class="field">
+            <label for="<%= base %>_image">Reemplazar foto</label>
+            <input id="<%= base %>_image" name="<%= base %>_image" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+          </div>
+          <% if (item.is_custom) { %>
+          <label class="welcome-media-check">
+            <input type="checkbox" name="<%= base %>_remove">
+            Quitar y volver a la foto original
+          </label>
+          <% } %>
+          <% if (item.kind === 'card') { %>
+          <div class="field">
+            <label for="<%= base %>_title">Título</label>
+            <input id="<%= base %>_title" name="<%= base %>_title" type="text" maxlength="160" value="<%= item.title %>">
+          </div>
+          <% if (item.slot.startsWith('retro-')) { %>
+          <div class="field">
+            <label for="<%= base %>_pill">Etiqueta / año</label>
+            <input id="<%= base %>_pill" name="<%= base %>_pill" type="text" maxlength="60" value="<%= item.pill %>">
+          </div>
+          <% } %>
+          <div class="field">
+            <label for="<%= base %>_text">Texto</label>
+            <textarea id="<%= base %>_text" name="<%= base %>_text" rows="3" maxlength="600"><%= item.text %></textarea>
+          </div>
+          <% } %>
+          <div class="field">
+            <label for="<%= base %>_alt">Texto alternativo de la foto</label>
+            <input id="<%= base %>_alt" name="<%= base %>_alt" type="text" maxlength="180" value="<%= item.alt %>">
+          </div>
+        </article>
+        <% }) %>
+      </div>
+      <button class="btn btn-primary" type="submit" style="margin-top: 14px;">Guardar fotos y textos</button>
+      <a class="btn btn-outline" href="/bienvenida.html" target="_blank" rel="noopener" style="margin-top: 14px;">Ver bienvenida</a>
+    </form>
+  </div>
+</section>
+<% } %>
+
+<% if (activeTab === 'general') { %>
+<section class="form-card" style="margin-top: 16px; max-width: 680px;">
+  <div class="form-card-head">
+    <h2>Cambiar mi contraseña</h2>
+    <p>Se aplica a tu cuenta (<%= adminUser.username %>).</p>
+  </div>
+  <div class="form-body">
+    <form method="post" action="/admin/password">
+      <div class="field-row-3">
+        <div class="field">
+          <label for="current_password">Contraseña actual</label>
+          <input id="current_password" name="current_password" type="password" autocomplete="current-password" required>
+        </div>
+        <div class="field">
+          <label for="new_password">Nueva contraseña</label>
+          <input id="new_password" name="new_password" type="password" autocomplete="new-password" minlength="6" required>
+        </div>
+        <div class="field">
+          <label for="confirm_password">Repetir nueva</label>
+          <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="6" required>
+        </div>
+      </div>
+      <button class="btn btn-outline" type="submit">Actualizar contraseña</button>
+    </form>
+  </div>
+</section>
+<% } %>
+
+<%- include('../partials/admin-bottom') %>

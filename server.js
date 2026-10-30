@@ -9,7 +9,7 @@ const QRCode = require('qrcode');
 const { db, getSettings, setSetting } = require('./lib/db');
 const { formatMoney, formatAmount, formatPrice, orderUnitPrice, normalizeCurrencyMode, formatOrderMoney, parsePriceToCents, formatDate, nowLocal, statusMeta, STATUS } = require('./lib/format');
 const { hashPassword, verifyPassword, createToken, verifyToken, parseCookies, serializeCookie } = require('./lib/auth');
-const { WELCOME_SLOTS, WELCOME_TEXT_META, TEXT_FIELDS, slotKey, getWelcomeMedia, getWelcomeTexts, setWelcomeText } = require('./lib/welcome');
+const { WELCOME_SLOTS, TEXT_FIELDS, slotKey, getWelcomeMedia, getWelcomeTexts, setWelcomeText } = require('./lib/welcome');
 const { MENU_TEXT_META, MENU_TEXT_GROUPS, getMenuTexts, setMenuText } = require('./lib/menu-texts');
 const { BACKUP_DIR: DB_BACKUP_DIR, backupDatabase, listBackups } = require('./lib/backup');
 const { buildReportData, refreshReports, getReportStatus, EXCEL_PATH, JSON_PATH } = require('./lib/reports');
@@ -265,17 +265,6 @@ app.get('/api/public-info', (req, res) => {
     opening_status: res.locals.settings.opening_status || '',
     opening_hours: res.locals.settings.opening_hours || '',
     social: publicSocialLinks(res.locals.settings),
-  });
-});
-
-app.get('/api/welcome', (req, res) => {
-  res.set('Cache-Control', 'no-store');
-  res.json({ items: getWelcomeMedia(), texts: getWelcomeTexts() });
-});
-
-app.get('/acerca', (req, res) => {
-  return res.render('about', {
-    title: "Acerca de Lily's Plays · Salón Gamer y Bistró",
   });
 });
 
@@ -882,7 +871,7 @@ app.post('/admin/usuarios/:id/eliminar', requireAdmin, (req, res) => {
 
 app.get('/admin/ajustes', requireAdmin, (req, res) => {
   const products = db.prepare('SELECT id, name FROM products ORDER BY name').all();
-  const settingsTab = ['menu', 'welcome', 'about', 'general'].includes(String(req.query.tab || '')) ? String(req.query.tab) : 'menu';
+  const settingsTab = ['menu', 'operacion', 'general'].includes(String(req.query.tab || '')) ? String(req.query.tab) : 'menu';
   const welcome = getWelcomeMedia();
   res.render('admin/settings', {
     title: 'Ajustes',
@@ -895,7 +884,6 @@ app.get('/admin/ajustes', requireAdmin, (req, res) => {
       is_custom: false,
     },
     welcomeTexts: getWelcomeTexts(),
-    welcomeTextMeta: WELCOME_TEXT_META,
     menuTexts: getMenuTexts(),
     menuTextMeta: MENU_TEXT_META,
     menuTextGroups: MENU_TEXT_GROUPS,
@@ -903,38 +891,6 @@ app.get('/admin/ajustes', requireAdmin, (req, res) => {
 });
 
 const welcomeUpload = upload.fields(WELCOME_SLOTS.map((item) => ({ name: `${slotKey(item.slot)}_image`, maxCount: 1 })));
-
-app.post('/admin/ajustes/fotos', requireAdmin, welcomeUpload, (req, res) => {
-  const current = getSettings();
-  for (const item of WELCOME_SLOTS) {
-    const base = slotKey(item.slot);
-    const file = req.files && req.files[`${base}_image`] ? req.files[`${base}_image`][0] : null;
-    const oldImage = current[`${base}_image`] || '';
-    if (file) {
-      const nextImage = `/uploads/${file.filename}`;
-      setSetting(`${base}_image`, nextImage);
-      if (oldImage && oldImage !== nextImage) removeUpload(oldImage);
-    } else if (req.body[`${base}_remove`] === 'on') {
-      if (oldImage) removeUpload(oldImage);
-      db.prepare('DELETE FROM settings WHERE key = ?').run(`${base}_image`);
-    }
-    for (const field of TEXT_FIELDS) {
-      const raw = req.body[`${base}_${field}`];
-      if (raw === undefined) continue;
-      const value = String(raw).trim();
-      if (value) setSetting(`${base}_${field}`, value.slice(0, field === 'text' ? 600 : 180));
-      else db.prepare('DELETE FROM settings WHERE key = ?').run(`${base}_${field}`);
-    }
-  }
-  return res.redirect(flash('/admin/ajustes?tab=welcome', 'ok', 'Fotos y textos de la bienvenida guardados.'));
-});
-
-app.post('/admin/ajustes/textos', requireAdmin, (req, res) => {
-  for (const [key] of WELCOME_TEXT_META) {
-    setWelcomeText(key, req.body[`text_${key}`] || '');
-  }
-  return res.redirect(flash('/admin/ajustes?tab=welcome', 'ok', 'Textos de la bienvenida guardados.'));
-});
 
 app.post('/admin/ajustes/reservas', requireAdmin, welcomeUpload, (req, res) => {
   const current = getSettings();
@@ -1001,19 +957,10 @@ app.post('/admin/ajustes', requireAdmin, (req, res) => {
     'brand_name', 'brand_sub', 'currency_code', 'currency_symbol', 'currency_symbol_cuc', 'currency_locale', 'currency_locale_cuc',
     'default_station', 'opening_status', 'opening_hours', 'kitchen_hours', 'service_note', 'hero_eyebrow', 'hero_title',
     'hero_text', 'footer_credit', 'qr_public_url', 'social_facebook', 'social_instagram', 'social_whatsapp', 'social_website', 'social_email', 'social_youtube',
-    'about_eyebrow', 'about_title_primary', 'about_title_accent', 'about_subtitle', 'about_intro',
-    'about_story_eyebrow', 'about_story_title', 'about_story_intro', 'about_story_text', 'about_quote',
-    'about_future_eyebrow', 'about_future_title', 'about_future_accent', 'about_future_text', 'about_future_platforms',
-    'about_map_eyebrow', 'about_map_title', 'about_map_text', 'about_address', 'about_map_caption', 'about_map_url',
   ];
-  const longTextKeys = new Set([
-    'about_story_text', 'about_intro', 'about_story_intro', 'about_future_text',
-    'about_map_text', 'about_address', 'about_quote', 'about_map_url',
-  ]);
   for (const key of textKeys) {
     if (body[key] !== undefined) {
-      const max = key === 'about_story_text' ? 6000 : longTextKeys.has(key) ? 800 : 400;
-      setSetting(key, String(body[key]).trim().slice(0, max));
+      setSetting(key, String(body[key]).trim().slice(0, 400));
     }
   }
   if (body.currency_mode !== undefined) {
@@ -1032,7 +979,7 @@ app.post('/admin/ajustes', requireAdmin, (req, res) => {
     const exists = id ? db.prepare('SELECT 1 FROM products WHERE id = ?').get(id) : true;
     setSetting('featured_product_id', exists ? String(id) : '');
   }
-  const tab = ['menu', 'welcome', 'about', 'general'].includes(String(body.tab || '')) ? String(body.tab) : 'menu';
+  const tab = ['menu', 'operacion', 'general'].includes(String(body.tab || '')) ? String(body.tab) : 'menu';
   return res.redirect(flash(`/admin/ajustes?tab=${tab}`, 'ok', 'Ajustes guardados.'));
 });
 

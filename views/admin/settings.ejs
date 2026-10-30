@@ -3,8 +3,7 @@
 <%
   const settingsTabs = [
     { key: 'menu', label: 'Menú' },
-    { key: 'welcome', label: 'Bienvenida' },
-    { key: 'about', label: 'Acerca' },
+    { key: 'operacion', label: 'Operación' },
     { key: 'general', label: 'General' },
   ];
   const activeTab = settingsTabs.some((tab) => tab.key === settingsTab) ? settingsTab : 'menu';
@@ -137,117 +136,7 @@
     </section>
     <% } %>
 
-    <% if (activeTab === 'about') { %>
-    <section class="form-card" id="acerca">
-      <div class="form-card-head">
-        <h2>Página Acerca de Lily's Plays</h2>
-        <p>Textos e información de la página pública <code>/acerca</code>.</p>
-      </div>
-      <div class="form-body">
-        <div class="field-row">
-          <div class="field">
-            <label for="about_eyebrow">Texto pequeño superior</label>
-            <input id="about_eyebrow" name="about_eyebrow" type="text" maxlength="80" value="<%= settings.about_eyebrow %>">
-          </div>
-          <div class="field">
-            <label for="about_subtitle">Subtítulo</label>
-            <input id="about_subtitle" name="about_subtitle" type="text" maxlength="80" value="<%= settings.about_subtitle %>">
-          </div>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label for="about_title_primary">Título · primera línea</label>
-            <input id="about_title_primary" name="about_title_primary" type="text" maxlength="60" value="<%= settings.about_title_primary %>">
-          </div>
-          <div class="field">
-            <label for="about_title_accent">Título · segunda línea</label>
-            <input id="about_title_accent" name="about_title_accent" type="text" maxlength="60" value="<%= settings.about_title_accent %>">
-          </div>
-        </div>
-        <div class="field">
-          <label for="about_intro">Introducción de la portada</label>
-          <textarea id="about_intro" name="about_intro" maxlength="800" rows="3"><%= settings.about_intro %></textarea>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label for="about_story_eyebrow">Texto pequeño de la historia</label>
-            <input id="about_story_eyebrow" name="about_story_eyebrow" type="text" maxlength="80" value="<%= settings.about_story_eyebrow %>">
-          </div>
-          <div class="field">
-            <label for="about_story_title">Título de la historia</label>
-            <input id="about_story_title" name="about_story_title" type="text" maxlength="120" value="<%= settings.about_story_title %>">
-          </div>
-        </div>
-        <div class="field">
-          <label for="about_story_intro">Resumen de la historia</label>
-          <textarea id="about_story_intro" name="about_story_intro" maxlength="800" rows="2"><%= settings.about_story_intro %></textarea>
-        </div>
-        <div class="field">
-          <label for="about_story_text">Párrafos de la historia</label>
-          <textarea id="about_story_text" name="about_story_text" maxlength="6000" rows="10"><%= settings.about_story_text %></textarea>
-          <span class="hint">Separa cada párrafo con una línea en blanco.</span>
-        </div>
-        <div class="field">
-          <label for="about_quote">Frase destacada</label>
-          <textarea id="about_quote" name="about_quote" maxlength="800" rows="2"><%= settings.about_quote %></textarea>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label for="about_future_eyebrow">Texto pequeño de “Muy pronto”</label>
-            <input id="about_future_eyebrow" name="about_future_eyebrow" type="text" maxlength="80" value="<%= settings.about_future_eyebrow %>">
-          </div>
-          <div class="field">
-            <label for="about_future_platforms">Plataformas</label>
-            <input id="about_future_platforms" name="about_future_platforms" type="text" maxlength="120" value="<%= settings.about_future_platforms %>" placeholder="PS5, XBOX, PC">
-            <span class="hint">Sepáralas con comas.</span>
-          </div>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label for="about_future_title">Título de “Muy pronto” · primera línea</label>
-            <input id="about_future_title" name="about_future_title" type="text" maxlength="60" value="<%= settings.about_future_title %>">
-          </div>
-          <div class="field">
-            <label for="about_future_title_accent">Título de “Muy pronto” · segunda línea</label>
-            <input id="about_future_title_accent" name="about_future_accent" type="text" maxlength="80" value="<%= settings.about_future_accent %>">
-          </div>
-        </div>
-        <div class="field">
-          <label for="about_future_text">Texto de “Muy pronto”</label>
-          <textarea id="about_future_text" name="about_future_text" maxlength="800" rows="3"><%= settings.about_future_text %></textarea>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label for="about_map_eyebrow">Texto pequeño de ubicación</label>
-            <input id="about_map_eyebrow" name="about_map_eyebrow" type="text" maxlength="80" value="<%= settings.about_map_eyebrow %>">
-          </div>
-          <div class="field">
-            <label for="about_map_title">Título de ubicación</label>
-            <input id="about_map_title" name="about_map_title" type="text" maxlength="120" value="<%= settings.about_map_title %>">
-          </div>
-        </div>
-        <div class="field">
-          <label for="about_map_text">Texto de ubicación</label>
-          <textarea id="about_map_text" name="about_map_text" maxlength="800" rows="3"><%= settings.about_map_text %></textarea>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label for="about_address">Dirección visible</label>
-            <textarea id="about_address" name="about_address" maxlength="800" rows="3"><%= settings.about_address %></textarea>
-          </div>
-          <div class="field">
-            <label for="about_map_caption">Texto bajo el mapa</label>
-            <input id="about_map_caption" name="about_map_caption" type="text" maxlength="160" value="<%= settings.about_map_caption %>">
-            <label for="about_map_url" style="margin-top: 12px;">Enlace de Google Maps</label>
-            <input id="about_map_url" name="about_map_url" type="text" maxlength="800" value="<%= settings.about_map_url %>">
-          </div>
-        </div>
-        <a class="btn btn-outline" href="/acerca" target="_blank" rel="noopener">Ver página Acerca</a>
-      </div>
-    </section>
-    <% } %>
-
-    <% if (activeTab === 'welcome') { %>
+    <% if (activeTab === 'operacion') { %>
     <section class="form-card">
       <div class="form-card-head">
         <h2>Operación</h2>
@@ -256,7 +145,7 @@
       <div class="form-body">
         <div class="field-row">
           <div class="field">
-            <label for="opening_status">Estado visible en la bienvenida</label>
+            <label for="opening_status">Estado visible</label>
             <input id="opening_status" name="opening_status" type="text" maxlength="80" value="<%= settings.opening_status %>" placeholder="Abierto hoy">
           </div>
           <div class="field">
@@ -338,8 +227,8 @@
   <aside class="settings-side">
     <section class="form-card">
       <div class="form-card-head">
-        <h2><%= activeTab === 'welcome' ? 'Guardar operación' : activeTab === 'menu' ? 'Guardar portada' : 'Guardar' %></h2>
-        <p><%= activeTab === 'welcome' ? 'Horarios y mensajes de servicio de la bienvenida.' : activeTab === 'menu' ? 'Moneda, portada y producto destacado. El banner, los textos y las reservas se guardan en sus propias tarjetas.' : 'Los cambios se ven al instante en el menú.' %></p>
+        <h2><%= activeTab === 'operacion' ? 'Guardar operación' : activeTab === 'menu' ? 'Guardar portada' : 'Guardar' %></h2>
+        <p><%= activeTab === 'operacion' ? 'Horarios y mensajes de servicio del menú.' : activeTab === 'menu' ? 'Moneda, portada y producto destacado. El banner, los textos y las reservas se guardan en sus propias tarjetas.' : 'Los cambios se ven al instante en el menú.' %></p>
       </div>
       <div class="form-body">
         <button class="btn btn-primary" type="submit" style="width: 100%;">Guardar ajustes</button>
@@ -363,7 +252,7 @@
 <section class="form-card" style="margin-top: 16px;" id="contenido-menu">
   <div class="form-card-head">
     <h2>Banner y textos del menú</h2>
-    <p>Foto del banner, insignia, botones, buscador y todos los textos del carrito. El banner también se usa en la portada de la bienvenida.</p>
+    <p>Foto del banner, insignia, botones, buscador y todos los textos del carrito.</p>
   </div>
   <div class="form-body">
     <form method="post" action="/admin/ajustes/menu-contenido" enctype="multipart/form-data">
@@ -373,7 +262,7 @@
           <div class="field">
             <label for="menu_hero_image">Foto del banner</label>
             <input id="menu_hero_image" name="menu_hero_image" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
-            <span class="hint">Se usa en el menú y en la bienvenida.</span>
+            <span class="hint">Se usa en la portada del menú.</span>
           </div>
           <% if (heroMedia.is_custom) { %>
           <label class="welcome-media-check">
@@ -415,7 +304,7 @@
 <section class="form-card" style="margin-top: 16px;" id="reservas">
   <div class="form-card-head">
     <h2>Reserva de estaciones</h2>
-    <p>Edita el bloque de reserva que aparece encima del menú: textos, botón, WhatsApp y las dos tarjetas PS4. Estos cambios también se reflejan en la bienvenida.</p>
+    <p>Edita el bloque de reserva que aparece encima del menú: textos, botón, WhatsApp y las dos tarjetas PS4.</p>
   </div>
   <div class="form-body">
     <form method="post" action="/admin/ajustes/reservas" enctype="multipart/form-data">
@@ -488,87 +377,6 @@
 
       <button class="btn btn-primary" type="submit" style="margin-top: 14px;">Guardar reservas</button>
       <a class="btn btn-outline" href="/#reservar" target="_blank" rel="noopener" style="margin-top: 14px;">Ver reservas en el menú</a>
-    </form>
-  </div>
-</section>
-<% } %>
-
-<% if (activeTab === 'welcome') { %>
-<section class="form-card" style="margin-top: 16px;">
-  <div class="form-card-head">
-    <h2>Textos de la bienvenida</h2>
-    <p>Edita los títulos, textos y botones de la portada y de cada sección. Los campos vacíos vuelven al texto original.</p>
-  </div>
-  <div class="form-body">
-    <form method="post" action="/admin/ajustes/textos">
-      <div class="welcome-text-grid">
-        <% (welcomeTextMeta || []).forEach(([key, label, type]) => { %>
-        <div class="field<%= type === 'textarea' ? ' is-wide' : '' %>">
-          <label for="text_<%= key %>"><%= label %></label>
-          <% if (type === 'textarea') { %>
-          <textarea id="text_<%= key %>" name="text_<%= key %>" rows="3" maxlength="600"><%= welcomeTexts[key] %></textarea>
-          <% } else { %>
-          <input id="text_<%= key %>" name="text_<%= key %>" type="text" maxlength="180" value="<%= welcomeTexts[key] %>">
-          <% } %>
-        </div>
-        <% }) %>
-      </div>
-      <button class="btn btn-primary" type="submit" style="margin-top: 14px;">Guardar textos</button>
-      <a class="btn btn-outline" href="/bienvenida.html" target="_blank" rel="noopener" style="margin-top: 14px;">Ver bienvenida</a>
-    </form>
-  </div>
-</section>
-
-<section class="form-card" style="margin-top: 16px;">
-  <div class="form-card-head">
-    <h2>Fotos de la bienvenida</h2>
-    <p>Cambia las fotos de las estaciones, la zona retro, el bloque de amigos y las imágenes de portada. Si no subes una foto, se conserva la actual.</p>
-  </div>
-  <div class="form-body">
-    <form method="post" action="/admin/ajustes/fotos" enctype="multipart/form-data">
-      <div class="welcome-media-grid">
-        <% welcome.forEach((item) => { const base = `welcome_${item.slot.replace(/-/g, '_')}`; %>
-        <article class="welcome-media-item">
-          <img class="welcome-media-thumb" src="<%= item.image %>" alt="">
-          <div class="welcome-media-name">
-            <b><%= item.label %></b>
-            <span><%= item.group %></span>
-          </div>
-          <div class="field">
-            <label for="<%= base %>_image">Reemplazar foto</label>
-            <input id="<%= base %>_image" name="<%= base %>_image" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
-          </div>
-          <% if (item.is_custom) { %>
-          <label class="welcome-media-check">
-            <input type="checkbox" name="<%= base %>_remove">
-            Quitar y volver a la foto original
-          </label>
-          <% } %>
-          <% if (item.kind === 'card') { %>
-          <div class="field">
-            <label for="<%= base %>_title">Título</label>
-            <input id="<%= base %>_title" name="<%= base %>_title" type="text" maxlength="160" value="<%= item.title %>">
-          </div>
-          <% if (item.slot.startsWith('retro-')) { %>
-          <div class="field">
-            <label for="<%= base %>_pill">Etiqueta / año</label>
-            <input id="<%= base %>_pill" name="<%= base %>_pill" type="text" maxlength="60" value="<%= item.pill %>">
-          </div>
-          <% } %>
-          <div class="field">
-            <label for="<%= base %>_text">Texto</label>
-            <textarea id="<%= base %>_text" name="<%= base %>_text" rows="3" maxlength="600"><%= item.text %></textarea>
-          </div>
-          <% } %>
-          <div class="field">
-            <label for="<%= base %>_alt">Texto alternativo de la foto</label>
-            <input id="<%= base %>_alt" name="<%= base %>_alt" type="text" maxlength="180" value="<%= item.alt %>">
-          </div>
-        </article>
-        <% }) %>
-      </div>
-      <button class="btn btn-primary" type="submit" style="margin-top: 14px;">Guardar fotos y textos</button>
-      <a class="btn btn-outline" href="/bienvenida.html" target="_blank" rel="noopener" style="margin-top: 14px;">Ver bienvenida</a>
     </form>
   </div>
 </section>
