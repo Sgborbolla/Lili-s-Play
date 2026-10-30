@@ -864,8 +864,8 @@ main, .site-footer { position: relative; z-index: 1; }
   border-radius: var(--radius);
   background: linear-gradient(160deg, #0c1729 0%, #070d17 100%);
   background:
-    radial-gradient(120% 90% at 50% 0%, rgba(var(--accent-rgb), .17), transparent 62%),
-    radial-gradient(90% 70% at 50% 100%, rgba(var(--accent2-rgb), .11), transparent 70%),
+    radial-gradient(120% 90% at 50% 0%, rgba(var(--accent-rgb), .20), transparent 62%),
+    radial-gradient(90% 70% at 50% 100%, rgba(var(--accent2-rgb), .13), transparent 70%),
     repeating-linear-gradient(0deg, rgba(255, 255, 255, .025) 0 1px, transparent 1px 26px),
     repeating-linear-gradient(90deg, rgba(255, 255, 255, .025) 0 1px, transparent 1px 26px),
     linear-gradient(160deg, #0c1729 0%, #080f1b 55%, #060b13 100%);
@@ -876,14 +876,14 @@ main, .site-footer { position: relative; z-index: 1; }
 .retro-card::before {
   content: "";
   position: absolute;
-  right: -12%;
-  bottom: -16%;
-  width: 84%;
-  height: 74%;
-  background: var(--art) center / contain no-repeat;
-  opacity: .05;
-  filter: blur(.4px) saturate(.9);
-  transform: rotate(-8deg);
+  right: -10%;
+  bottom: 12px;
+  width: 80%;
+  height: 48%;
+  background: var(--console-art) center bottom / contain no-repeat;
+  opacity: .20;
+  filter: brightness(1.2) contrast(1.05);
+  transform: rotate(-5deg);
   pointer-events: none;
   z-index: 0;
 }
@@ -892,18 +892,18 @@ main, .site-footer { position: relative; z-index: 1; }
   content: attr(data-console);
   position: absolute;
   left: 50%;
-  top: 34%;
-  transform: translate(-50%, -50%) rotate(-7deg);
+  top: 31%;
+  transform: translate(-50%, -50%) rotate(-6deg);
   color: var(--accent);
   font-family: "Syne", sans-serif;
-  font-size: clamp(16px, 1.55vw, 24px);
+  font-size: clamp(14px, 1.4vw, 21px);
   font-weight: 800;
-  letter-spacing: .14em;
+  letter-spacing: .13em;
   line-height: 1;
   text-transform: uppercase;
   white-space: nowrap;
-  opacity: .10;
-  text-shadow: 0 0 18px rgba(var(--accent-rgb), .22);
+  opacity: .30;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .55), 0 0 18px rgba(var(--accent-rgb), .35);
   pointer-events: none;
   z-index: 0;
 }
@@ -922,22 +922,22 @@ main, .site-footer { position: relative; z-index: 1; }
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 4px;
-  width: 48px;
-  opacity: .38;
+  width: 50px;
+  opacity: .70;
   pointer-events: none;
 }
 
 .retro-buttons i {
   display: grid;
   place-items: center;
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, .22);
   background: var(--accent);
   color: #07101c;
   font-family: "Space Grotesk", sans-serif;
-  font-size: 7px;
+  font-size: 8px;
   font-style: normal;
   font-weight: 700;
   line-height: 1;
