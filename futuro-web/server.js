@@ -882,7 +882,7 @@ app.post('/admin/usuarios/:id/eliminar', requireAdmin, (req, res) => {
 
 app.get('/admin/ajustes', requireAdmin, (req, res) => {
   const products = db.prepare('SELECT id, name FROM products ORDER BY name').all();
-  const settingsTab = ['menu', 'welcome', 'about', 'general'].includes(String(req.query.tab || '')) ? String(req.query.tab) : 'menu';
+  const settingsTab = ['menu', 'general'].includes(String(req.query.tab || '')) ? String(req.query.tab) : 'menu';
   const welcome = getWelcomeMedia();
   res.render('admin/settings', {
     title: 'Ajustes',
@@ -1032,7 +1032,7 @@ app.post('/admin/ajustes', requireAdmin, (req, res) => {
     const exists = id ? db.prepare('SELECT 1 FROM products WHERE id = ?').get(id) : true;
     setSetting('featured_product_id', exists ? String(id) : '');
   }
-  const tab = ['menu', 'welcome', 'about', 'general'].includes(String(body.tab || '')) ? String(body.tab) : 'menu';
+  const tab = ['menu', 'general'].includes(String(body.tab || '')) ? String(body.tab) : 'menu';
   return res.redirect(flash(`/admin/ajustes?tab=${tab}`, 'ok', 'Ajustes guardados.'));
 });
 

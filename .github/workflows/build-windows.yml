@@ -1,0 +1,104 @@
+name: Build Windows portable
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-windows.yml'
+      - 'server.js'
+      - 'lib/**'
+      - 'views/**'
+      - 'public/**'
+      - 'scripts/**'
+      - 'package.json'
+      - 'package-lock.json'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        shell: pwsh
+        run: |
+          npm ci
+          npm install --global @yao-pkg/pkg@6.24.0
+          python -m pip install --upgrade pip
+          python -m pip install xlsxwriter pyinstaller
+
+      - name: Build Excel helper
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path build/scripts, build/pyinstaller | Out-Null
+          pyinstaller --onefile --clean --noconfirm --name build_reports --distpath build/scripts --workpath build/pyinstaller --specpath build/pyinstaller scripts/build_reports.py
+
+      - name: Build Windows executable
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path build/exe | Out-Null
+          pkg . --target node24-win-x64 --output build/exe/LilysPlays.exe
+
+      - name: Assemble portable folder
+        shell: pwsh
+        run: |
+          $dest = 'build/portable'
+          New-Item -ItemType Directory -Force -Path $dest | Out-Null
+          New-Item -ItemType Directory -Force -Path "$dest/scripts", "$dest/data", "$dest/Reportes", "$dest/public/uploads" | Out-Null
+          Copy-Item 'build/exe/LilysPlays.exe' "$dest/LilysPlays.exe"
+          Copy-Item 'build/scripts/build_reports.exe' "$dest/scripts/build_reports.exe"
+          Copy-Item 'README.md', 'GUIA-RED-LOCAL.txt', 'CREDITS.md' $dest
+
+          @'
+          Lily's Plays - Windows portable
+          ===============================
+
+          1. Abre esta carpeta completa.
+          2. Ejecuta LilysPlays.exe (o Iniciar.bat).
+          3. Menu publico:  http://localhost:3000
+          4. Panel:         http://localhost:3001/admin  (solo esta PC)
+          5. Usuario inicial: freeman / 12345678
+             El panel pedira cambiarla la primera vez.
+
+          Todo se guarda dentro de esta carpeta:
+            data/              base de datos, usuarios y respaldos
+            Reportes/          Excel y JSON
+            public/uploads/    imagenes subidas
+
+          No muevas solo LilysPlays.exe: para conservar todo, mueve o copia
+          la carpeta completa. El Excel funciona sin instalar Python porque
+          incluye scripts/build_reports.exe.
+          '@ | Set-Content -Encoding UTF8 "$dest/LEEME-PRIMERO.txt"
+
+          @'
+          @echo off
+          cd /d "%~dp0"
+          start "" "LilysPlays.exe"
+          '@ | Set-Content -Encoding ASCII "$dest/Iniciar.bat"
+
+          Compress-Archive -Path "$dest/*" -DestinationPath 'build/LilysPlays-Windows.zip' -Force
+
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: LilysPlays-Windows
+          path: build/LilysPlays-Windows.zip
+          if-no-files-found: error

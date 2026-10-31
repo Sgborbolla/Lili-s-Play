@@ -1,0 +1,19 @@
+<%
+  const socialItems = [
+    { key: 'whatsapp', label: 'WhatsApp', raw: String(settings.social_whatsapp || '').trim(), href: String(settings.social_whatsapp || '').trim() ? (/^https?:\/\//i.test(String(settings.social_whatsapp).trim()) ? String(settings.social_whatsapp).trim() : `https://wa.me/${String(settings.social_whatsapp).replace(/\D/g, '')}`) : '' },
+    { key: 'facebook', label: 'Facebook', href: String(settings.social_facebook || '').trim() ? (/^https?:\/\//i.test(String(settings.social_facebook).trim()) ? String(settings.social_facebook).trim() : `https://${String(settings.social_facebook).trim()}`) : '' },
+    { key: 'instagram', label: 'Instagram', href: String(settings.social_instagram || '').trim() ? (/^https?:\/\//i.test(String(settings.social_instagram).trim()) ? String(settings.social_instagram).trim() : `https://${String(settings.social_instagram).trim()}`) : '' },
+    { key: 'gmail', label: 'Gmail', href: String(settings.social_email || '').trim() ? (/^mailto:/i.test(String(settings.social_email).trim()) ? String(settings.social_email).trim() : `mailto:${String(settings.social_email).trim()}`) : '' },
+    { key: 'youtube', label: 'YouTube', href: String(settings.social_youtube || '').trim() ? (/^https?:\/\//i.test(String(settings.social_youtube).trim()) ? String(settings.social_youtube).trim() : `https://youtube.com/@${String(settings.social_youtube).trim().replace(/^@/, '')}`) : '' },
+    { key: 'website', label: 'Sitio web', href: String(settings.social_website || '').trim() ? (/^https?:\/\//i.test(String(settings.social_website).trim()) ? String(settings.social_website).trim() : `https://${String(settings.social_website).trim()}`) : '' }
+  ].filter((item) => item.href);
+%>
+<% if (socialItems.length) { %>
+<nav class="public-socials" aria-label="Nuestras redes sociales">
+  <% socialItems.forEach((item) => { %>
+  <a class="public-social public-social--<%= item.key %>" href="<%= item.href %>" target="_blank" rel="noopener">
+    <span class="public-social__dot" aria-hidden="true"></span><%= item.label %>
+  </a>
+  <% }) %>
+</nav>
+<% } %>

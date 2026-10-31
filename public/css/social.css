@@ -119,3 +119,57 @@
     padding-right: 16px;
   }
 }
+
+
+/* Enlaces públicos de redes, sin la foto del banner */
+
+.public-socials {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 18px 24px 0;
+}
+
+.public-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 13px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 999px;
+  color: #cfe0f0;
+  background: rgba(255, 255, 255, .04);
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.public-social:hover,
+.public-social:focus-visible {
+  color: #fff;
+  border-color: var(--brand, #22e6ff);
+  background: rgba(255, 255, 255, .08);
+}
+
+.public-social__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--brand, #22e6ff);
+  box-shadow: 0 0 10px var(--brand, #22e6ff);
+}
+
+.public-social--whatsapp { --brand: #25d366; }
+.public-social--facebook { --brand: #1877f2; }
+.public-social--instagram { --brand: #dd2a7b; }
+.public-social--gmail { --brand: #ea4335; }
+.public-social--youtube { --brand: #ff1a1a; }
+.public-social--website { --brand: #ffd166; }
+
+@media (max-width: 700px) {
+  .public-socials { padding: 16px 16px 0; }
+}

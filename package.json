@@ -2,7 +2,8 @@
   "name": "lilys-plays",
   "version": "1.0.0",
   "description": "Lily's Plays: salón gamer y bistró",
-  "main": "index.js",
+  "main": "server.js",
+  "bin": "server.js",
   "scripts": {
     "test": "node --experimental-sqlite scripts/smoke-test.js",
     "start": "node --experimental-sqlite server.js",
@@ -20,5 +21,15 @@
   },
   "engines": {
     "node": ">=22.5"
+  },
+  "pkg": {
+    "targets": [
+      "node24-win-x64"
+    ],
+    "assets": [
+      "views/**/*",
+      "public/**/*"
+    ],
+    "outputPath": "build/exe"
   }
 }

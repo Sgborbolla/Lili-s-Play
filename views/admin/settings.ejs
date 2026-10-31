@@ -176,44 +176,6 @@
     <% if (activeTab === 'general') { %>
     <section class="form-card">
       <div class="form-card-head">
-        <h2>Redes y contacto</h2>
-        <p>Los enlaces aparecen en el banner de redes sociales del pie. El sitio web usa el ícono SITIO WEB.</p>
-      </div>
-      <div class="form-body">
-        <div class="field-row">
-          <div class="field">
-            <label for="social_whatsapp">WhatsApp</label>
-            <input id="social_whatsapp" name="social_whatsapp" type="url" maxlength="400" value="<%= settings.social_whatsapp %>" placeholder="https://wa.me/5355555555">
-          </div>
-          <div class="field">
-            <label for="social_instagram">Instagram</label>
-            <input id="social_instagram" name="social_instagram" type="url" maxlength="400" value="<%= settings.social_instagram %>" placeholder="https://instagram.com/…">
-          </div>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label for="social_facebook">Facebook</label>
-            <input id="social_facebook" name="social_facebook" type="url" maxlength="400" value="<%= settings.social_facebook %>" placeholder="https://facebook.com/…">
-          </div>
-          <div class="field">
-            <label for="social_youtube">YouTube</label>
-            <input id="social_youtube" name="social_youtube" type="url" maxlength="400" value="<%= settings.social_youtube %>" placeholder="https://youtube.com/…">
-          </div>
-        </div>
-        <div class="field">
-          <label for="social_email">Correo electrónico</label>
-          <input id="social_email" name="social_email" type="email" maxlength="400" value="<%= settings.social_email %>" placeholder="hola@lilysplays.com">
-        </div>
-        <div class="field">
-          <label for="social_website">Sitio web (ícono SITIO WEB)</label>
-          <input id="social_website" name="social_website" type="text" inputmode="url" maxlength="400" value="<%= settings.social_website %>" placeholder="https://lilysplays.com">
-          <span class="hint">Vacío = el ícono no abre ninguna página.</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="form-card">
-      <div class="form-card-head">
         <h2>Enlace público del QR</h2>
         <p>Normalmente se deja vacío para usar la IP de la PC automáticamente.</p>
       </div>
@@ -337,7 +299,7 @@
         <div class="field">
           <label for="social_whatsapp_reserve">WhatsApp de reservas</label>
           <input id="social_whatsapp_reserve" name="social_whatsapp" type="url" maxlength="400" value="<%= settings.social_whatsapp %>" placeholder="https://wa.me/5355555555">
-          <span class="hint">Los botones de cada estación abren este WhatsApp. También se usa en el banner de redes.</span>
+          <span class="hint">Los botones de cada estación abren este WhatsApp.</span>
         </div>
       </div>
 

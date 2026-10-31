@@ -13,6 +13,7 @@ const { WELCOME_SLOTS, TEXT_FIELDS, slotKey, getWelcomeMedia, getWelcomeTexts, s
 const { MENU_TEXT_META, MENU_TEXT_GROUPS, getMenuTexts, setMenuText } = require('./lib/menu-texts');
 const { BACKUP_DIR: DB_BACKUP_DIR, backupDatabase, listBackups } = require('./lib/backup');
 const { buildReportData, refreshReports, getReportStatus, EXCEL_PATH, JSON_PATH } = require('./lib/reports');
+const { APP_ROOT, DATA_DIR, UPLOADS_DIR } = require('./lib/paths');
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
@@ -20,9 +21,8 @@ const ADMIN_PORT = Number(process.env.ADMIN_PORT || 3001);
 const PUBLIC_HOST = process.env.PUBLIC_HOST || '0.0.0.0';
 const ADMIN_HOST = process.env.ADMIN_HOST || '127.0.0.1';
 if (ADMIN_PORT === PORT) throw new Error('ADMIN_PORT debe ser distinto de PORT.');
-const PUBLIC_DIR = path.join(__dirname, 'public');
-const UPLOAD_DIR = path.join(PUBLIC_DIR, 'uploads');
-const DATA_DIR = path.join(__dirname, 'data');
+const PUBLIC_DIR = path.join(APP_ROOT, 'public');
+const UPLOAD_DIR = UPLOADS_DIR;
 
 fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -34,9 +34,10 @@ if (!fs.existsSync(SECRET_FILE)) {
 const SECRET = fs.readFileSync(SECRET_FILE, 'utf8').trim();
 const COOKIE = 'lp_session';
 const SESSION_TTL = 7 * 24 * 60 * 60 * 1000;
+const REMEMBER_TTL = 30 * 24 * 60 * 60 * 1000;
 
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(APP_ROOT, 'views'));
 app.disable('x-powered-by');
 if (process.env.TRUST_PROXY) app.set('trust proxy', process.env.TRUST_PROXY === '1' ? 1 : process.env.TRUST_PROXY);
 
@@ -58,18 +59,28 @@ app.use((req, res, next) => {
   if (req.secure) res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   next();
 });
+app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: 0, etag: true }));
 app.use(express.static(PUBLIC_DIR, { maxAge: 0, etag: true }));
 app.use(express.urlencoded({ extended: false, limit: '2mb' }));
 app.use(express.json({ limit: '2mb' }));
 
 function getLanIp() {
   const nets = os.networkInterfaces();
+  let best = null;
   for (const name of Object.keys(nets)) {
+    const key = name.toLowerCase();
+    if (/^(lo|dummy|tun|tap|ppp|clat|ip6tnl|sit)/.test(key)) continue;
     for (const net of nets[name] || []) {
-      if (net.family === 'IPv4' && !net.internal) return net.address;
+      if (net.family !== 'IPv4' || net.internal) continue;
+      let score = 1;
+      if (/^(wlan|wifi|eth|en|wlp)/.test(key)) score += 100;
+      if (/^192\.168\./.test(net.address)) score += 30;
+      else if (/^10\./.test(net.address)) score += 20;
+      else if (/^172\.(1[6-9]|2\d|3[01])\./.test(net.address)) score += 10;
+      if (!best || score > best.score) best = { score, address: net.address };
     }
   }
-  return '127.0.0.1';
+  return best ? best.address : '127.0.0.1';
 }
 
 function getSessionUser(req) {
@@ -119,9 +130,16 @@ app.use((req, res, next) => {
   if (req.method !== 'POST') return next();
   const origin = req.get('origin');
   if (!origin) return next();
-  if (origin !== requestOrigin(req)) {
-    return res.status(403).send('Origen de la solicitud no permitido.');
+  const host = String(req.get('host') || '').toLowerCase();
+  const localHost = /^(127\.0\.0\.1|localhost|\[::1\])(?::\d+)?$/.test(host);
+  const fetchSite = String(req.get('sec-fetch-site') || '').toLowerCase();
+  let sameOrigin = false;
+  if (origin === 'null') {
+    sameOrigin = localHost && fetchSite === 'same-origin';
+  } else {
+    try { sameOrigin = new URL(origin).host.toLowerCase() === host; } catch {}
   }
+  if (!sameOrigin) return res.status(403).send('Origen de la solicitud no permitido.');
   next();
 });
 
@@ -436,9 +454,12 @@ function secureCookie(req) {
 function setAdminCookie(req, res, token, maxAge = SESSION_TTL) {
   const secure = secureCookie(req);
   const cookies = [serializeCookie(COOKIE, '', { path: '/', maxAge: 0, sameSite: 'Strict' })];
-  cookies.push(token
-    ? serializeCookie(COOKIE, token, { path: '/admin', maxAge, sameSite: 'Strict', secure })
-    : serializeCookie(COOKIE, '', { path: '/admin', maxAge: 0, sameSite: 'Strict', secure }));
+  cookies.push(serializeCookie(COOKIE, token || '', {
+    path: '/admin',
+    maxAge: token ? maxAge : 0,
+    sameSite: 'Strict',
+    secure
+  }));
   res.setHeader('Set-Cookie', cookies);
 }
 
@@ -465,8 +486,9 @@ app.post('/admin/login', (req, res) => {
     });
   }
   loginAttempts.delete(ip);
-  const token = createToken(SECRET, { uid: user.id, username: user.username, sv: Number(user.session_version) || 1 }, SESSION_TTL);
-  setAdminCookie(req, res, token);
+  const remember = req.body.remember === '1' || req.body.remember === 'on';
+  const token = createToken(SECRET, { uid: user.id, username: user.username, sv: Number(user.session_version) || 1 }, remember ? REMEMBER_TTL : SESSION_TTL);
+  setAdminCookie(req, res, token, remember ? REMEMBER_TTL : null);
   if (user.must_change_password) return res.redirect('/admin/ajustes?tab=general#seguridad');
   return res.redirect(safeNext(req.body.next));
 });

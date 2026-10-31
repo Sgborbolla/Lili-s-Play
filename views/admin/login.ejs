@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<%- include('../partials/head', { title: 'Ingresar · Panel', themeColor: '#f6f8fc', pageCss: ['/css/admin.css?v=8', '/css/watermarks.css?v=2'], robots: 'noindex,nofollow,noarchive' }) %>
+<%- include('../partials/head', { title: 'Ingresar · Panel', themeColor: '#f6f8fc', pageCss: ['/css/admin.css?v=9', '/css/watermarks.css?v=2'], robots: 'noindex,nofollow,noarchive' }) %>
 </head>
 <body class="login-body" id="top">
 <%- include('../partials/watermarks', { watermarkClass: 'watermarks--admin' }) %>
@@ -37,6 +37,11 @@
         <label for="password">Contraseña</label>
         <input id="password" name="password" type="password" autocomplete="current-password" required>
       </div>
+
+      <label class="remember-row">
+        <input type="checkbox" name="remember" value="1" checked>
+        <span>Recordar sesión en este dispositivo</span>
+      </label>
 
       <button class="btn btn-primary" type="submit">Entrar al panel</button>
     </form>
