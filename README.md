@@ -41,14 +41,18 @@ npm start
 Abre:
 
 - Menú: `http://localhost:3000/`
-- Administración: `http://localhost:3000/admin`
-- Reportes: `http://localhost:3000/admin/reportes`
+- Administración: `http://localhost:3001/admin` (solo desde la PC del servidor)
+- Reportes: `http://localhost:3001/admin/reportes`
 
 Para que los clientes entren desde celular o tablet, usa la IP local de la PC:
 
 ```text
 http://IP-DE-LA-PC:3000/
 ```
+
+El menú público y el panel usan puertos distintos: el 3000 se comparte por la
+Wi-Fi para los clientes y el 3001 solo escucha en `127.0.0.1`, así que el panel
+no se puede abrir desde otros equipos de la red.
 
 El QR se genera desde **Admin → QR**. Revisa `GUIA-RED-LOCAL.txt` para la red y el firewall.
 
@@ -100,6 +104,26 @@ server.js       Servidor Express
 data/           Base de datos y respaldos locales (no se sube)
 Reportes/       Excel y JSON generados (no se sube)
 ```
+
+## Carpeta portable
+
+Todo se guarda dentro de la carpeta del proyecto:
+
+- `data/lilys-plays.db`: base de datos, usuarios y ajustes.
+- `data/backups/`: respaldos automáticos de la base de datos.
+- `data/secret.key`: clave local de las sesiones del panel.
+- `public/uploads/`: imágenes subidas desde el panel.
+- `Reportes/`: Excel, JSON y respaldos de reportes.
+
+Para mover la instalación a otra PC, cierra el servidor y copia la carpeta
+completa. No muevas solo el ejecutable ni dejes `data/` o `Reportes/` en otra
+ruta: el programa no usa `AppData` ni rutas absolutas para guardar datos.
+
+Cuando se genere el `.exe`, hay que fijar la raíz de datos a la carpeta del
+ejecutable para que `data/`, `Reportes/` y `public/uploads/` queden junto a él
+y se muevan con la carpeta. Los archivos de programa pueden ir embebidos. Para
+que los reportes funcionen en otra PC sin instalar Python, el empaquetado debe
+incluir Python embebido o un `scripts/build_reports.exe`.
 
 ## Créditos
 

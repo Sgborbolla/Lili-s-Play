@@ -23,6 +23,16 @@ def qty(value):
         return 0
 
 
+def excel_datetime(value):
+    text = str(value or "").strip().replace("T", " ")
+    if not text:
+        return ""
+    try:
+        return datetime.strptime(text[:19], "%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        return text
+
+
 def sheet_name(name):
     clean = "".join(ch for ch in str(name) if ch not in "[]:*?/\\")
     return clean[:31] or "Hoja"
@@ -113,7 +123,7 @@ def period_rows(data, key, currency):
 def add_period_sheet(workbook, formats, data, key, title, currency, chart_kind):
     ws = workbook.add_worksheet(sheet_name(title))
     rows = period_rows(data, key, currency)
-    headers = ["Periodo", "Moneda", "Pedidos", "Unidades", "Ingresos", "Pagos", "Reembolsos", "Ticket medio"]
+    headers = ["Periodo", "Moneda", "Pedidos", "Unidades", "Ingresos", "Pagos", "Reembolsos", "Anulaciones", "Ticket medio"]
     values = []
     for row in rows:
         values.append([
@@ -124,13 +134,14 @@ def add_period_sheet(workbook, formats, data, key, title, currency, chart_kind):
             money(row.get("income_cents")),
             money(row.get("payments_cents")),
             money(row.get("refund_cents")),
+            money(row.get("adjustments_cents")),
             money(row.get("ticket_cents")),
         ])
     write_table(
         ws, formats, headers, values,
-        widths=[18, 9, 10, 10, 14, 14, 14, 14],
+        widths=[18, 9, 10, 10, 14, 14, 14, 14, 14],
         col_formats=[formats["text"], formats["center"], formats["integer"], formats["integer"],
-                     formats["money"], formats["money"], formats["money"], formats["money"]],
+                     formats["money"], formats["money"], formats["money"], formats["money"], formats["money"]],
     )
     ws.write(0, 9, "Los importes están en la moneda indicada en cada fila.", formats["subtitle"])
     if values and len(values) >= 1:
@@ -160,20 +171,21 @@ def build(data, output_path):
     ws.set_column("B:B", 14)
     ws.set_column("C:C", 14)
     ws.set_column("D:D", 14)
-    ws.set_column("E:E", 10)
+    ws.set_column("E:E", 14)
     ws.set_column("F:F", 10)
-    ws.set_column("G:G", 14)
-    ws.set_column("H:H", 24)
+    ws.set_column("G:G", 10)
+    ws.set_column("H:H", 14)
+    ws.set_column("I:I", 24)
     ws.write("A1", (data.get("business") or {}).get("name") or "Lily's Plays", formats["title"])
     ws.write("A2", (data.get("business") or {}).get("subtitle") or "Salón Gamer y Bistró", formats["subtitle"])
     ws.write("A3", f"Generado: {data.get('generated_at', '')}", formats["subtitle"])
     if data.get("mixed_currencies"):
-        ws.merge_range("A4:H4", "Hay pedidos en más de una moneda. Los totales se muestran separados por moneda.", formats["note"])
+        ws.merge_range("A4:I4", "Hay pedidos en más de una moneda. Los totales se muestran separados por moneda.", formats["note"])
         start = 5
     else:
         start = 4
     ws.write(start, 0, "Resumen por moneda", formats["section"])
-    headers = ["Moneda", "Ingresos", "Pagos", "Reembolsos", "Pedidos", "Unidades", "Ticket medio", "Producto más vendido"]
+    headers = ["Moneda", "Ingresos", "Pagos", "Reembolsos", "Anulaciones", "Pedidos", "Unidades", "Ticket medio", "Producto más vendido"]
     values = []
     for row in summary_rows:
         values.append([
@@ -181,6 +193,7 @@ def build(data, output_path):
             money(row.get("income_cents")),
             money(row.get("payments_cents")),
             money(row.get("refund_cents")),
+            money(row.get("adjustments_cents")),
             qty(row.get("orders")),
             qty(row.get("units")),
             money(row.get("ticket_cents")),
@@ -188,7 +201,7 @@ def build(data, output_path):
         ])
     end = write_table(
         ws, formats, headers, values, start_row=start + 1,
-        col_formats=[formats["center"], formats["money"], formats["money"], formats["money"],
+        col_formats=[formats["center"], formats["money"], formats["money"], formats["money"], formats["money"],
                      formats["integer"], formats["integer"], formats["money"], formats["text"]],
     )
     ws.write(end + 2, 0, "El Excel se actualiza automáticamente al registrar pedidos y también puede generarse desde Admin → Reportes.", formats["subtitle"])
@@ -200,11 +213,11 @@ def build(data, output_path):
     for order in all_orders:
         values.append([
             order.get("code", ""),
-            order.get("created_at", ""),
+            excel_datetime(order.get("created_at")),
             order.get("status", ""),
             order.get("payment_status", ""),
             order.get("payment_method", ""),
-            qty(order.get("station")),
+            str(order.get("station") or ""),
             order.get("customer", ""),
             order.get("currency", ""),
             money(order.get("subtotal_cents")),
@@ -244,7 +257,7 @@ def build(data, output_path):
         for item in order.get("items") or []:
             values.append([
                 order.get("code", ""),
-                order.get("created_at", ""),
+                excel_datetime(order.get("created_at")),
                 order.get("payment_status", ""),
                 order.get("currency", ""),
                 item.get("name", ""),
@@ -360,7 +373,9 @@ def build(data, output_path):
             if row.get("type") != "Pago":
                 continue
             method = row.get("method") or "Sin método"
-            methods[method] = methods.get(method, 0.0) + money(row.get("amount_cents"))
+            currency = row.get("currency") or "—"
+            key = f"{method} · {currency}"
+            methods[key] = methods.get(key, 0.0) + money(row.get("amount_cents"))
         if methods:
             ws_pay.set_column("J:K", 16)
             ws_pay.write("J1", "Método", formats["header"])

@@ -12,34 +12,6 @@ if ('serviceWorker' in navigator && window.isSecureContext) {
   });
 }
 
-document.addEventListener('keydown', (event) => {
-  if (event.ctrlKey && event.shiftKey && String(event.key).toLowerCase() === 'a') {
-    event.preventDefault();
-    window.location.href = '/admin';
-  }
-});
-
-const brand = document.querySelector('.brand');
-if (brand) {
-  let adminTimer = 0;
-  let adminFired = false;
-  const cancelAdmin = () => window.clearTimeout(adminTimer);
-  brand.addEventListener('pointerdown', () => {
-    adminFired = false;
-    adminTimer = window.setTimeout(() => {
-      adminFired = true;
-      window.location.href = '/admin';
-    }, 1400);
-  });
-  ['pointerup', 'pointerleave', 'pointercancel'].forEach((name) => brand.addEventListener(name, cancelAdmin));
-  brand.addEventListener('click', (event) => {
-    if (adminFired) {
-      event.preventDefault();
-      adminFired = false;
-    }
-  });
-  brand.addEventListener('contextmenu', (event) => event.preventDefault());
-}
 
 document.querySelectorAll('.social-banner__link').forEach((link) => {
   const empty = link.getAttribute('href') === '#' || link.hasAttribute('data-empty');

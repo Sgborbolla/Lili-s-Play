@@ -8,7 +8,7 @@ if not exist "node_modules" (
 )
 echo.
 echo Iniciando Lily's Plays en http://localhost:3000
-echo Panel: http://localhost:3000/admin
+echo Panel: http://localhost:3001/admin  (solo esta PC)
 echo.
 call npm start
 if errorlevel 1 goto error

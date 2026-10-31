@@ -22,9 +22,9 @@
 
 ## Seguridad
 
-- [ ] Añadir rate limit a `/api/orders` y a los formularios públicos.
-- [ ] Añadir cabeceras de seguridad (CSP, X-Frame-Options, Referrer-Policy, etc.).
-- [ ] Revisar la contraseña admin por defecto antes de publicar en producción.
+- [x] Añadir rate limit a `/api/orders` y al acceso al panel.
+- [x] Añadir cabeceras de seguridad (CSP, X-Frame-Options, Referrer-Policy, etc.).
+- [x] Proteger el panel en `127.0.0.1:3001` y forzar el cambio de contraseña inicial.
 - [ ] Revisar permisos y validación de subidas de imágenes.
 
 ## Datos y pedidos
@@ -51,7 +51,12 @@
 
 ## Mantenimiento
 
-- [ ] `pureimage` aparece como dependencia sin uso claro.
-- [ ] Revisar `node_modules` con paquetes extraneous.
-- [ ] Configurar un comando real de pruebas (`npm test` hoy falla a propósito).
-- [ ] Probar el QR en LAN/HTTPS y confirmar que abre la URL correcta.
+- [x] Eliminar `pureimage` y revisar dependencias.
+- [x] `npm test` funciona con la prueba de humo.
+- [ ] Probar el QR en LAN y confirmar que abre la URL correcta.
+
+## Distribución portable
+
+- [ ] Generar el `.exe` dentro de la carpeta del proyecto, junto a `data/`, `Reportes/`, `public/` y `views/`.
+- [ ] Incluir Python embebido o `scripts/build_reports.exe` para que el Excel funcione sin instalar Python.
+- [ ] Probar mover la carpeta completa a otra PC y confirmar que se conservan base de datos, fotos y Excel.

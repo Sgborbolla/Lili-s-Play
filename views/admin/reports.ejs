@@ -107,10 +107,10 @@
   <div class="card-head"><h2>Resumen por moneda</h2></div>
   <div class="table-wrap">
     <table class="data-table">
-      <thead><tr><th>Moneda</th><th class="num">Ingresos</th><th class="num">Pagos</th><th class="num">Reembolsos</th><th class="num">Pedidos</th><th class="num">Unidades</th><th class="num">Ticket medio</th><th>Producto top</th></tr></thead>
+      <thead><tr><th>Moneda</th><th class="num">Ingresos</th><th class="num">Pagos</th><th class="num">Reembolsos</th><th class="num">Anulaciones</th><th class="num">Pedidos</th><th class="num">Unidades</th><th class="num">Ticket medio</th><th>Producto top</th></tr></thead>
       <tbody>
         <% if (!summaryRows.length) { %>
-        <tr><td class="cell-empty" colspan="8">Todavía no hay ventas pagadas. El Excel se genera igual y se irá completando.</td></tr>
+        <tr><td class="cell-empty" colspan="9">Todavía no hay ventas pagadas. El Excel se genera igual y se irá completando.</td></tr>
         <% } %>
         <% summaryRows.forEach((row) => { %>
         <tr>
@@ -118,6 +118,7 @@
           <td class="num"><%= money(row.income_cents, row.currency) %></td>
           <td class="num"><%= money(row.payments_cents, row.currency) %></td>
           <td class="num"><%= money(row.refund_cents, row.currency) %></td>
+          <td class="num"><%= money(row.adjustments_cents, row.currency) %></td>
           <td class="num"><%= row.orders %></td>
           <td class="num"><%= row.units %></td>
           <td class="num"><%= money(row.ticket_cents, row.currency) %></td>

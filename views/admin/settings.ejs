@@ -10,6 +10,10 @@
   const reservationStations = welcome.filter((item) => item.group === 'Estaciones');
 %>
 
+<% if (adminUser.must_change_password) { %>
+<div class="alert alert-warn" role="alert">Estás usando la contraseña inicial. Cámbiala ahora en <a href="#seguridad">Cambiar mi contraseña</a> antes de continuar.</div>
+<% } %>
+
 <nav class="settings-tabs" aria-label="Secciones de ajustes">
   <% settingsTabs.forEach((tab) => { %>
   <a class="settings-tab <%= activeTab === tab.key ? 'is-active' : '' %>" href="/admin/ajustes?tab=<%= tab.key %>"><%= tab.label %></a>
@@ -236,14 +240,14 @@
         <div class="side-note" style="margin-top: 12px;">
           <b>Red local</b>
           Menú: <code>http://<%= lanIp %>:<%= port %></code><br>
-          Panel: <code>/admin</code>
+          Panel: <code>http://127.0.0.1:<%= adminPort %>/admin</code> (solo esta PC)
         </div>
       </div>
     </section>
 
     <div class="side-note">
       <b>El panel es privado</b>
-      No se enlaza desde el menú ni desde el QR. Los clientes solo ven las páginas públicas.
+      Solo se abre en esta PC. Los clientes solo ven el menú público y nunca el panel.
     </div>
   </aside>
 </form>
@@ -383,7 +387,7 @@
 <% } %>
 
 <% if (activeTab === 'general') { %>
-<section class="form-card" style="margin-top: 16px; max-width: 680px;">
+<section class="form-card" style="margin-top: 16px; max-width: 680px;" id="seguridad">
   <div class="form-card-head">
     <h2>Cambiar mi contraseña</h2>
     <p>Se aplica a tu cuenta (<%= adminUser.username %>).</p>
@@ -397,11 +401,11 @@
         </div>
         <div class="field">
           <label for="new_password">Nueva contraseña</label>
-          <input id="new_password" name="new_password" type="password" autocomplete="new-password" minlength="6" required>
+          <input id="new_password" name="new_password" type="password" autocomplete="new-password" minlength="12" required>
         </div>
         <div class="field">
           <label for="confirm_password">Repetir nueva</label>
-          <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="6" required>
+          <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="12" required>
         </div>
       </div>
       <button class="btn btn-outline" type="submit">Actualizar contraseña</button>

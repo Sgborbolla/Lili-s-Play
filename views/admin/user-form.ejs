@@ -29,8 +29,8 @@
 
       <div class="field">
         <label for="password"><%= isNew ? 'Contraseña' : 'Nueva contraseña (opcional)' %></label>
-        <input id="password" name="password" type="password" autocomplete="new-password" <%= isNew ? 'required' : '' %> placeholder="<%= isNew ? 'Mínimo 6 caracteres' : 'Déjala vacía para no cambiarla' %>">
-        <span class="hint">Mínimo 6 caracteres.</span>
+        <input id="password" name="password" type="password" autocomplete="new-password" <%= isNew ? 'required' : '' %> placeholder="<%= isNew ? 'Mínimo 12 caracteres' : 'Déjala vacía para no cambiarla' %>">
+        <span class="hint">Mínimo 12 caracteres.</span>
       </div>
 
       <div class="form-section">
@@ -65,7 +65,7 @@
       </div>
       <div class="side-note" style="margin-top: 12px;">
         <b>Panel privado</b>
-        El panel no aparece en el menú público ni en el QR. Solo se entra por <code>/admin</code>.
+        El panel no aparece en el menú público ni en el QR. Solo se abre en la PC del servidor.
       </div>
     </div>
   </aside>

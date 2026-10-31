@@ -11,15 +11,16 @@ usa una VPN.
 
 - La PC es el servidor. Allí corre Lily's Plays y guarda todo:
   base de datos en data/ e imágenes en public/uploads/.
-- El servidor escucha en el puerto 3000 y en todas las interfaces de red
-  (0.0.0.0), así que funciona con la IP que tenga la PC en ese momento.
+- El menú público escucha en el puerto 3000 y en todas las interfaces de
+  red (0.0.0.0), así que funciona con la IP que tenga la PC en ese momento.
+- El panel de administración escucha aparte, en 127.0.0.1:3001. Solo se
+  puede abrir desde la misma PC; desde celulares u otras PC no responde.
 - El router le asigna una IP a la PC, por ejemplo 192.168.1.50.
 - Los teléfonos deben estar conectados al mismo router o Wi-Fi que la PC.
-- El QR se genera con la IP de la red local de la PC y abre la
-  bienvenida, por ejemplo:
-  http://192.168.1.50:3000/bienvenida.html
-- El cliente escanea el QR, ve la bienvenida, entra al menú, pide y
-  sigue su pedido.
+- El QR se genera con la IP de la red local de la PC y abre el menú,
+  por ejemplo:
+  http://192.168.1.50:3000/
+- El cliente escanea el QR, ve el menú, pide y sigue su pedido.
 - El cliente NUNCA ve el panel de administración. El panel no está
   enlazado en el menú público ni en el QR.
 - No hace falta internet para operar. Solo se necesita internet para
@@ -31,29 +32,21 @@ usa una VPN.
 2. DIRECCIONES IMPORTANTES
 --------------------------
 
-En la misma PC:
+En la misma PC del servidor:
   Menú:  http://localhost:3000
-  Panel: http://localhost:3000/admin
+  Panel: http://localhost:3001/admin
 
 Desde un teléfono u otra PC en la misma red:
   Menú:  http://IP-DE-LA-PC:3000
-  Panel: http://IP-DE-LA-PC:3000/admin
+  Panel: no disponible desde la red
 
 Ejemplo:
   Menú:  http://192.168.1.50:3000
-  Panel: http://192.168.1.50:3000/admin
 
-El servidor imprime estas direcciones al arrancar. También se pueden ver
-en el panel, en Ajustes y en Códigos QR.
-
-Acceso rápido al panel (solo personal):
-  - En la PC: abrir http://localhost:3000/admin y guardarlo en favoritos.
-  - Desde el menú público: Ctrl + Shift + A.
-  - En pantalla táctil: mantener presionado el logo de Lily's Plays
-    durante 1.4 segundos.
-
-El acceso rápido no muestra ningún enlace visible al cliente. La
-protección real es el usuario y la contraseña del panel.
+El servidor imprime estas direcciones al arrancar. El panel solo se abre
+en la PC donde corre Lily's Plays: guarda http://localhost:3001/admin en
+favoritos. No hay atajo desde el menú público y los clientes no reciben
+ningún enlace al panel.
 
 
 3. PRIMERA VEZ EN LA PC
@@ -61,17 +54,19 @@ protección real es el usuario y la contraseña del panel.
 
 1. Conectar la PC al Wi-Fi o cable del local.
 2. Abrir el programa o ejecutar el servidor.
-3. En la PC, abrir http://localhost:3000/admin
+3. En la PC, abrir http://localhost:3001/admin
 4. Entrar con el usuario inicial:
      Usuario: freeman
      Contraseña: 12345678
-5. Cambiar la contraseña en Ajustes.
+5. El panel pedirá cambiar la contraseña. Usa una de 12 caracteres o más.
 6. Revisar en Ajustes el nombre del salón, la moneda y el enlace del QR.
 7. Permitir el programa o el puerto 3000 en el firewall de Windows,
    en red privada.
 8. Generar un QR en Códigos QR y probarlo con un teléfono conectado a la
    misma red.
-9. Reservar la IP de la PC en el router para que no cambie.
+9. Reservar la IP de la PC en el router para que no cambie. La app
+   detecta la IP automáticamente, pero si cambia, el QR anterior deja de
+   servir y hay que generar uno nuevo.
 
 
 4. CÓMO FIJAR LA IP
@@ -191,19 +186,28 @@ La VPN aparece como IP del QR:
 
 El puerto 3000 está ocupado:
   - Cerrar la otra instancia del programa.
-  - O usar otro puerto con la variable PORT, por ejemplo:
-      set PORT=3001
+  - O usar otro puerto público con la variable PORT, por ejemplo:
+      set PORT=3002
       npm start
+    El panel local sigue en http://localhost:3001/admin.
 
 
-8. RESPALDO
------------
+8. RESPALDO Y CARPETA PORTABLE
+------------------------------
 
-Copiar estas dos carpetas para guardar todo:
-  data/             base de datos, usuarios y ajustes
+Todo vive dentro de la carpeta de Lily's Plays:
+  data/             base de datos, usuarios, clave de sesiones y respaldos
   public/uploads/   imágenes subidas de productos
+  Reportes/         Excel, JSON y respaldos de reportes
 
-Con eso se puede restaurar el menú, los pedidos y las fotos en otra PC.
+Para mover todo a otra PC:
+  1. Cerrar el servidor.
+  2. Copiar la carpeta completa de Lily's Plays.
+  3. Abrir iniciar.bat desde la nueva carpeta.
+
+No copies solo el .exe ni separes data/ o Reportes/: la base de datos, el
+Excel y las fotos se perderían de vista. El programa guarda todo junto a
+su propia carpeta, sin usar AppData ni rutas absolutas.
 
 
 9. ABRIR COMO PROGRAMA (SIN PARECER NAVEGADOR)
@@ -216,23 +220,24 @@ El menú se puede instalar como aplicación desde Chrome/Edge:
 También se puede abrir en modo ventana, sin barra de direcciones, con
 Chrome o Edge y el parámetro --app:
   chrome.exe --app=http://localhost:3000
-  msedge.exe --app=http://localhost:3000/admin
+  msedge.exe --app=http://localhost:3001/admin
 
 Para el panel, lo práctico es crear un acceso directo en el escritorio
-con esa dirección y abrirlo en modo ventana.
+con http://localhost:3001/admin y abrirlo en modo ventana.
 
 
 10. SEGURIDAD DEL PANEL
 -----------------------
 
-- El panel vive en /admin y no está enlazado en las páginas públicas.
-- El panel usa una cuenta principal de administrador. La sección Usuarios
-  queda disponible por si se quieren crear otros administradores.
+- El panel escucha solo en 127.0.0.1:3001 y no está enlazado en las
+  páginas públicas.
+- Los clientes solo acceden al puerto 3000; /admin responde 404 desde
+  cualquier celular u otra PC de la red.
 - La página pública es anónima: los clientes no crean cuentas, no inician
   sesión y no dejan contraseña. Solo escanean el QR, ven el menú y piden.
-- Cambiar la contraseña inicial y no compartirla.
-- El menú público y el panel pueden convivir en la misma PC y puerto:
-  los clientes solo acceden a las páginas públicas.
+- Cambiar la contraseña inicial por una de 12 caracteres o más.
+- Si otra persona usa el panel, crea una cuenta propia en Usuarios y
+  desactívala cuando ya no la necesite.
 
 
 RESUMEN RÁPIDO
@@ -240,8 +245,10 @@ RESUMEN RÁPIDO
 
 1. PC encendida y conectada al Wi-Fi del local.
 2. Servidor corriendo en el puerto 3000.
-3. Reservar la IP de la PC en el router.
-4. Si hay VPN, fijar la IP real en Ajustes > Enlace público del QR.
+3. La app detecta la IP local automáticamente para el QR.
+4. Si hay VPN y detecta la IP equivocada, fijar la IP real en
+   Ajustes > Enlace público del QR.
 5. Probar el menú desde un teléfono con la IP de la PC.
-6. Guardar http://localhost:3000/admin en favoritos de la PC.
-7. Cambiar la contraseña inicial.
+6. Guardar http://localhost:3001/admin en favoritos de la PC.
+7. Cambiar la contraseña inicial por una de 12 caracteres o más.
+8. Para mover todo, copiar la carpeta completa; no separar data/ ni Reportes/.

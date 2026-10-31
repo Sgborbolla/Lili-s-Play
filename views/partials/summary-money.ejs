@@ -1,1 +1,1 @@
-<% if (code === 'USD') { %><span class="cur-usd" role="img" aria-label="dólar"><span class="cur-usd-s" aria-hidden="true">S</span><span class="cur-usd-bars" aria-hidden="true"><i></i><i></i></span></span><%= value %><% } else { %>$<%= value %><% } %>
+<% if (code === 'USD') { %><span class="cur-usd" role="img" aria-label="dólar"><span class="cur-usd-s" aria-hidden="true">S</span><span class="cur-usd-bars" aria-hidden="true"><i></i><i></i></span></span><%= value %><% } else { %><%= (settings && settings.currency_symbol_cuc) || '$' %><%= value %><% } %>

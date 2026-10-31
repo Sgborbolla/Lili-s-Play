@@ -16,6 +16,10 @@ const { buildReportData, refreshReports, getReportStatus, EXCEL_PATH, JSON_PATH 
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
+const ADMIN_PORT = Number(process.env.ADMIN_PORT || 3001);
+const PUBLIC_HOST = process.env.PUBLIC_HOST || '0.0.0.0';
+const ADMIN_HOST = process.env.ADMIN_HOST || '127.0.0.1';
+if (ADMIN_PORT === PORT) throw new Error('ADMIN_PORT debe ser distinto de PORT.');
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const UPLOAD_DIR = path.join(PUBLIC_DIR, 'uploads');
 const DATA_DIR = path.join(__dirname, 'data');
@@ -34,6 +38,26 @@ const SESSION_TTL = 7 * 24 * 60 * 60 * 1000;
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.disable('x-powered-by');
+if (process.env.TRUST_PROXY) app.set('trust proxy', process.env.TRUST_PROXY === '1' ? 1 : process.env.TRUST_PROXY);
+
+const ADMIN_CSP = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'";
+const PUBLIC_CSP = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'";
+
+app.use((req, res, next) => {
+  const isAdminPath = req.path === '/admin' || req.path.startsWith('/admin/');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'no-referrer');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  res.setHeader('Content-Security-Policy', isAdminPath ? ADMIN_CSP : PUBLIC_CSP);
+  if (isAdminPath) {
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive');
+  }
+  if (req.secure) res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  next();
+});
 app.use(express.static(PUBLIC_DIR, { maxAge: 0, etag: true }));
 app.use(express.urlencoded({ extended: false, limit: '2mb' }));
 app.use(express.json({ limit: '2mb' }));
@@ -52,8 +76,9 @@ function getSessionUser(req) {
   const cookies = parseCookies(req.headers.cookie);
   const data = verifyToken(cookies[COOKIE], SECRET);
   if (!data || !data.uid) return null;
-  const user = db.prepare('SELECT id, username, display_name, role, active FROM admin_users WHERE id = ?').get(Number(data.uid));
+  const user = db.prepare('SELECT id, username, display_name, role, active, must_change_password, session_version FROM admin_users WHERE id = ?').get(Number(data.uid));
   if (!user || !user.active) return null;
+  if (Number(data.sv) !== Number(user.session_version)) return null;
   return user;
 }
 
@@ -71,8 +96,32 @@ app.use((req, res, next) => {
   res.locals.adminUser = getSessionUser(req);
   res.locals.lanIp = getLanIp();
   res.locals.port = PORT;
+  res.locals.adminPort = ADMIN_PORT;
   res.locals.notice = typeof req.query.ok === 'string' ? req.query.ok : '';
   res.locals.warning = typeof req.query.err === 'string' ? req.query.err : '';
+  next();
+});
+
+app.use((req, res, next) => {
+  const isAdminPort = Number(req.socket.localPort) === ADMIN_PORT;
+  const isAdminPath = req.path === '/admin' || req.path.startsWith('/admin/');
+  if (!isAdminPort && isAdminPath) {
+    return res.status(404).render('404', { title: 'Página no encontrada' });
+  }
+  if (isAdminPort && res.locals.adminUser && res.locals.adminUser.must_change_password) {
+    const allowed = req.path === '/admin/ajustes' || req.path === '/admin/password' || req.path === '/admin/logout';
+    if (!allowed) return res.redirect('/admin/ajustes?tab=general#seguridad');
+  }
+  next();
+});
+
+app.use((req, res, next) => {
+  if (req.method !== 'POST') return next();
+  const origin = req.get('origin');
+  if (!origin) return next();
+  if (origin !== requestOrigin(req)) {
+    return res.status(403).send('Origen de la solicitud no permitido.');
+  }
   next();
 });
 
@@ -108,6 +157,23 @@ function noteLoginFail(ip) {
   const a = loginAttempts.get(ip);
   if (!a || Date.now() - a.first > 10 * 60 * 1000) loginAttempts.set(ip, { count: 1, first: Date.now() });
   else a.count += 1;
+}
+
+const orderAttempts = new Map();
+function orderRateLimited(ip) {
+  const now = Date.now();
+  const a = orderAttempts.get(ip);
+  if (!a || now - a.first > 10 * 60 * 1000) {
+    orderAttempts.set(ip, { count: 1, first: now });
+    return false;
+  }
+  a.count += 1;
+  return a.count > 40;
+}
+
+function passwordError(password) {
+  if (String(password || '').length < 12) return 'La contraseña debe tener al menos 12 caracteres.';
+  return '';
 }
 
 function flash(url, key, msg) {
@@ -151,9 +217,9 @@ function productValues(body, existing) {
     category_id: Number(body.category_id || (existing && existing.category_id)) || 0,
     name: String(body.name || (existing && existing.name) || '').trim().slice(0, 90),
     description: String(body.description !== undefined ? body.description : (existing ? existing.description : '')).trim().slice(0, 400),
-    price_cents: body.price !== undefined ? parsePriceToCents(body.price) : (existing ? existing.price_cents : 0),
+    price_cents: body.price !== undefined ? parsePriceToCents(body.price, 'USD') : (existing ? existing.price_cents : 0),
     price_input: priceInput,
-    price_cuc_cents: body.price_cuc !== undefined ? parsePriceToCents(body.price_cuc) : (existing ? existing.price_cuc_cents : 0),
+    price_cuc_cents: body.price_cuc !== undefined ? parsePriceToCents(body.price_cuc, 'CUC') : (existing ? existing.price_cuc_cents : 0),
     price_cuc_input: priceCucInput,
     image: existing ? existing.image : '',
     emoji: String(body.emoji !== undefined ? body.emoji : (existing ? existing.emoji : '')).trim().slice(0, 8),
@@ -285,6 +351,11 @@ app.get('/api/pedidos/:code/estado', (req, res) => {
 
 app.post('/api/orders', (req, res) => {
   let started = false;
+  const ip = req.ip || 'local';
+  if (orderRateLimited(ip)) {
+    res.setHeader('Retry-After', '600');
+    return res.status(429).json({ ok: false, error: 'Demasiados pedidos seguidos. Espera unos minutos e intenta de nuevo.' });
+  }
   try {
     const body = req.body || {};
     const rawItems = Array.isArray(body.items) ? body.items : [];
@@ -355,9 +426,21 @@ app.get('/admin/login', (req, res) => {
     error: null,
     next: safeNext(req.query.next),
     username: '',
-    defaultUser: 'freeman',
   });
 });
+
+function secureCookie(req) {
+  return Boolean(req.secure) || String(req.get('x-forwarded-proto') || '').split(',')[0].trim() === 'https';
+}
+
+function setAdminCookie(req, res, token, maxAge = SESSION_TTL) {
+  const secure = secureCookie(req);
+  const cookies = [serializeCookie(COOKIE, '', { path: '/', maxAge: 0, sameSite: 'Strict' })];
+  cookies.push(token
+    ? serializeCookie(COOKIE, token, { path: '/admin', maxAge, sameSite: 'Strict', secure })
+    : serializeCookie(COOKIE, '', { path: '/admin', maxAge: 0, sameSite: 'Strict', secure }));
+  res.setHeader('Set-Cookie', cookies);
+}
 
 app.post('/admin/login', (req, res) => {
   const ip = req.ip || 'local';
@@ -367,7 +450,6 @@ app.post('/admin/login', (req, res) => {
       error: 'Demasiados intentos. Espera 10 minutos e intenta de nuevo.',
       next: safeNext(req.body.next),
       username: String(req.body.username || ''),
-      defaultUser: 'freeman',
     });
   }
   const username = String(req.body.username || '').trim().toLowerCase();
@@ -380,17 +462,17 @@ app.post('/admin/login', (req, res) => {
       error: 'Usuario o contraseña incorrectos.',
       next: safeNext(req.body.next),
       username: String(req.body.username || ''),
-      defaultUser: 'freeman',
     });
   }
   loginAttempts.delete(ip);
-  const token = createToken(SECRET, { uid: user.id, username: user.username }, SESSION_TTL);
-  res.setHeader('Set-Cookie', serializeCookie(COOKIE, token, { maxAge: SESSION_TTL, sameSite: 'Lax' }));
+  const token = createToken(SECRET, { uid: user.id, username: user.username, sv: Number(user.session_version) || 1 }, SESSION_TTL);
+  setAdminCookie(req, res, token);
+  if (user.must_change_password) return res.redirect('/admin/ajustes?tab=general#seguridad');
   return res.redirect(safeNext(req.body.next));
 });
 
 app.post('/admin/logout', (req, res) => {
-  res.setHeader('Set-Cookie', serializeCookie(COOKIE, '', { maxAge: 0, sameSite: 'Lax' }));
+  setAdminCookie(req, res, '');
   res.redirect('/admin/login');
 });
 
@@ -399,7 +481,13 @@ app.get('/admin', requireAdmin, (req, res) => {
   const stats = {
     todayOrders: db.prepare("SELECT COUNT(*) AS c FROM orders WHERE date(created_at) = date('now','localtime')").get().c,
     pending: db.prepare("SELECT COUNT(*) AS c FROM orders WHERE status IN ('nuevo','preparando','listo')").get().c,
-    todayRevenue: db.prepare("SELECT COALESCE(SUM(total_cents),0) AS s FROM orders WHERE payment_status = 'pagado' AND date(paid_at) = date('now','localtime') AND (currency_code = ? OR currency_code = '')").get(dashboardCurrency).s,
+    todayRevenue: db.prepare(`
+      SELECT COALESCE(SUM(e.amount_cents),0) AS s
+      FROM order_payment_events e
+      JOIN orders o ON o.id = e.order_id
+      WHERE date(e.created_at) = date('now','localtime')
+        AND (o.currency_code = ? OR o.currency_code = '')
+    `).get(dashboardCurrency).s,
     activeProducts: db.prepare('SELECT COUNT(*) AS c FROM products WHERE active = 1').get().c,
   };
   const recent = db.prepare('SELECT * FROM orders ORDER BY id DESC LIMIT 6').all();
@@ -806,8 +894,7 @@ app.post('/admin/usuarios', requireAdmin, (req, res) => {
   const error = (() => {
     if (!/^[a-z0-9._-]{3,24}$/.test(username)) return 'El usuario debe tener entre 3 y 24 caracteres (letras, números, punto, guion).';
     if (db.prepare('SELECT 1 FROM admin_users WHERE lower(username) = ?').get(username)) return 'Ese usuario ya existe.';
-    if (password.length < 6) return 'La contraseña debe tener al menos 6 caracteres.';
-    return '';
+    return passwordError(password);
   })();
   if (error) {
     return res.status(400).render('admin/user-form', {
@@ -818,7 +905,7 @@ app.post('/admin/usuarios', requireAdmin, (req, res) => {
     });
   }
   const { salt, hash } = hashPassword(password);
-  db.prepare('INSERT INTO admin_users(username, display_name, salt, hash, role, active) VALUES (?, ?, ?, ?, ?, 1)')
+  db.prepare('INSERT INTO admin_users(username, display_name, salt, hash, role, active, must_change_password, session_version) VALUES (?, ?, ?, ?, ?, 1, 0, 1)')
     .run(username, displayName || username, salt, hash, 'admin');
   return res.redirect(flash('/admin/usuarios', 'ok', 'Administrador creado.'));
 });
@@ -833,7 +920,7 @@ app.post('/admin/usuarios/:id', requireAdmin, (req, res) => {
   const isSelf = res.locals.adminUser.id === user.id;
   let error = '';
   if (isSelf && !active) error = 'No puedes desactivar tu propia cuenta.';
-  if (password && password.length < 6) error = 'La nueva contraseña debe tener al menos 6 caracteres.';
+  if (password) error = passwordError(password);
   if (!error && isSelf && !user.active) error = 'Tu cuenta está inactiva.';
   if (error) {
     return res.status(400).render('admin/user-form', {
@@ -845,13 +932,16 @@ app.post('/admin/usuarios/:id', requireAdmin, (req, res) => {
   }
   if (password) {
     const { salt, hash } = hashPassword(password);
-    db.prepare('UPDATE admin_users SET display_name = ?, active = ?, salt = ?, hash = ? WHERE id = ?').run(displayName || user.username, active, salt, hash, id);
+    db.prepare('UPDATE admin_users SET display_name = ?, active = ?, salt = ?, hash = ?, must_change_password = 0, session_version = session_version + 1 WHERE id = ?')
+      .run(displayName || user.username, active, salt, hash, id);
   } else {
-    db.prepare('UPDATE admin_users SET display_name = ?, active = ? WHERE id = ?').run(displayName || user.username, active, id);
+    db.prepare('UPDATE admin_users SET display_name = ?, active = ?, session_version = session_version + 1 WHERE id = ?')
+      .run(displayName || user.username, active, id);
   }
   if (isSelf) {
-    const token = createToken(SECRET, { uid: user.id, username: user.username }, SESSION_TTL);
-    res.setHeader('Set-Cookie', serializeCookie(COOKIE, token, { maxAge: SESSION_TTL, sameSite: 'Lax' }));
+    const updated = db.prepare('SELECT id, username, session_version FROM admin_users WHERE id = ?').get(id);
+    const token = createToken(SECRET, { uid: updated.id, username: updated.username, sv: Number(updated.session_version) || 1 }, SESSION_TTL);
+    setAdminCookie(req, res, token);
   }
   return res.redirect(flash('/admin/usuarios', 'ok', 'Administrador actualizado.'));
 });
@@ -991,11 +1081,15 @@ app.post('/admin/password', requireAdmin, (req, res) => {
   if (!user || !verifyPassword(current, user.salt, user.hash)) {
     return res.redirect(flash('/admin/ajustes?tab=general', 'err', 'La contraseña actual no es correcta.'));
   }
-  if (next.length < 6) return res.redirect(flash('/admin/ajustes?tab=general', 'err', 'La nueva contraseña debe tener al menos 6 caracteres.'));
+  const invalidPassword = passwordError(next);
+  if (invalidPassword) return res.redirect(flash('/admin/ajustes?tab=general', 'err', invalidPassword));
   if (next !== confirm) return res.redirect(flash('/admin/ajustes?tab=general', 'err', 'Las contraseñas no coinciden.'));
   const { salt, hash } = hashPassword(next);
-  db.prepare('UPDATE admin_users SET salt = ?, hash = ? WHERE id = ?').run(salt, hash, user.id);
-  return res.redirect(flash('/admin/ajustes?tab=general', 'ok', 'Contraseña actualizada.'));
+  db.prepare('UPDATE admin_users SET salt = ?, hash = ?, must_change_password = 0, session_version = session_version + 1 WHERE id = ?').run(salt, hash, user.id);
+  const updated = db.prepare('SELECT id, username, session_version FROM admin_users WHERE id = ?').get(user.id);
+  const token = createToken(SECRET, { uid: updated.id, username: updated.username, sv: Number(updated.session_version) || 1 }, SESSION_TTL);
+  setAdminCookie(req, res, token);
+  return res.redirect(`${flash('/admin/ajustes?tab=general', 'ok', 'Contraseña actualizada.')}#seguridad`);
 });
 
 function requestOrigin(req) {
@@ -1076,21 +1170,22 @@ app.use((req, res) => {
 
 app.use((err, req, res, next) => {
   console.error(err);
-  if (req.path.startsWith('/api')) return res.status(400).json({ ok: false, error: err.message || 'Error' });
-  return res.status(400).send(`<div style="font-family:system-ui;padding:24px"><h3>No se pudo completar la acción</h3><p>${String(err.message || 'Error').replace(/</g, '&lt;')}</p><a href="javascript:history.back()">Volver</a></div>`);
+  if (res.headersSent) return next(err);
+  const status = Number(err.status || err.statusCode) || 500;
+  const message = status < 500 ? (err.message || 'Solicitud inválida.') : 'Error interno del servidor.';
+  if (req.path.startsWith('/api')) return res.status(status).json({ ok: false, error: message });
+  return res.status(status).send(`<div style="font-family:system-ui;padding:24px"><h3>No se pudo completar la acción</h3><p>${String(message).replace(/</g, '&lt;')}</p><a href="javascript:history.back()">Volver</a></div>`);
 });
 
-const server = app.listen(PORT, '0.0.0.0', () => {
+const publicServer = app.listen(PORT, PUBLIC_HOST, () => {
   const ip = getLanIp();
   console.log('');
   console.log("  Lily's Plays · Salón Gamer y Bistró");
   console.log('  ------------------------------------------');
   console.log(`  Menú local:    http://localhost:${PORT}`);
   console.log(`  Menú en LAN:   http://${ip}:${PORT}`);
-  console.log(`  Panel local:   http://localhost:${PORT}/admin`);
-  console.log(`  Panel en LAN:  http://${ip}:${PORT}/admin`);
-  console.log('  Usuario inicial: freeman  ·  Contraseña: 12345678');
-  console.log('  Cambia la contraseña en Admin > Ajustes.');
+  console.log(`  Panel:         http://localhost:${ADMIN_PORT}/admin`);
+  console.log('  El panel solo acepta conexiones desde esta PC.');
   console.log('');
   setTimeout(() => {
     refreshReports().catch((error) => {
@@ -1099,11 +1194,31 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   }, 1200);
 });
 
+const adminServer = app.listen(ADMIN_PORT, ADMIN_HOST, () => {
+  if (ADMIN_HOST !== '127.0.0.1' && ADMIN_HOST !== '::1' && ADMIN_HOST !== 'localhost') {
+    console.warn(`  Aviso: el panel está escuchando en ${ADMIN_HOST}:${ADMIN_PORT}. Debería ser solo localhost.`);
+  }
+});
+
+publicServer.on('error', (error) => {
+  console.error('No se pudo abrir el menú público:', error.message);
+  process.exit(1);
+});
+adminServer.on('error', (error) => {
+  console.error('No se pudo abrir el panel local:', error.message);
+  process.exit(1);
+});
+
+let closing = 2;
 function shutdown() {
-  server.close(() => {
+  const done = () => {
+    closing -= 1;
+    if (closing > 0) return;
     try { db.close(); } catch { /* ignore */ }
     process.exit(0);
-  });
+  };
+  publicServer.close(done);
+  adminServer.close(done);
 }
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);

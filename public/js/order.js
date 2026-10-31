@@ -79,6 +79,12 @@
   if (printBtn) printBtn.addEventListener('click', () => window.print());
 
   if (!terminalStates.includes(order.status)) {
-    window.setInterval(refresh, 10000);
+    const timer = window.setInterval(() => {
+      if (terminalStates.includes(order.status)) {
+        window.clearInterval(timer);
+        return;
+      }
+      refresh();
+    }, 10000);
   }
 })();
