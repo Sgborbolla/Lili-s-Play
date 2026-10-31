@@ -1142,7 +1142,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`  Menú en LAN:   http://${ip}:${PORT}`);
   console.log(`  Panel local:   http://localhost:${PORT}/admin`);
   console.log(`  Panel en LAN:  http://${ip}:${PORT}/admin`);
-  console.log('  Usuario inicial: freeman  ·  Contraseña: 12345678');
+  console.log('  Usuario inicial: freeman  ·  Contraseña: 1234');
   console.log('  Cambia la contraseña en Admin > Ajustes.');
   console.log('');
   setTimeout(() => {

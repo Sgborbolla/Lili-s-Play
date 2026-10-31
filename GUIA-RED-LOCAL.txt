@@ -57,8 +57,9 @@ ningún enlace al panel.
 3. En la PC, abrir http://localhost:3001/admin
 4. Entrar con el usuario inicial:
      Usuario: freeman
-     Contraseña: 12345678
-5. El panel pedirá cambiar la contraseña. Usa una de 12 caracteres o más.
+     Contraseña: 1234
+5. La contraseña inicial es 1234. Se recomienda cambiarla por una de
+   12 caracteres o más desde General > Seguridad.
 6. Revisar en Ajustes el nombre del salón, la moneda y el enlace del QR.
 7. Permitir el programa o el puerto 3000 en el firewall de Windows,
    en red privada.

@@ -66,6 +66,8 @@ jobs:
           Copy-Item 'build/exe/LilysPlays.exe' "$dest/LilysPlays.exe"
           Copy-Item 'build/scripts/build_reports.exe' "$dest/scripts/build_reports.exe"
           Copy-Item 'README.md', 'GUIA-RED-LOCAL.txt', 'CREDITS.md' $dest
+          "Version: ${{ github.sha }}" | Set-Content -Encoding ASCII "$dest/VERSION.txt"
+          "Build: $([DateTime]::UtcNow.ToString('yyyy-MM-dd HH:mm:ss')) UTC" | Add-Content -Encoding ASCII "$dest/VERSION.txt"
 
           @'
           Lily's Plays - Windows portable
@@ -75,8 +77,9 @@ jobs:
           2. Ejecuta LilysPlays.exe (o Iniciar.bat).
           3. Menu publico:  http://localhost:3000
           4. Panel:         http://localhost:3001/admin  (solo esta PC)
-          5. Usuario inicial: freeman / 12345678
-             El panel pedira cambiarla la primera vez.
+          5. Usuario inicial: freeman / 1234
+             Se recomienda cambiarla por una de 12 caracteres o mas
+             desde General > Seguridad.
 
           Todo se guarda dentro de esta carpeta:
             data/              base de datos, usuarios y respaldos
